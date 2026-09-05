@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Why New Zealand — Pristine Land, Affordable Premium</title>
+<meta name="description" content="Why New Zealand's wine, mānuka honey, craft beer and single malt are the purest premium products on Earth — and why they're worth the journey.">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fjalla+One&family=Libre+Franklin:ital,wght@0,300..800;1,400&display=swap">
+<style>
+:root{
+  --ink:#161B24; --ivory:#F5F1E6; --paper:#FBF9F2; --saffron:#C97B1E; --saffron-deep:#B26A15;
+  --vine:#3D5C4A; --mist:#9AA1AD; --line:rgba(22,27,36,.14); --line-inv:rgba(245,241,230,.16);
+  --serif:"Fjalla One","Arial Narrow",Arial,sans-serif; --sans:"Libre Franklin","Helvetica Neue",Arial,sans-serif;
+}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);font:400 16px/1.6 var(--sans)}
+img{max-width:100%}
+a{color:inherit}
+.wrap{max-width:1060px;margin:0 auto;padding:0 24px}
+.eyebrow{font:600 12px/1 var(--sans);letter-spacing:.18em;text-transform:uppercase;color:var(--saffron)}
+h1,h2,h3{font-family:var(--serif);font-weight:400;text-wrap:balance}
+header{background:var(--ink);color:var(--ivory)}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:22px 0}
+.mark{display:flex;align-items:center;gap:12px;font:700 15px/1.1 var(--sans);letter-spacing:.06em;text-transform:uppercase}
+.mark b{color:var(--saffron)}
+.mark .rule{display:inline-block;width:26px;height:2px;background:var(--saffron)}
+.mark a{color:inherit;text-decoration:none}
+.nav nav{display:flex;gap:26px;font:500 13px var(--sans)}
+.nav nav a{text-decoration:none;color:var(--mist)}
+.nav nav a:hover,.nav nav a:focus-visible{color:var(--ivory)}
+a:focus-visible{outline:2px solid var(--saffron);outline-offset:3px}
+
+.hero{background:var(--ink);color:var(--ivory);padding:64px 0 70px;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;inset:auto -10% -55% -10%;height:70%;
+  background:radial-gradient(60% 100% at 50% 100%, rgba(61,92,74,.45), transparent 70%)}
+.hero .wrap{position:relative}
+.hero h1{font-size:clamp(36px,5.6vw,60px);line-height:1.08;max-width:17ch;margin:18px 0 22px}
+.hero h1 em{font-style:normal;color:var(--saffron)}
+.hero p.lede{max-width:60ch;color:#C9CDD6;font-size:18px}
+.stats{display:flex;gap:38px;flex-wrap:wrap;margin-top:42px;padding-top:22px;border-top:1px solid var(--line-inv)}
+.stats div{font-size:13px;color:var(--mist);max-width:200px}
+.stats b{display:block;font-family:var(--serif);font-size:26px;color:var(--ivory);font-variant-numeric:tabular-nums}
+
+section.block{padding:64px 0 56px}
+section.block.alt{background:var(--ivory);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.block h2{font-size:clamp(26px,3.8vw,38px);margin:12px 0 12px}
+.block .sub{max-width:66ch;color:#4A5160;margin-bottom:26px}
+
+.vs{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--line);background:#fff}
+.vs .col{padding:28px 30px}
+.vs .col + .col{border-left:1px solid var(--line)}
+.vs .col.nz{background:var(--ink);color:var(--ivory)}
+.vs h3{font-size:22px;margin-bottom:4px}
+.vs .tag{font:600 11px var(--sans);letter-spacing:.14em;text-transform:uppercase;color:#8A8272}
+.vs .col.nz .tag{color:var(--saffron)}
+.vs ul{list-style:none;margin-top:18px;display:flex;flex-direction:column;gap:12px;font-size:14.5px}
+.vs .col:not(.nz) ul{color:#4A5160}
+.vs .col.nz ul{color:#D5D9E0}
+.vs li{padding-left:20px;position:relative}
+.vs li::before{content:"";position:absolute;left:0;top:.6em;width:9px;height:2px;background:#B8B09E}
+.vs .col.nz li::before{background:var(--saffron)}
+.verdict{margin-top:14px;padding:14px 18px;background:var(--vine);color:#E8EDE5;font-size:14.5px;border-radius:2px}
+.verdict b{color:#fff}
+
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-top:8px}
+.duo .card{background:#fff;border:1px solid var(--line);padding:28px 28px 24px}
+.block.alt .duo .card{background:var(--paper)}
+.duo h3{font-size:22px;margin-bottom:8px}
+.duo .fact{font:600 12.5px var(--sans);color:var(--vine);margin-bottom:10px}
+.duo p{font-size:14.5px;color:#4A5160}
+.duo p + p{margin-top:10px}
+
+.visit{background:var(--vine);color:var(--ivory);padding:64px 0 60px}
+.visit .eyebrow{color:#EDC98A}
+.visit h2{font-size:clamp(26px,3.8vw,38px);margin:12px 0 10px}
+.visit .sub{color:#D7DDD3;max-width:62ch;margin-bottom:30px}
+.places{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:rgba(245,241,230,.2);border:1px solid rgba(245,241,230,.2)}
+.place{background:var(--vine);padding:24px 20px}
+.place h3{font-size:19px;margin-bottom:6px;color:#fff}
+.place .k{font:600 11px var(--sans);letter-spacing:.12em;text-transform:uppercase;color:#EDC98A}
+.place p{font-size:13.5px;color:#D7DDD3;margin-top:8px}
+
+.cta{background:var(--ink);color:var(--ivory);padding:64px 0 58px;text-align:left}
+.cta h2{font-size:clamp(26px,3.8vw,36px);max-width:24ch;margin:12px 0 16px}
+.cta p{color:var(--mist);max-width:56ch}
+.btn{display:inline-block;margin-top:24px;padding:13px 26px;font:600 14px var(--sans);letter-spacing:.04em;text-decoration:none;border-radius:2px;background:var(--saffron);color:var(--ink)}
+.btn:hover{background:#E8983F}
+.src{font-size:11.5px;color:#8A8F9B;margin-top:34px;max-width:90ch}
+footer{background:var(--ink);color:#7A8090;border-top:1px solid var(--line-inv);padding:26px 0;font-size:12.5px}
+footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+
+@media (max-width:860px){
+  .vs{grid-template-columns:1fr}
+  .vs .col + .col{border-left:none;border-top:1px solid var(--line)}
+  .duo{grid-template-columns:1fr}
+  .places{grid-template-columns:1fr 1fr}
+  .nav nav{display:none}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <div class="mark"><span class="rule"></span><a href="/">Market <b>Access</b> Partners</a></div>
+    <nav aria-label="Site">
+      <a href="/#window">The window</a>
+      <a href="/#sectors">Sectors</a>
+      <a href="/why-new-zealand.html" style="color:var(--ivory)">Why New Zealand</a>
+      <a href="/#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <p class="eyebrow">Why New Zealand</p>
+    <h1>Pristine land.<br><em>Affordable premium.</em></h1>
+    <p class="lede">New Zealand is the last significant landmass humans ever settled — two islands of rainforest, alps and coastline at the far edge of the world, shared by barely five million people. What grows here grows in air, water and soil most of the planet lost long ago. That purity is not a marketing line. It is the product.</p>
+    <div class="stats">
+      <div><b>98%</b>of vineyard area certified sustainable (SWNZ)</div>
+      <div><b>~5m</b>people on a landmass larger than the United Kingdom</div>
+      <div><b>~85%</b>of electricity from renewable sources</div>
+      <div><b>#1</b>among the highest average export prices of any wine nation</div>
+    </div>
+  </div>
+</section>
+
+<section class="block">
+  <div class="wrap">
+    <p class="eyebrow">Wine</p>
+    <h2>France sells you its history. New Zealand sells you its land.</h2>
+    <p class="sub">French wine is magnificent — and it costs like it. Its premium is centuries of reputation, complex classification, and vintages that swing with the weather. New Zealand's premium is simpler: the cleanest grape-growing environment on Earth, made by winemakers who answer to the vineyard rather than the appellation rulebook.</p>
+    <div class="vs">
+      <div class="col">
+        <span class="tag">The old world</span>
+        <h3>France</h3>
+        <ul>
+          <li>Premium defined by appellation and château hierarchy — the label costs more than the land</li>
+          <li>Significant vintage variation; great years priced beyond reach</li>
+          <li>Top Burgundy and Bordeaux now trade as luxury assets, not drinks</li>
+          <li>Centuries of intensive agriculture on ancient, worked soils</li>
+        </ul>
+      </div>
+      <div class="col nz">
+        <span class="tag">The new premium</span>
+        <h3>New Zealand</h3>
+        <ul>
+          <li>98% of vineyard area certified sustainable — the highest of any major wine nation</li>
+          <li>Maritime climate delivers consistency: the wine you loved is the wine you get</li>
+          <li>World-defining Sauvignon Blanc and world-class Pinot Noir at a fraction of equivalent Burgundy</li>
+          <li>Among the highest average bottle prices of any exporter — earned on quality, not heritage</li>
+        </ul>
+      </div>
+    </div>
+    <div class="verdict"><b>Affordable premium:</b> a top New Zealand single-vineyard wine costs less than an entry-level bottle from a famous French appellation — and drinks with more purity, more fruit and more honesty.</div>
+  </div>
+</section>
+
+<section class="block alt">
+  <div class="wrap">
+    <p class="eyebrow">Mānuka honey</p>
+    <h2>Bees that feed on native bush found almost nowhere else on Earth</h2>
+    <p class="sub">Mānuka is a native New Zealand tree. Our bees forage its blossom in remote hill country — much of it in Northland — far from industrial agriculture. The result is a honey with unique, scientifically measured properties that generic honey cannot imitate.</p>
+    <div class="duo">
+      <div class="card">
+        <h3>Everyone else's honey</h3>
+        <p class="fact">Commodity, blended, often adulterated</p>
+        <p>Global honey trades as a commodity and is one of the world's most adulterated foods — cut with syrups, blended across borders, graded on little more than colour. Provenance is a label claim, rarely a test.</p>
+      </div>
+      <div class="card">
+        <h3>New Zealand mānuka</h3>
+        <p class="fact">The only honey with a government science standard</p>
+        <p>New Zealand is the only country whose government defines authentic mānuka honey by laboratory test — every export batch is verified against MPI's scientific definition, and grading systems like UMF™/MGO measure the unique compounds in every jar.</p>
+        <p>Under the NZ–India FTA, India cut mānuka tariffs 75% for New Zealand alone — the first concession of its kind India has given any country.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="block">
+  <div class="wrap">
+    <p class="eyebrow">Craft beer &amp; single malt</p>
+    <h2>Alpine water, world-famous hops, and a whisky industry the world just noticed</h2>
+    <div class="duo">
+      <div class="card">
+        <h3>Craft beer</h3>
+        <p class="fact">Hops the whole world brews with</p>
+        <p>New Zealand hops — Nelson Sauvin, Riwaka, Motueka — are among the most sought-after in world brewing, grown in one small, sunny corner of the South Island. Our craft brewers use them fresh, with soft alpine water, in one of the world's most inventive small beer scenes.</p>
+      </div>
+      <div class="card">
+        <h3>Single malt whisky</h3>
+        <p class="fact">World Whiskies Awards winners, already</p>
+        <p>New Zealand's young distilleries are beating the old world at its own game: Scapegrace has taken a world's-best single malt title, and Pōkeno and Cardrona are World Whiskies Awards category winners — whiskies built on glacial water and clean southern air.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="visit">
+  <div class="wrap">
+    <p class="eyebrow">Come and see it</p>
+    <h2>We are hard to get to. That's the point.</h2>
+    <p class="sub">Every hour of the journey is distance from the crowded, polluted world — and the reason the product is what it is. Walk the vineyard, meet the beekeeper, taste at the distillery door. New Zealand is the only luxury provenance you can experience end to end in a week.</p>
+    <div class="places">
+      <div class="place"><span class="k">Far north</span><h3>Northland</h3><p>Mānuka hill country, the Bay of Islands, and honey straight from the apiary. Subtropical, remote, pure.</p></div>
+      <div class="place"><span class="k">Geothermal heart</span><h3>Rotorua</h3><p>Steaming earth, Māori manaakitanga and native forest — the living culture behind the provenance story.</p></div>
+      <div class="place"><span class="k">Great lake</span><h3>Taupō</h3><p>A lake the size of Singapore, trout rivers, and volcanic country that filters some of the purest water on Earth.</p></div>
+      <div class="place"><span class="k">Southern alps</span><h3>Queenstown</h3><p>Alpine drama, Central Otago Pinot Noir at 45° south, and distilleries drawing glacial water. Premium, poured at source.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="cta">
+  <div class="wrap">
+    <p class="eyebrow">For our Indian partners</p>
+    <h2>Bring your buyers here. The land closes the deal.</h2>
+    <p>Market Access Partners hosts trade visits for Indian importers, distributors and hospitality groups — vineyards, apiaries, breweries and distilleries, door to door. Nobody leaves unconvinced.</p>
+    <a class="btn" href="/#contact">Talk to us</a>
+    <p class="src">Sources: Sustainable Winegrowing NZ certification coverage; NZ Winegrowers export statistics; NZ Ministry for Primary Industries mānuka honey scientific definition; World Whiskies Awards results 2024–2026; MFAT NZ–India FTA key outcomes. Population and renewable-electricity figures: Stats NZ / MBIE.</p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 Market Access Partners Limited · New Zealand</span>
+    <span>myaccesspartners.com</span>
+  </div>
+</footer>
+
+</body>
+</html>
