@@ -27,6 +27,10 @@ header .wrap{display:flex;justify-content:space-between;align-items:baseline;gap
 h1{font-family:var(--serif);font-weight:400;font-size:clamp(26px,3.6vw,38px);margin:34px 0 6px}
 .sub{color:#4A5160;max-width:70ch}
 .eyebrow{font:600 11px var(--sans);letter-spacing:.18em;text-transform:uppercase;color:var(--saffron)}
+.dirtog{display:inline-flex;border:1px solid var(--line);border-radius:3px;overflow:hidden;margin:14px 0 4px}
+.dirtog button{font:600 13px var(--sans);padding:9px 18px;border:none;background:#fff;color:#4A5160;cursor:pointer}
+.dirtog button.on{background:var(--ink);color:var(--ivory)}
+.dirtog button:not(.on):hover{background:var(--ivory)}
 
 .grid{display:grid;grid-template-columns:320px 1fr;gap:34px;margin:30px 0 60px;align-items:start}
 .panel{background:var(--ivory);border:1px solid var(--line);padding:22px}
@@ -96,16 +100,20 @@ td .pct{color:#8A8F9B;font-size:11px}
 </header>
 
 <div class="wrap">
-  <p class="eyebrow" style="margin-top:36px">NZ → India</p>
+  <p class="eyebrow" style="margin-top:36px" id="dirEyebrow">NZ → India</p>
   <h1>Landed price calculator</h1>
-  <p class="sub">Enter the producer's bottle price and see the duty-paid landed cost in India — today, on FTA day one, and at full phase-down — inclusive of freight, both MAP commissions, customs duty and India-side costs.</p>
+  <div class="dirtog" role="tablist" aria-label="Trade direction">
+    <button id="dirNZIN" class="on" type="button">NZ → India</button>
+    <button id="dirINNZ" type="button">India → NZ</button>
+  </div>
+  <p class="sub" id="dirSub">Enter the producer's bottle price and see the duty-paid landed cost in India — today, on FTA day one, and at full phase-down — inclusive of freight, both MAP commissions, customs duty and India-side costs.</p>
 
   <div class="grid">
     <div class="panel">
       <h2>Inputs</h2>
-      <div class="field"><label for="fob">Producer price per bottle — FOB NZ (NZD)</label>
+      <div class="field"><label for="fob" id="fobLabel">Producer price per bottle — FOB NZ (NZD)</label>
         <input id="fob" type="number" step="0.5" min="0" value="15">
-        <div class="hint">What the winery charges at the port, excluding our commission.</div></div>
+        <div class="hint" id="fobHint">What the winery charges at the port, excluding our commission.</div></div>
       <div class="field"><label for="commMode">MAP 15% commission</label>
         <select id="commMode"><option value="top">Added on top of FOB</option><option value="in">Absorbed in FOB price</option></select></div>
       <div class="field"><label for="freight">Freight + insurance per bottle (NZD)</label>
@@ -121,17 +129,17 @@ td .pct{color:#8A8F9B;font-size:11px}
       </div>
       <div class="field"><label for="d2">FTA year 10 %</label><input id="d2" type="number" step="1" value="25">
         <div class="hint">Ends at 25% or 50% depending on the wine's value band — edit to match.</div></div>
-      <div class="divider">India-side costs</div>
+      <div class="divider" id="destDivider">India-side costs</div>
       <div class="field"><label for="mapIn">MAP India-side fee % (on FOB)</label><input id="mapIn" type="number" step="0.5" value="5"></div>
-      <div class="field"><label for="state">State excise &amp; fees % (on duty-paid cost)</label><input id="state" type="number" step="1" value="25">
-        <div class="hint">Varies hugely by state — Maharashtra ≠ Delhi ≠ Haryana. Set per target state.</div></div>
+      <div class="field"><label for="state" id="stateLabel">State excise &amp; fees % (on duty-paid cost)</label><input id="state" type="number" step="1" value="25">
+        <div class="hint" id="stateHint">Varies hugely by state — Maharashtra ≠ Delhi ≠ Haryana. Set per target state.</div></div>
       <div class="field"><label for="margin">Importer / distributor margin %</label><input id="margin" type="number" step="1" value="30"></div>
       <div class="field"><label for="bpc">Bottles per 20ft container</label><input id="bpc" type="number" step="100" value="12000"></div>
     </div>
 
     <div>
       <div class="scenarios" id="scenarios"></div>
-      <table id="tbl"><caption>Full breakdown per bottle (INR)</caption><thead></thead><tbody></tbody></table>
+      <table id="tbl"><caption id="tblCap">Full breakdown per bottle (INR)</caption><thead></thead><tbody></tbody></table>
       <div class="foot">
         <p><strong>Assumptions &amp; caveats:</strong> duty is applied to CIF value (FOB + commission where on-sold + freight/insurance). India's current wine tariff (~150%) is structured as 50% basic customs duty + 100% agriculture cess. FTA rates apply only from entry into force (expected H1 2027) and phase down over 10 years to 25% or 50% by value band. State excise, label registration and distribution fees differ by state and channel; the figure here is indicative. This is a planning tool, not a customs ruling — verify against the tariff schedule and a customs broker's calculation before quoting.</p>
       </div>
@@ -141,70 +149,125 @@ td .pct{color:#8A8F9B;font-size:11px}
 </div>
 
 <script>
-// Calculator is gated by the site-wide password only; no personal login needed.
+// Reached via the site-wide preview password; this page holds no data.
 const $ = id => document.getElementById(id);
 document.getElementById("who").textContent = "Crew preview";
+
+// ---- Trade direction ----
+let liveRate = 55.5; // INR per NZD, mid-market
+const DIRS = {
+  nzin: {
+    eyebrow: "NZ → India",
+    sub: "Enter the producer's bottle price and see the duty-paid landed cost in India, today, on FTA day one, and at full phase-down, inclusive of freight, both MAP commissions, customs duty and India-side costs.",
+    fobLabel: "Producer price per bottle — FOB NZ (NZD)", fobHint: "What the winery charges at the port, excluding our commission.", fobDefault: 15, fobStep: 0.5,
+    duties: [150, 75, 25], destDivider: "India-side costs",
+    stateLabel: "State excise & fees % (on duty-paid cost)", stateHint: "Varies hugely by state. Maharashtra, Delhi and Haryana all differ; set per target state.", stateDefault: 25,
+    marginDefault: 30, outCur: "INR", tblCap: "Full breakdown per bottle (INR)",
+    notes: d => [d[0]+"% duty, current schedule", d[1]+"% duty, at entry into force", d[2]+"% duty, full phase-down"],
+    stateRow: "State excise & fees",
+  },
+  innz: {
+    eyebrow: "India → NZ",
+    sub: "Enter the supplier's unit price and see the landed cost in New Zealand, today and under the FTA (NZ phases its tariffs on Indian goods to zero). GST of 15% applies at the border and is recoverable for GST-registered importers.",
+    fobLabel: "Supplier price per unit — FOB India (INR)", fobHint: "What the Indian producer charges at the port, excluding our commission.", fobDefault: 800, fobStep: 10,
+    duties: [5, 0, 0], destDivider: "NZ-side costs",
+    stateLabel: "NZ GST % (on duty-paid cost)", stateHint: "15% at the border. Recoverable for GST-registered importers; treat as cashflow, not cost.", stateDefault: 15,
+    marginDefault: 30, outCur: "NZD", tblCap: "Full breakdown per unit (NZD)",
+    notes: d => [d[0]+"% duty, typical current NZ tariff (many lines already 0%)", d[1]+"% duty, FTA day one", d[2]+"% duty, FTA fully phased"],
+    stateRow: "NZ GST (border)",
+  },
+};
+let dir = "nzin";
+
+function applyDir(next){
+  dir = next;
+  const c = DIRS[dir];
+  $("dirNZIN").classList.toggle("on", dir==="nzin");
+  $("dirINNZ").classList.toggle("on", dir==="innz");
+  $("dirEyebrow").textContent = c.eyebrow;
+  $("dirSub").textContent = c.sub;
+  $("fobLabel").textContent = c.fobLabel; $("fobHint").textContent = c.fobHint;
+  $("fob").value = c.fobDefault; $("fob").step = c.fobStep;
+  $("d0").value = c.duties[0]; $("d1").value = c.duties[1]; $("d2").value = c.duties[2];
+  $("destDivider").textContent = c.destDivider;
+  $("stateLabel").textContent = c.stateLabel; $("stateHint").textContent = c.stateHint;
+  $("state").value = c.stateDefault; $("margin").value = c.marginDefault;
+  calc();
+}
 
 // ---- Calculator ----
 const fmtI = n => "₹" + n.toLocaleString("en-IN",{maximumFractionDigits:0});
 const fmtN = n => "NZ$" + n.toLocaleString("en-NZ",{maximumFractionDigits:2,minimumFractionDigits:2});
+const fmtN0 = n => "NZ$" + n.toLocaleString("en-NZ",{maximumFractionDigits:0});
 
 function calc(){
-  const fob=+$("fob").value||0, mode=$("commMode").value, fr=+$("freight").value||0, fx=+$("fx").value||0;
+  const c = DIRS[dir];
+  const fob=+$("fob").value||0, mode=$("commMode").value, fr=+$("freight").value||0, fx=+$("fx").value||liveRate;
   const duties=[+$("d0").value||0, +$("d1").value||0, +$("d2").value||0];
-  const mapIn=(+$("mapIn").value||0)/100, st=(+$("state").value||0)/100, mg=(+$("margin").value||0)/100, bpc=+$("bpc").value||0;
-  const comm = mode==="top" ? fob*0.15 : 0;
-  const cifNZD = fob + comm + fr;
-  const names=["Today (pre-FTA)","FTA day one","FTA year 10"];
-  const notes=[`${duties[0]}% duty — current schedule`,`${duties[1]}% duty — at entry into force`,`${duties[2]}% duty — full phase-down`];
+  const mapIn=(+$("mapIn").value||0)/100, st=(+$("state").value||0)/100, mg=(+$("margin").value||0)/100;
+  const out = c.outCur==="INR" ? fmtI : fmtN0;
+  const sub = c.outCur==="INR" ? (n=>fmtN(n/fx)) : (n=>fmtI(n*fx));
+  const fobOut = c.outCur==="INR" ? fob*fx : fob/fx;
+  const frOut  = c.outCur==="INR" ? fr*fx  : fr;
+  const comm = mode==="top" ? fobOut*0.15 : 0;
+  const cif = fobOut + comm + frOut;
+  const names=["Today (pre-FTA)","FTA day one","FTA fully phased"];
+  const notes=c.notes(duties);
   const sc = duties.map((d,i)=>{
-    const cif=cifNZD*fx, duty=cif*d/100, dpc=cif+duty;
-    const mapFee=fob*fx*mapIn, stateCost=dpc*st, marginCost=(dpc+stateCost)*mg;
-    const indiaSide=mapFee+stateCost+marginCost;
-    const landed=dpc+indiaSide;
-    return {name:names[i],note:notes[i],cif,duty,indiaSide,landed,mapFee,stateCost,marginCost,d};
+    const duty=cif*d/100, dpc=cif+duty;
+    const mapFee=fobOut*mapIn, stateCost=dpc*st, marginCost=(dpc+stateCost)*mg;
+    const destSide=mapFee+stateCost+marginCost;
+    const landed=dpc+destSide;
+    return {name:names[i],note:notes[i],cif,duty,destSide,landed,mapFee,stateCost,marginCost,d};
   });
   const base=sc[0].landed;
+  const unit = dir==="nzin" ? "bottle" : "unit";
+  const originTag = dir==="nzin" ? "NZ-side" : "India-side";
+  const destTag = dir==="nzin" ? "India" : "NZ";
+  $("tblCap").textContent = c.tblCap;
   $("scenarios").innerHTML = sc.map((s,i)=>{
     const total=s.landed, w=k=>Math.max(2,(k/total*100)).toFixed(1);
-    const save = i===0 ? "" : `<div class="saving">▼ ${Math.round((1-s.landed/base)*100)}% vs today — saves ${fmtI(base-s.landed)}/bottle</div>`;
+    const savePct = Math.round((1-s.landed/base)*100);
+    const save = (i===0 || savePct<=0) ? "" : `<div class="saving">▼ ${savePct}% vs today, saves ${out(base-s.landed)}/${unit}</div>`;
     return `<div class="scn${i===2?" hero":""}">
       <div class="tag">${s.name}</div><div class="duty-note">${s.note}</div>
-      <div class="big">${fmtI(s.landed)}<span class="unit"> / bottle</span></div>
-      <div class="nzd">${fmtN(s.landed/(+$("fx").value||1))} · case of 12: ${fmtI(s.landed*12)}</div>
+      <div class="big">${out(s.landed)}<span class="unit"> / ${unit}</span></div>
+      <div class="nzd">${sub(s.landed)} · case of 12: ${out(s.landed*12)}</div>
       <div class="bar" role="img" aria-label="Cost composition">
-        <span class="s-nz" style="width:${w(s.cif)}%" title="NZ-side (CIF): ${fmtI(s.cif)}"></span>
-        <span class="s-duty" style="width:${w(s.duty)}%" title="Customs duty: ${fmtI(s.duty)}"></span>
-        <span class="s-india" style="width:${w(s.indiaSide)}%" title="India-side: ${fmtI(s.indiaSide)}"></span>
+        <span class="s-nz" style="width:${w(s.cif)}%" title="${originTag} (CIF): ${out(s.cif)}"></span>
+        <span class="s-duty" style="width:${w(s.duty)}%" title="Customs duty: ${out(s.duty)}"></span>
+        <span class="s-india" style="width:${w(s.destSide)}%" title="${destTag}-side: ${out(s.destSide)}"></span>
       </div>
-      <div class="legend"><span><i style="background:var(--nz)"></i>NZ-side ${fmtI(s.cif)}</span><span><i style="background:var(--duty)"></i>Duty ${fmtI(s.duty)}</span><span><i style="background:var(--india)"></i>India ${fmtI(s.indiaSide)}</span></div>
+      <div class="legend"><span><i style="background:var(--nz)"></i>${originTag} ${out(s.cif)}</span><span><i style="background:var(--duty)"></i>Duty ${out(s.duty)}</span><span><i style="background:var(--india)"></i>${destTag} ${out(s.destSide)}</span></div>
       ${save}</div>`;
   }).join("");
 
   const rows=[
-    ["Producer FOB", s=>fob*(+$("fx").value)],
-    [$("commMode").value==="top"?"MAP commission 15% (NZ side)":"MAP commission 15% (absorbed in FOB)", s=>comm*(+$("fx").value)],
-    ["Freight + insurance", s=>fr*(+$("fx").value)],
+    [dir==="nzin"?"Producer FOB":"Supplier FOB", s=>fobOut],
+    [$("commMode").value==="top"?"MAP commission 15% (origin side)":"MAP commission 15% (absorbed in FOB)", s=>comm],
+    ["Freight + insurance", s=>frOut],
     ["Customs duty", s=>s.duty],
-    ["MAP fee (India side)", s=>s.mapFee],
-    ["State excise & fees", s=>s.stateCost],
+    ["MAP fee (receiver side)", s=>s.mapFee],
+    [c.stateRow, s=>s.stateCost],
     ["Importer / distributor margin", s=>s.marginCost],
   ];
   $("tbl").querySelector("thead").innerHTML =
     `<tr><th>Component</th>${sc.map(s=>`<th>${s.name}<div class="pct">${s.d}% duty</div></th>`).join("")}</tr>`;
   $("tbl").querySelector("tbody").innerHTML =
-    rows.map(([label,f])=>`<tr><td>${label}</td>${sc.map(s=>`<td>${fmtI(f(s))}</td>`).join("")}</tr>`).join("")
-    + `<tr class="total"><td>Landed price per bottle</td>${sc.map(s=>`<td>${fmtI(s.landed)}</td>`).join("")}</tr>`
-    + `<tr><td>Per case (12)</td>${sc.map(s=>`<td>${fmtI(s.landed*12)}</td>`).join("")}</tr>`
-    + `<tr><td>Per 20ft container (${(+$("bpc").value).toLocaleString()} btl)</td>${sc.map(s=>`<td>${fmtI(s.landed*(+$("bpc").value))}</td>`).join("")}</tr>`;
+    rows.map(([label,f])=>`<tr><td>${label}</td>${sc.map(s=>`<td>${out(f(s))}</td>`).join("")}</tr>`).join("")
+    + `<tr class="total"><td>Landed price per ${unit}</td>${sc.map(s=>`<td>${out(s.landed)}</td>`).join("")}</tr>`
+    + `<tr><td>Per case (12)</td>${sc.map(s=>`<td>${out(s.landed*12)}</td>`).join("")}</tr>`
+    + `<tr><td>Per 20ft container (${(+$("bpc").value||0).toLocaleString()} ${unit}s)</td>${sc.map(s=>`<td>${out(s.landed*(+$("bpc").value||0))}</td>`).join("")}</tr>`;
 }
-document.querySelectorAll("input,select").forEach(el=>{ if(!el.closest("#gate")) el.addEventListener("input",calc); });
+document.querySelectorAll("input,select").forEach(el=>{ el.addEventListener("input",calc); });
+$("dirNZIN").onclick=()=>applyDir("nzin");
+$("dirINNZ").onclick=()=>applyDir("innz");
 
 // ---- Live FX (mid-market). Editable override stays in the field. ----
 async function liveFx(){
   const note=$("fxNote");
-  const set=(rate,src,when)=>{ $("fx").value=rate.toFixed(2);
-    note.textContent=`Live mid-market ${rate.toFixed(2)} (${src}, ${when}). Edit to override — banks quote worse.`; calc(); };
+  const set=(rate,src,when)=>{ liveRate=rate; $("fx").value=rate.toFixed(2);
+    note.textContent=`Live mid-market ${rate.toFixed(2)} INR per NZD (${src}, ${when}). Edit to override; banks quote worse.`; calc(); };
   try{
     const r=await fetch("https://api.frankfurter.dev/v1/latest?base=NZD&symbols=INR").then(x=>x.json());
     if(r?.rates?.INR) return set(r.rates.INR,"ECB",r.date);
@@ -214,11 +277,12 @@ async function liveFx(){
       const r=await fetch("https://open.er-api.com/v6/latest/NZD").then(x=>x.json());
       if(r?.rates?.INR) return set(r.rates.INR,"ER-API",new Date(r.time_last_update_utc).toISOString().slice(0,10));
       throw 0;
-    }catch(e2){ note.textContent="Live rate unavailable — using default 55.5, edit to override."; }
+    }catch(e2){ note.textContent="Live rate unavailable; using default 55.5 INR per NZD, edit to override."; }
   }
 }
 liveFx();
 calc();
+
 </script>
 </body>
 </html>
