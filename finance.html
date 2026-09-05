@@ -33,7 +33,7 @@ h1{font-family:var(--serif);font-weight:400;font-size:clamp(26px,3.6vw,38px);mar
 .eyebrow{font:600 11px var(--sans);letter-spacing:.18em;text-transform:uppercase;color:var(--saffron)}
 h2.sec{font-family:var(--serif);font-weight:400;font-size:22px;margin:38px 0 10px}
 
-.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:18px 0 8px}
+.tiles{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin:18px 0 8px}
 .tile{background:#fff;border:1px solid var(--line);padding:16px 18px}
 .tile .lbl{font:600 11px var(--sans);letter-spacing:.1em;text-transform:uppercase;color:#6A6F7A}
 .tile .val{font-family:var(--serif);font-size:26px;margin-top:6px;font-variant-numeric:tabular-nums}
@@ -144,8 +144,8 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid 
 </div>
 
 <script>
-const SUPABASE_URL = "__SUPABASE_URL__";
-const SUPABASE_ANON = "__SUPABASE_ANON__";
+const SUPABASE_URL = "https://iwdibogfypdjgsinwube.supabase.co";
+const SUPABASE_ANON = "sb_publishable_BRmzLQw94Lt49xLFmDHJVQ_yoo68o4c";
 const $ = id => document.getElementById(id);
 const configured = SUPABASE_URL.startsWith("https://");
 let sb = configured ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON) : null;
@@ -198,7 +198,9 @@ function render(orders,budget,containers){
     <div class="tile accent"><div class="lbl">Our commission</div><div class="val">${nz(commNZ+commIN)}</div><div class="det">15% earned ${nz(commNZ)} · 5% landed ${nz(commIN)}</div></div>
     <div class="tile"><div class="lbl">Budget</div><div class="val">${nz(act)} <span style="font-size:14px;color:#6A6F7A">of ${nz(plan)}</span></div>
       <div class="pbar"><span class="${act>plan?"over":""}" style="width:${pct}%"></span></div>
-      <div class="det">${act>plan? "Over by "+nz(act-plan) : nz(plan-act)+" headroom"}</div></div>`;
+      <div class="det">${act>plan? "Over by "+nz(act-plan) : nz(plan-act)+" headroom"}</div></div>
+    <div class="tile"><div class="lbl">Charity provision</div><div class="val">${nz(Math.max(0,(commNZ+commIN-act))*0.10)}</div>
+      <div class="det">10% of profit to date — 5% India ${nz(Math.max(0,(commNZ+commIN-act))*0.05)} · 5% NZ ${nz(Math.max(0,(commNZ+commIN-act))*0.05)}. At directors' & shareholders' discretion.</div></div>`;
 
   $("orders").querySelector("thead").innerHTML =
     `<tr><th>Date</th><th>Producer</th><th>Buyer</th><th>Cases</th><th>FOB NZD</th><th>15% fee</th><th>5% fee</th><th>Status</th><th>Ship date</th><th></th></tr>`;
