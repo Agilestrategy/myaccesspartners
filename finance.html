@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MAP Finance Board</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fjalla+One&family=Libre+Franklin:ital,wght@0,300..800;1,400&display=swap">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<style>
+:root{
+  --ink:#161B24; --ivory:#F5F1E6; --paper:#FBF9F2; --saffron:#C97B1E;
+  --mist:#9AA1AD; --line:rgba(22,27,36,.14);
+  --good:#2E7D51; --warn:#C97B1E; --bad:#A33B2E;
+  --serif:"Fjalla One","Arial Narrow",Arial,sans-serif; --sans:"Libre Franklin","Helvetica Neue",Arial,sans-serif;
+}
+*{box-sizing:border-box;margin:0}
+body{background:var(--paper);color:var(--ink);font:400 15px/1.55 var(--sans)}
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+header{background:var(--ink);color:var(--ivory);padding:18px 0}
+header .wrap{display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap}
+.mark{font:700 14px var(--sans);letter-spacing:.06em;text-transform:uppercase}
+.mark b{color:var(--saffron)}
+.mark a{color:inherit;text-decoration:none}
+nav.tools{display:flex;gap:18px;font-size:12.5px}
+nav.tools a{color:var(--mist);text-decoration:none}
+nav.tools a:hover{color:var(--ivory)}
+#who{font-size:12.5px;color:var(--mist)}
+#who button{background:none;border:1px solid rgba(245,241,230,.3);color:var(--ivory);padding:4px 10px;margin-left:10px;font:500 12px var(--sans);cursor:pointer;border-radius:2px}
+h1{font-family:var(--serif);font-weight:400;font-size:clamp(26px,3.6vw,38px);margin:34px 0 6px}
+.sub{color:#4A5160;max-width:72ch;margin-bottom:22px}
+.eyebrow{font:600 11px var(--sans);letter-spacing:.18em;text-transform:uppercase;color:var(--saffron)}
+h2.sec{font-family:var(--serif);font-weight:400;font-size:22px;margin:38px 0 10px}
+
+.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:18px 0 8px}
+.tile{background:#fff;border:1px solid var(--line);padding:16px 18px}
+.tile .lbl{font:600 11px var(--sans);letter-spacing:.1em;text-transform:uppercase;color:#6A6F7A}
+.tile .val{font-family:var(--serif);font-size:26px;margin-top:6px;font-variant-numeric:tabular-nums}
+.tile .det{font-size:11.5px;color:#6A6F7A;margin-top:2px;font-variant-numeric:tabular-nums}
+.tile.accent{background:var(--ink);color:var(--ivory);border-color:var(--ink)}
+.tile.accent .lbl{color:var(--saffron)}
+.tile.accent .det{color:var(--mist)}
+
+table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--line);font-variant-numeric:tabular-nums}
+th,td{padding:7px 10px;border-bottom:1px solid var(--line);font-size:13px;text-align:right}
+th:first-child,td:first-child,th:nth-child(2),td:nth-child(2),th:nth-child(3),td:nth-child(3){text-align:left}
+thead th{font:600 11.5px var(--sans);text-transform:uppercase;letter-spacing:.06em;color:#6A6F7A;background:var(--ivory)}
+tr.total td{font-weight:700;background:var(--ivory)}
+.pill{display:inline-block;padding:2px 9px;border-radius:10px;font:600 11px var(--sans)}
+.pill.quoted{background:rgba(154,161,173,.2);color:#4A5160}
+.pill.confirmed{background:rgba(201,123,30,.16);color:#8a5510}
+.pill.shipped{background:rgba(78,91,166,.15);color:#3A4480}
+.pill.landed{background:rgba(46,125,81,.14);color:var(--good)}
+.pill.paid{background:var(--good);color:#fff}
+button.primary{background:var(--saffron);border:none;color:var(--ink);font:600 13px var(--sans);padding:9px 16px;cursor:pointer;border-radius:2px}
+button.quiet{background:none;border:1px solid var(--line);color:#4A5160;font:500 11.5px var(--sans);padding:4px 9px;cursor:pointer;border-radius:2px}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--saffron);outline-offset:1px}
+.addrow{display:grid;gap:8px;margin:12px 0 6px;align-items:end}
+.addrow.orders{grid-template-columns:1.6fr 1.2fr 80px 110px 120px 120px auto}
+.addrow.budget{grid-template-columns:130px 1.6fr 110px 110px 130px auto}
+.addrow label{display:block;font:600 10.5px var(--sans);text-transform:uppercase;letter-spacing:.06em;color:#6A6F7A;margin-bottom:3px}
+.addrow input,.addrow select{width:100%;padding:7px 8px;border:1px solid var(--line);background:#fff;font:500 13px var(--sans);border-radius:2px}
+.ship-list{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.ship{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;background:#fff;border:1px solid var(--line);padding:10px 14px;font-size:13px}
+.ship b{font-variant-numeric:tabular-nums}
+.ship .cd{color:var(--saffron);font-weight:600}
+#msg{font-size:12.5px;color:var(--bad);min-height:16px;margin:8px 0}
+.empty{padding:12px 0;color:#6A6F7A;font-size:13.5px}
+.pbar{height:8px;background:var(--ivory);border:1px solid var(--line);border-radius:4px;overflow:hidden;margin-top:6px}
+.pbar span{display:block;height:100%;background:var(--good)}
+.pbar span.over{background:var(--bad)}
+
+#gate{position:fixed;inset:0;background:var(--ink);display:flex;align-items:center;justify-content:center;z-index:50}
+#gate .card{background:var(--paper);padding:38px;max-width:380px;width:92%;border-top:3px solid var(--saffron)}
+#gate h2{font-family:var(--serif);font-weight:400;font-size:24px;margin:10px 0 6px}
+#gate p{font-size:13px;color:#4A5160;margin-bottom:16px}
+#gate input{width:100%;padding:10px;border:1px solid var(--line);margin-bottom:10px;font:500 14px var(--sans);border-radius:2px}
+#gate button{width:100%;padding:11px;background:var(--saffron);border:none;font:600 14px var(--sans);cursor:pointer;border-radius:2px;color:var(--ink)}
+#gate .err{color:var(--bad);font-size:12.5px;min-height:18px;margin-top:8px}
+[hidden]{display:none!important}
+.tblwrap{overflow-x:auto}
+@media(max-width:900px){.tiles{grid-template-columns:1fr 1fr}.addrow.orders,.addrow.budget{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <div class="card">
+    <span class="eyebrow">Market Access Partners</span>
+    <h2>Directors &amp; shareholders</h2>
+    <p>This tool is private. Sign in with the email address your access was issued to.</p>
+    <input id="em" type="email" placeholder="Email" autocomplete="username">
+    <input id="pw" type="password" placeholder="Password" autocomplete="current-password">
+    <button id="signin">Sign in</button>
+    <div class="err" id="err"></div>
+  </div>
+</div>
+
+<div id="app" hidden>
+<header>
+  <div class="wrap">
+    <span class="mark"><a href="/">Market <b>Access</b> Partners · Internal</a></span>
+    <nav class="tools"><a href="/landed-price.html">Calculator</a><a href="/containers.html">Containers</a><a href="/finance.html" style="color:var(--ivory)">Finance</a></nav>
+    <span id="who"></span>
+  </div>
+</header>
+
+<div class="wrap">
+  <p class="eyebrow" style="margin-top:36px">Finance board</p>
+  <h1>Budget, sales &amp; shipping</h1>
+  <p class="sub">Live for every director and shareholder. Sales flow from quoted to paid; our take is 15% of FOB on confirmation plus 5% from the Indian receiver on landing. Budget tracks planned against actual spend.</p>
+  <div id="msg"></div>
+
+  <div class="tiles" id="tiles"></div>
+
+  <h2 class="sec">Sales pipeline</h2>
+  <div class="tblwrap"><table id="orders"><thead></thead><tbody></tbody></table></div>
+  <div class="addrow orders">
+    <div><label>Producer</label><input id="o-prod" placeholder="Winery name"></div>
+    <div><label>Buyer (India)</label><input id="o-buyer" placeholder="Importer / distributor"></div>
+    <div><label>Cases</label><input id="o-cases" type="number" min="0" value="200"></div>
+    <div><label>FOB value NZD</label><input id="o-fob" type="number" min="0" step="100" value="30000"></div>
+    <div><label>Status</label><select id="o-status"><option>quoted</option><option>confirmed</option><option>shipped</option><option>landed</option><option>paid</option></select></div>
+    <div><label>Ship date</label><input id="o-ship" type="date"></div>
+    <div><button class="primary" id="o-add">Add sale</button></div>
+  </div>
+
+  <h2 class="sec">Shipping dates</h2>
+  <div class="ship-list" id="ships"></div>
+
+  <h2 class="sec">Budget</h2>
+  <div class="tblwrap"><table id="budget"><thead></thead><tbody></tbody></table></div>
+  <div class="addrow budget">
+    <div><label>Category</label><input id="b-cat" placeholder="Marketing"></div>
+    <div><label>Item</label><input id="b-item" placeholder="What the money is for"></div>
+    <div><label>Planned NZD</label><input id="b-plan" type="number" min="0" step="100" value="0"></div>
+    <div><label>Actual NZD</label><input id="b-act" type="number" min="0" step="100" value="0"></div>
+    <div><label>Due date</label><input id="b-due" type="date"></div>
+    <div><button class="primary" id="b-add">Add line</button></div>
+  </div>
+  <div style="height:60px"></div>
+</div>
+</div>
+
+<script>
+const SUPABASE_URL = "__SUPABASE_URL__";
+const SUPABASE_ANON = "__SUPABASE_ANON__";
+const $ = id => document.getElementById(id);
+const configured = SUPABASE_URL.startsWith("https://");
+let sb = configured ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON) : null;
+
+async function boot(){
+  if(!configured){ $("err").textContent = "Access control is not configured yet — ask Paul."; return; }
+  const { data:{ session } } = await sb.auth.getSession();
+  if (session) show(session);
+}
+function show(session){
+  $("gate").hidden = true; $("app").hidden = false;
+  $("who").innerHTML = session.user.email + '<button id="out">Sign out</button>';
+  $("out").onclick = async ()=>{ await sb.auth.signOut(); location.reload(); };
+  load();
+}
+$("signin").onclick = async ()=>{
+  if(!configured){ $("err").textContent = "Access control is not configured yet — ask Paul."; return; }
+  const { data, error } = await sb.auth.signInWithPassword({ email: $("em").value.trim(), password: $("pw").value });
+  if (error) { $("err").textContent = "Sign-in failed: " + error.message; return; }
+  show(data.session);
+};
+$("pw").addEventListener("keydown", e=>{ if(e.key==="Enter") $("signin").click(); });
+
+const esc = s => String(s??"").replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const nz = n => "NZ$" + (+n).toLocaleString("en-NZ",{maximumFractionDigits:0});
+const NEXT = {quoted:"confirmed",confirmed:"shipped",shipped:"landed",landed:"paid"};
+
+async function load(){
+  $("msg").textContent="";
+  const [o,b,c] = await Promise.all([
+    sb.from("orders").select("*").order("order_date",{ascending:false}),
+    sb.from("budget_items").select("*").order("category"),
+    sb.from("containers").select("*").order("cutoff_date"),
+  ]);
+  if(o.error||b.error||c.error){ $("msg").textContent="Load failed: "+(o.error||b.error||c.error).message; return; }
+  render(o.data||[], b.data||[], c.data||[]);
+}
+
+function render(orders,budget,containers){
+  const conf = orders.filter(x=>x.status!=="quoted");
+  const pipeline = orders.filter(x=>x.status==="quoted").reduce((s,x)=>s+ +x.fob_value_nzd,0);
+  const confirmed = conf.reduce((s,x)=>s+ +x.fob_value_nzd,0);
+  const commNZ = conf.reduce((s,x)=>s+ .15*x.fob_value_nzd,0);
+  const commIN = orders.filter(x=>["landed","paid"].includes(x.status)).reduce((s,x)=>s+ .05*x.fob_value_nzd,0);
+  const plan = budget.reduce((s,x)=>s+ +x.planned_nzd,0), act = budget.reduce((s,x)=>s+ +x.actual_nzd,0);
+  const pct = plan? Math.min(100,act/plan*100) : 0;
+  $("tiles").innerHTML = `
+    <div class="tile"><div class="lbl">Pipeline (quoted)</div><div class="val">${nz(pipeline)}</div><div class="det">${orders.filter(x=>x.status==="quoted").length} open quotes</div></div>
+    <div class="tile"><div class="lbl">Confirmed sales</div><div class="val">${nz(confirmed)}</div><div class="det">${conf.length} orders · ${conf.reduce((s,x)=>s+x.cases,0).toLocaleString()} cases</div></div>
+    <div class="tile accent"><div class="lbl">Our commission</div><div class="val">${nz(commNZ+commIN)}</div><div class="det">15% earned ${nz(commNZ)} · 5% landed ${nz(commIN)}</div></div>
+    <div class="tile"><div class="lbl">Budget</div><div class="val">${nz(act)} <span style="font-size:14px;color:#6A6F7A">of ${nz(plan)}</span></div>
+      <div class="pbar"><span class="${act>plan?"over":""}" style="width:${pct}%"></span></div>
+      <div class="det">${act>plan? "Over by "+nz(act-plan) : nz(plan-act)+" headroom"}</div></div>`;
+
+  $("orders").querySelector("thead").innerHTML =
+    `<tr><th>Date</th><th>Producer</th><th>Buyer</th><th>Cases</th><th>FOB NZD</th><th>15% fee</th><th>5% fee</th><th>Status</th><th>Ship date</th><th></th></tr>`;
+  $("orders").querySelector("tbody").innerHTML = orders.length? orders.map(x=>`<tr>
+    <td style="text-align:left">${x.order_date??""}</td><td>${esc(x.producer_name)}</td><td>${esc(x.buyer??"")}</td>
+    <td>${(+x.cases).toLocaleString()}</td><td>${nz(x.fob_value_nzd)}</td>
+    <td>${x.status!=="quoted"? nz(.15*x.fob_value_nzd):"—"}</td>
+    <td>${["landed","paid"].includes(x.status)? nz(.05*x.fob_value_nzd):"—"}</td>
+    <td style="text-align:left"><span class="pill ${x.status}">${x.status}</span>
+      ${NEXT[x.status]?`<button class="quiet" data-adv="${x.id}" data-to="${NEXT[x.status]}">→ ${NEXT[x.status]}</button>`:""}</td>
+    <td>${x.ship_date??"—"}</td>
+    <td><button class="quiet" data-del-o="${x.id}">remove</button></td></tr>`).join("")
+    : `<tr><td colspan="10" class="empty" style="text-align:left">No sales yet — add the first one below.</td></tr>`;
+
+  const today=new Date().toISOString().slice(0,10);
+  $("ships").innerHTML = containers.length? containers.map(c=>{
+    const days = c.cutoff_date? Math.ceil((new Date(c.cutoff_date)-new Date(today))/864e5) : null;
+    return `<div class="ship"><span><b>${esc(c.name)}</b> · ${esc(c.route)}</span>
+      <span>cutoff <b>${c.cutoff_date??"TBC"}</b>${days!==null?` · <span class="cd">${days>=0? days+" days to fill":"cutoff passed"}</span>`:""} · <a href="/containers.html">fill it →</a></span></div>`;
+  }).join("") : `<div class="empty">No containers yet — create one on the Containers page.</div>`;
+
+  $("budget").querySelector("thead").innerHTML =
+    `<tr><th>Category</th><th>Item</th><th>Due</th><th>Planned</th><th>Actual</th><th>Variance</th><th></th></tr>`;
+  $("budget").querySelector("tbody").innerHTML = (budget.length? budget.map(x=>{
+    const v = x.planned_nzd-x.actual_nzd;
+    return `<tr><td style="text-align:left">${esc(x.category)}</td><td style="text-align:left">${esc(x.item)}</td><td style="text-align:left">${x.due_date??"—"}</td>
+    <td>${nz(x.planned_nzd)}</td>
+    <td><input type="number" value="${+x.actual_nzd}" data-act="${x.id}" style="width:90px;padding:3px 6px;border:1px solid var(--line);border-radius:2px;text-align:right"></td>
+    <td style="color:${v<0?"var(--bad)":"var(--good)"}">${v<0?"−":""}${nz(Math.abs(v))}</td>
+    <td><button class="quiet" data-del-b="${x.id}">remove</button></td></tr>`;}).join("") : "")
+    + `<tr class="total"><td colspan="3">Total</td><td>${nz(plan)}</td><td>${nz(act)}</td><td>${nz(plan-act)}</td><td></td></tr>`;
+
+  document.querySelectorAll("[data-adv]").forEach(b=>b.onclick=async()=>{
+    const patch={status:b.dataset.to};
+    if(b.dataset.to==="shipped" && !orders.find(x=>x.id==b.dataset.adv)?.ship_date) patch.ship_date=today;
+    const {error}=await sb.from("orders").update(patch).eq("id",+b.dataset.adv);
+    if(error){$("msg").textContent=error.message;return;} load();
+  });
+  document.querySelectorAll("[data-del-o]").forEach(b=>b.onclick=async()=>{
+    if(!confirm("Remove this sale?"))return;
+    const {error}=await sb.from("orders").delete().eq("id",+b.dataset.delO);
+    if(error){$("msg").textContent=error.message;return;} load();
+  });
+  document.querySelectorAll("[data-del-b]").forEach(b=>b.onclick=async()=>{
+    if(!confirm("Remove this budget line?"))return;
+    const {error}=await sb.from("budget_items").delete().eq("id",+b.dataset.delB);
+    if(error){$("msg").textContent=error.message;return;} load();
+  });
+  document.querySelectorAll("[data-act]").forEach(i=>i.onchange=async()=>{
+    const {error}=await sb.from("budget_items").update({actual_nzd:+i.value||0}).eq("id",+i.dataset.act);
+    if(error){$("msg").textContent=error.message;return;} load();
+  });
+}
+
+$("o-add").onclick=async()=>{
+  if(!$("o-prod").value.trim()){ $("msg").textContent="Name the producer."; return; }
+  const {error}=await sb.from("orders").insert({ producer_name:$("o-prod").value.trim(), buyer:$("o-buyer").value.trim()||null,
+    cases:+$("o-cases").value||0, fob_value_nzd:+$("o-fob").value||0, status:$("o-status").value, ship_date:$("o-ship").value||null });
+  if(error){$("msg").textContent=error.message;return;} $("o-prod").value=""; load();
+};
+$("b-add").onclick=async()=>{
+  if(!$("b-item").value.trim()){ $("msg").textContent="Describe the budget item."; return; }
+  const {error}=await sb.from("budget_items").insert({ category:$("b-cat").value.trim()||"General", item:$("b-item").value.trim(),
+    planned_nzd:+$("b-plan").value||0, actual_nzd:+$("b-act").value||0, due_date:$("b-due").value||null });
+  if(error){$("msg").textContent=error.message;return;} $("b-item").value=""; load();
+};
+boot();
+</script>
+</body>
+</html>
