@@ -125,7 +125,7 @@ td .pct{color:#8A8F9B;font-size:11px}
         <div class="hint">Consolidated 20ft ≈ NZ$2–3/bottle.</div></div>
       <div class="field"><label for="fx">Exchange rate (INR per NZD)</label>
         <input id="fx" type="number" step="0.1" min="1" value="55.5">
-        <div class="hint">Mid-market ≈ 55.5 (Sep 2026) — check on the day.</div></div>
+        <div class="hint" id="fxNote">Fetching live rate…</div></div>
       <div class="divider">Customs duty scenarios</div>
       <div class="row2">
         <div class="field"><label for="d0">Today %</label><input id="d0" type="number" step="1" value="150"></div>
@@ -236,6 +236,25 @@ function calc(){
     + `<tr><td>Per 20ft container (${(+$("bpc").value).toLocaleString()} btl)</td>${sc.map(s=>`<td>${fmtI(s.landed*(+$("bpc").value))}</td>`).join("")}</tr>`;
 }
 document.querySelectorAll("input,select").forEach(el=>{ if(!el.closest("#gate")) el.addEventListener("input",calc); });
+
+// ---- Live FX (mid-market). Editable override stays in the field. ----
+async function liveFx(){
+  const note=$("fxNote");
+  const set=(rate,src,when)=>{ $("fx").value=rate.toFixed(2);
+    note.textContent=`Live mid-market ${rate.toFixed(2)} (${src}, ${when}). Edit to override — banks quote worse.`; calc(); };
+  try{
+    const r=await fetch("https://api.frankfurter.dev/v1/latest?base=NZD&symbols=INR").then(x=>x.json());
+    if(r?.rates?.INR) return set(r.rates.INR,"ECB",r.date);
+    throw 0;
+  }catch(e){
+    try{
+      const r=await fetch("https://open.er-api.com/v6/latest/NZD").then(x=>x.json());
+      if(r?.rates?.INR) return set(r.rates.INR,"ER-API",new Date(r.time_last_update_utc).toISOString().slice(0,10));
+      throw 0;
+    }catch(e2){ note.textContent="Live rate unavailable — using default 55.5, edit to override."; }
+  }
+}
+liveFx();
 boot();
 </script>
 </body>
