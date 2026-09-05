@@ -2,6 +2,10 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<script>
+/* Catch an OAuth sign-in that lands on the root and carry it to the dashboard, hash intact. */
+(function(){ try{ var h=location.hash||""; if(h.indexOf("access_token=")>-1 || h.indexOf("error=")>-1){ location.replace("/dashboard.html"+h); } }catch(e){} })();
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Market Access Partners | First into India</title>
 <meta name="description" content="Market Access Partners gets New Zealand's independent wine, craft beer and mānuka honey producers into India's premium market ahead of the NZ-India FTA.">
