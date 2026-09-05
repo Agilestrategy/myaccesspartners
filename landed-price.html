@@ -22,6 +22,9 @@ header{background:var(--ink);color:var(--ivory);padding:18px 0}
 header .wrap{display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap}
 .mark{font:700 14px var(--sans);letter-spacing:.06em;text-transform:uppercase}
 .mark b{color:var(--saffron)}
+nav.tools{display:flex;gap:18px;font-size:12.5px}
+nav.tools a{color:var(--mist);text-decoration:none}
+nav.tools a:hover{color:var(--ivory)}
 #who{font-size:12.5px;color:var(--mist)}
 #who button{background:none;border:1px solid rgba(245,241,230,.3);color:var(--ivory);padding:4px 10px;margin-left:10px;font:500 12px var(--sans);cursor:pointer;border-radius:2px}
 h1{font-family:var(--serif);font-weight:400;font-size:clamp(26px,3.6vw,38px);margin:34px 0 6px}
@@ -95,6 +98,7 @@ td .pct{color:#8A8F9B;font-size:11px}
 <header>
   <div class="wrap">
     <span class="mark">Market <b>Access</b> Partners · Internal</span>
+    <nav class="tools"><a href="/dashboard.html">Dashboard</a><a href="/landed-price.html" style="color:var(--ivory)">Calculator</a><a href="/containers.html">Containers</a><a href="/finance.html">Finance</a></nav>
     <span id="who"></span>
   </div>
 </header>

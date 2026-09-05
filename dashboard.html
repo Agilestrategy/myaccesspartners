@@ -1,0 +1,446 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MAP Dashboard</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fjalla+One&family=Libre+Franklin:ital,wght@0,300..800;1,400&display=swap">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<style>
+:root{
+  --ink:#161B24; --ivory:#F5F1E6; --paper:#FBF9F2; --saffron:#C97B1E;
+  --mist:#9AA1AD; --line:rgba(22,27,36,.14);
+  --good:#2E7D51; --warn:#C97B1E; --bad:#A33B2E;
+  --s1:#4E5BA6; --s2:#C97B1E; --s3:#2E7D51;
+  --grid:#E5E2D8; --muted:#6A6F7A; --secondary:#4A5160;
+  --serif:"Fjalla One","Arial Narrow",Arial,sans-serif; --sans:"Libre Franklin","Helvetica Neue",Arial,sans-serif;
+}
+*{box-sizing:border-box;margin:0}
+body{background:var(--paper);color:var(--ink);font:400 15px/1.55 var(--sans)}
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+header{background:var(--ink);color:var(--ivory);padding:18px 0}
+header .wrap{display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap}
+.mark{font:700 14px var(--sans);letter-spacing:.06em;text-transform:uppercase}
+.mark b{color:var(--saffron)}
+.mark a{color:inherit;text-decoration:none}
+nav.tools{display:flex;gap:18px;font-size:12.5px}
+nav.tools a{color:var(--mist);text-decoration:none}
+nav.tools a:hover{color:var(--ivory)}
+#who{font-size:12.5px;color:var(--mist)}
+#who button{background:none;border:1px solid rgba(245,241,230,.3);color:var(--ivory);padding:4px 10px;margin-left:10px;font:500 12px var(--sans);cursor:pointer;border-radius:2px}
+h1{font-family:var(--serif);font-weight:400;font-size:clamp(26px,3.6vw,38px);margin:34px 0 6px}
+.sub{color:var(--secondary);max-width:72ch;margin-bottom:22px}
+.eyebrow{font:600 11px var(--sans);letter-spacing:.18em;text-transform:uppercase;color:var(--saffron)}
+
+.hero{display:grid;grid-template-columns:1.35fr 2fr;gap:14px;margin:18px 0 14px}
+.hero .big{background:var(--ink);color:var(--ivory);padding:22px 24px;border-top:3px solid var(--saffron)}
+.hero .big .lbl{font:600 11px var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--saffron)}
+.hero .big .val{font-family:var(--serif);font-size:56px;line-height:1.05;margin-top:8px}
+.hero .big .det{font-size:12.5px;color:var(--mist);margin-top:6px}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.tile{background:#fff;border:1px solid var(--line);padding:14px 16px}
+.tile .lbl{font:600 10.5px var(--sans);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.tile .val{font-family:var(--serif);font-size:24px;margin-top:5px}
+.tile .det{font-size:11.5px;color:var(--muted);margin-top:1px}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:10px 0 40px}
+.card{background:#fff;border:1px solid var(--line);padding:18px 20px}
+.card.wide{grid-column:1/-1}
+.card h3{font-family:var(--serif);font-weight:400;font-size:18px;margin-bottom:2px}
+.card .note{font-size:12px;color:var(--muted);margin-bottom:12px}
+.card .top{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+button.quiet{background:none;border:1px solid var(--line);color:var(--secondary);font:500 11px var(--sans);padding:3px 9px;cursor:pointer;border-radius:2px}
+button.quiet[aria-pressed="true"]{background:var(--ivory)}
+button:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--saffron);outline-offset:1px}
+.legend{display:flex;gap:16px;font-size:12px;color:var(--secondary);margin-bottom:10px;flex-wrap:wrap}
+.legend .k{display:inline-flex;align-items:center;gap:6px}
+.legend .sw{width:11px;height:11px;border-radius:2px;display:inline-block}
+svg text{font:500 12px var(--sans);fill:var(--secondary)}
+svg text.val{font-weight:600;fill:var(--ink)}
+svg text.cat{fill:var(--secondary)}
+.bar{cursor:default}
+.bar:hover rect,.bar:hover path,.bar:focus rect,.bar:focus path{filter:brightness(1.12)}
+.emptychart{padding:26px 6px;color:var(--muted);font-size:13.5px}
+.emptychart a{color:var(--saffron)}
+.datatable{margin-top:10px}
+.datatable table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+.datatable th,.datatable td{padding:5px 8px;border-bottom:1px solid var(--line);font-size:12.5px;text-align:right}
+.datatable th:first-child,.datatable td:first-child{text-align:left}
+.datatable thead th{font:600 10.5px var(--sans);text-transform:uppercase;letter-spacing:.06em;color:var(--muted);background:var(--ivory)}
+#tip{position:fixed;pointer-events:none;background:var(--ink);color:var(--ivory);padding:7px 10px;font:500 12px var(--sans);border-radius:3px;z-index:60;max-width:240px}
+#tip b{font-size:13px}
+#tip .k{display:inline-block;width:12px;height:3px;border-radius:2px;vertical-align:middle;margin-right:6px}
+#msg{font-size:12.5px;color:var(--bad);min-height:16px;margin:8px 0}
+footer{background:var(--ink);color:var(--mist);padding:20px 0;font-size:12px;margin-top:20px}
+footer .wrap{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}
+
+#gate{position:fixed;inset:0;background:var(--ink);display:flex;align-items:center;justify-content:center;z-index:50}
+#gate .card{background:var(--paper);padding:38px;max-width:380px;width:92%;border-top:3px solid var(--saffron)}
+#gate h2{font-family:var(--serif);font-weight:400;font-size:24px;margin:10px 0 6px}
+#gate p{font-size:13px;color:var(--secondary);margin-bottom:16px}
+#gate input{width:100%;padding:10px;border:1px solid var(--line);margin-bottom:10px;font:500 14px var(--sans);border-radius:2px}
+#gate button{width:100%;padding:11px;background:var(--saffron);border:none;font:600 14px var(--sans);cursor:pointer;border-radius:2px;color:var(--ink)}
+#gate .err{color:var(--bad);font-size:12.5px;min-height:18px;margin-top:8px}
+#gate button.ghost{background:transparent;border:1px solid var(--line);color:var(--ink);font-weight:500}
+#gate .alt{font-size:11.5px;color:#8A8F9C;text-align:center;margin:14px 0 10px;letter-spacing:.04em;text-transform:uppercase}
+[hidden]{display:none!important}
+@media(max-width:900px){.hero{grid-template-columns:1fr}.tiles{grid-template-columns:1fr 1fr}.grid2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <div class="card">
+    <span class="eyebrow">Market Access Partners</span>
+    <h2>Directors &amp; shareholders</h2>
+    <p>This tool is private. Sign in with the Google account your access was issued to.</p>
+    <button id="signin-google"><svg width="16" height="16" viewBox="0 0 48 48" style="vertical-align:-3px;margin-right:8px"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>Continue with Google</button>
+    <div class="alt">or with email and password</div>
+    <input id="em" type="email" placeholder="Email" autocomplete="username">
+    <input id="pw" type="password" placeholder="Password" autocomplete="current-password">
+    <button id="signin" class="ghost">Sign in</button>
+    <div class="err" id="err"></div>
+  </div>
+</div>
+
+<div id="app" hidden>
+<header>
+  <div class="wrap">
+    <span class="mark"><a href="/">Market <b>Access</b> Partners · Internal</a></span>
+    <nav class="tools"><a href="/dashboard.html" style="color:var(--ivory)">Dashboard</a><a href="/landed-price.html">Calculator</a><a href="/containers.html">Containers</a><a href="/finance.html">Finance</a></nav>
+    <span id="who"></span>
+  </div>
+</header>
+
+<div class="wrap">
+  <p class="eyebrow" style="margin-top:36px">Engine room</p>
+  <h1>The whole business on one page</h1>
+  <p class="sub">Live from the CRM, the finance board and the container board. Two 20ft containers on the water before Christmas is the goal; everything here counts toward it.</p>
+  <div id="msg"></div>
+
+  <div class="hero">
+    <div class="big">
+      <div class="lbl" id="hero-lbl">Days to Container 1 cutoff</div>
+      <div class="val" id="hero-val">–</div>
+      <div class="det" id="hero-det"></div>
+    </div>
+    <div class="tiles" id="tiles"></div>
+  </div>
+
+  <div class="grid2">
+
+    <div class="card">
+      <div class="top"><h3>Container fill</h3><button class="quiet" data-table="c-fill" aria-pressed="false">Data</button></div>
+      <div class="note">Bottles committed against 12,000 per container. Confirmed fills it; tentative holds space.</div>
+      <div class="legend"><span class="k"><span class="sw" style="background:var(--s3)"></span>Confirmed</span><span class="k"><span class="sw" style="background:var(--s2)"></span>Tentative</span></div>
+      <div id="chart-fill"></div>
+      <div class="datatable" id="tbl-c-fill" hidden></div>
+    </div>
+
+    <div class="card">
+      <div class="top"><h3>Sales pipeline</h3><button class="quiet" data-table="c-pipe" aria-pressed="false">Data</button></div>
+      <div class="note">FOB value by stage. Our 15% is earned at confirmed; the 5% India clip lands at landed.</div>
+      <div id="chart-pipe"></div>
+      <div class="datatable" id="tbl-c-pipe" hidden></div>
+    </div>
+
+    <div class="card">
+      <div class="top"><h3>Independent wineries by region</h3><button class="quiet" data-table="c-region" aria-pressed="false">Data</button></div>
+      <div class="note">The hunting ground: independent producers in the CRM, by region.</div>
+      <div id="chart-region"></div>
+      <div class="datatable" id="tbl-c-region" hidden></div>
+    </div>
+
+    <div class="card">
+      <div class="top"><h3>Outreach progress</h3><button class="quiet" data-table="c-crm" aria-pressed="false">Data</button></div>
+      <div class="note">Producers by CRM status. Every contract starts with a first call.</div>
+      <div id="chart-crm"></div>
+      <div class="datatable" id="tbl-c-crm" hidden></div>
+    </div>
+
+    <div class="card">
+      <div class="top"><h3>Budget: planned vs actual</h3><button class="quiet" data-table="c-budget" aria-pressed="false">Data</button></div>
+      <div class="legend"><span class="k"><span class="sw" style="background:var(--s1)"></span>Planned</span><span class="k"><span class="sw" style="background:var(--s2)"></span>Actual</span></div>
+      <div id="chart-budget"></div>
+      <div class="datatable" id="tbl-c-budget" hidden></div>
+    </div>
+
+    <div class="card">
+      <div class="top"><h3>Commission scenarios</h3><button class="quiet" data-table="c-target" aria-pressed="false">Data</button></div>
+      <div class="note">From the stretch-target model: what the 15% + 5% engine produces at each scenario.</div>
+      <div id="chart-target"></div>
+      <div class="datatable" id="tbl-c-target" hidden></div>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">
+    <span>Market Access Partners Limited · A venture of Agile Strategy</span>
+    <span id="fx-foot"></span>
+  </div>
+</footer>
+</div>
+
+<div id="tip" hidden></div>
+
+<script>
+const SUPABASE_URL = "https://iwdibogfypdjgsinwube.supabase.co";
+const SUPABASE_ANON = "sb_publishable_BRmzLQw94Lt49xLFmDHJVQ_yoo68o4c";
+const $ = id => document.getElementById(id);
+const configured = SUPABASE_URL.startsWith("https://");
+let sb = configured ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON) : null;
+
+async function boot(){
+  if(!configured){ $("err").textContent = "Access control is not configured yet — ask Paul."; return; }
+  const { data:{ session } } = await sb.auth.getSession();
+  if (session) show(session);
+}
+function show(session){
+  $("gate").hidden = true; $("app").hidden = false;
+  $("who").innerHTML = session.user.email + '<button id="out">Sign out</button>';
+  $("out").onclick = async ()=>{ await sb.auth.signOut(); location.reload(); };
+  load();
+}
+$("signin-google").onclick = async ()=>{
+  if(!configured){ $("err").textContent = "Access control is not configured yet — ask Paul."; return; }
+  const { error } = await sb.auth.signInWithOAuth({ provider: "google", options: { redirectTo: location.origin + location.pathname } });
+  if (error) $("err").textContent = "Google sign-in failed: " + error.message;
+};
+$("signin").onclick = async ()=>{
+  if(!configured){ $("err").textContent = "Access control is not configured yet — ask Paul."; return; }
+  const { data, error } = await sb.auth.signInWithPassword({ email: $("em").value.trim(), password: $("pw").value });
+  if (error) { $("err").textContent = "Sign-in failed: " + error.message; return; }
+  show(data.session);
+};
+$("pw").addEventListener("keydown", e=>{ if(e.key==="Enter") $("signin").click(); });
+
+/* ---------- helpers ---------- */
+const nz = n => "NZ$" + Math.round(+n).toLocaleString();
+const compact = n => { n=+n; if(n>=1e6) return "NZ$"+(n/1e6).toFixed(2).replace(/\.?0+$/,"")+"m"; if(n>=1e3) return "NZ$"+Math.round(n/1e3)+"k"; return "NZ$"+Math.round(n); };
+const num = n => (+n).toLocaleString();
+
+/* tooltip */
+const tip = $("tip");
+function tipShow(html, x, y){ tip.replaceChildren(...html); tip.hidden=false; const r=tip.getBoundingClientRect(); tip.style.left=Math.min(x+14, innerWidth-r.width-8)+"px"; tip.style.top=Math.max(6, y-r.height-10)+"px"; }
+function tipRow(strongText, labelText, color){
+  const b=document.createElement("b"); b.textContent=strongText;
+  const s=document.createElement("span"); s.textContent=" "+labelText; s.style.color="var(--mist)";
+  const d=document.createElement("div");
+  if(color){ const k=document.createElement("span"); k.className="k"; k.style.background=color; d.appendChild(k); }
+  d.appendChild(b); d.appendChild(s); return d;
+}
+function tipHide(){ tip.hidden=true; }
+document.addEventListener("scroll", tipHide, true);
+
+/* horizontal bar chart: rows = [{label, values:[{v, color, name}]}] */
+function hbar(elId, rows, opts={}){
+  const el=$(elId); el.replaceChildren();
+  const fmt = opts.fmt || num;
+  const rowH = rows[0].values.length>1 ? rows[0].values.length*20+14 : 30;
+  const barH = Math.min(18, rows[0].values.length>1 ? 16 : 18);
+  const labelW = opts.labelW || 120, valueW = 62;
+  const W = el.clientWidth || 480, H = rows.length*rowH + 4;
+  const plotW = Math.max(60, W - labelW - valueW);
+  const max = Math.max(1, ...rows.flatMap(r=>r.values.map(v=>+v.v)));
+  const svg = document.createElementNS("http://www.w3.org/2000/svg","svg");
+  svg.setAttribute("viewBox",`0 0 ${W} ${H}`); svg.setAttribute("width","100%");
+  svg.setAttribute("role","img"); if(opts.aria) svg.setAttribute("aria-label", opts.aria);
+  rows.forEach((r,i)=>{
+    const y0=i*rowH;
+    const cat=document.createElementNS(svg.namespaceURI,"text");
+    cat.setAttribute("x",labelW-10); cat.setAttribute("y",y0+rowH/2+4); cat.setAttribute("text-anchor","end");
+    cat.setAttribute("class","cat"); cat.textContent=r.label; svg.appendChild(cat);
+    r.values.forEach((s,j)=>{
+      const w=Math.max(+s.v>0?3:0, (+s.v/max)*plotW);
+      const y=r.values.length>1 ? y0+7+j*20 : y0+(rowH-barH)/2;
+      const g=document.createElementNS(svg.namespaceURI,"g");
+      g.setAttribute("class","bar"); g.setAttribute("tabindex","0");
+      const rr=Math.min(4,w);
+      const p=document.createElementNS(svg.namespaceURI,"path");
+      p.setAttribute("d",`M${labelW},${y} H${labelW+w-rr} Q${labelW+w},${y} ${labelW+w},${y+rr} V${y+barH-rr} Q${labelW+w},${y+barH} ${labelW+w-rr},${y+barH} H${labelW} Z`);
+      p.setAttribute("fill",s.color); g.appendChild(p);
+      const hit=document.createElementNS(svg.namespaceURI,"rect");
+      hit.setAttribute("x",labelW); hit.setAttribute("y",y-3); hit.setAttribute("width",Math.max(24,w)); hit.setAttribute("height",barH+6); hit.setAttribute("fill","transparent");
+      g.appendChild(hit);
+      const t=document.createElementNS(svg.namespaceURI,"text");
+      const txt=fmt(+s.v), estW=txt.length*7.2;
+      if (labelW+w+8+estW > W-2 && w > estW+16){ t.setAttribute("x",labelW+w-8); t.setAttribute("text-anchor","end"); t.setAttribute("style","fill:#fff;font-weight:600"); }
+      else { t.setAttribute("x",Math.min(labelW+w+8, W-estW-2)); t.setAttribute("class","val"); }
+      t.setAttribute("y",y+barH-4);
+      t.textContent=txt; g.appendChild(t);
+      const showTip=(x,yy)=>tipShow([tipRow(fmt(+s.v), (s.name?s.name+" · ":"")+r.label, s.color)],x,yy);
+      g.addEventListener("pointermove",e=>showTip(e.clientX,e.clientY));
+      g.addEventListener("pointerleave",tipHide);
+      g.addEventListener("focus",()=>{const b=g.getBoundingClientRect();showTip(b.right,b.top);});
+      g.addEventListener("blur",tipHide);
+      svg.appendChild(g);
+    });
+  });
+  el.appendChild(svg);
+}
+
+/* meter: filled segments on a light track */
+function meter(elId, items){
+  const el=$(elId); el.replaceChildren();
+  items.forEach(it=>{
+    const wrap=document.createElement("div"); wrap.style.marginBottom="16px";
+    const top=document.createElement("div");
+    top.style.cssText="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:5px";
+    const l=document.createElement("span"); l.textContent=it.label;
+    const v=document.createElement("span"); v.style.cssText="font-weight:600;font-variant-numeric:tabular-nums";
+    v.textContent=`${num(it.confirmed+it.tentative)} / ${num(it.cap)} bottles`;
+    top.append(l,v);
+    const track=document.createElement("div");
+    track.style.cssText="height:16px;background:#EDE9DC;border-radius:4px;overflow:hidden;display:flex;gap:2px";
+    track.setAttribute("tabindex","0");
+    const seg=(val,color)=>{ const s=document.createElement("div"); s.style.cssText=`height:100%;background:${color};width:${Math.min(100,val/it.cap*100)}%`; return s; };
+    if(it.confirmed>0) track.appendChild(seg(it.confirmed,"var(--s3)"));
+    if(it.tentative>0) track.appendChild(seg(it.tentative,"var(--s2)"));
+    const showTip=(x,y)=>tipShow([tipRow(num(it.confirmed)+" bottles","confirmed","#2E7D51"),tipRow(num(it.tentative)+" bottles","tentative","#C97B1E"),tipRow(num(Math.max(0,it.cap-it.confirmed-it.tentative))+" bottles","free to sell",null)],x,y);
+    track.addEventListener("pointermove",e=>showTip(e.clientX,e.clientY));
+    track.addEventListener("pointerleave",tipHide);
+    track.addEventListener("focus",()=>{const b=track.getBoundingClientRect();showTip(b.left+b.width/2,b.top);});
+    track.addEventListener("blur",tipHide);
+    const det=document.createElement("div");
+    det.style.cssText="font-size:11.5px;color:var(--muted);margin-top:4px";
+    det.textContent=`${it.route} · cutoff ${it.cutoff}${it.days!=null?` · ${it.days} days out`:""}`;
+    wrap.append(top,track,det);
+    el.appendChild(wrap);
+  });
+}
+
+function emptyState(elId, textBefore, linkText, href, textAfter){
+  const el=$(elId); el.replaceChildren();
+  const d=document.createElement("div"); d.className="emptychart";
+  d.appendChild(document.createTextNode(textBefore));
+  if(linkText){ const a=document.createElement("a"); a.href=href; a.textContent=linkText; d.appendChild(a); d.appendChild(document.createTextNode(textAfter||"")); }
+  el.appendChild(d);
+}
+
+function dataTable(id, headers, rows){
+  const el=$("tbl-"+id); el.replaceChildren();
+  const t=document.createElement("table");
+  const thead=document.createElement("thead"); const trh=document.createElement("tr");
+  headers.forEach(h=>{const th=document.createElement("th"); th.textContent=h; trh.appendChild(th);});
+  thead.appendChild(trh); t.appendChild(thead);
+  const tb=document.createElement("tbody");
+  rows.forEach(r=>{const tr=document.createElement("tr"); r.forEach(c=>{const td=document.createElement("td"); td.textContent=c; tr.appendChild(td);}); tb.appendChild(tr);});
+  t.appendChild(tb); el.appendChild(t);
+}
+document.querySelectorAll("button[data-table]").forEach(b=>{
+  b.onclick=()=>{ const el=$("tbl-"+b.dataset.table); el.hidden=!el.hidden; b.setAttribute("aria-pressed", String(!el.hidden)); };
+});
+
+function tile(lbl,val,det){
+  const d=document.createElement("div"); d.className="tile";
+  const a=document.createElement("div"); a.className="lbl"; a.textContent=lbl;
+  const b=document.createElement("div"); b.className="val"; b.textContent=val;
+  const c=document.createElement("div"); c.className="det"; c.textContent=det||"";
+  d.append(a,b,c); return d;
+}
+
+/* ---------- load & render ---------- */
+async function load(){
+  let fx=null;
+  try{ const r=await fetch("https://api.frankfurter.dev/v1/latest?base=NZD&symbols=INR"); fx=(await r.json()).rates.INR; }
+  catch(e){ try{ const r=await fetch("https://open.er-api.com/v6/latest/NZD"); fx=(await r.json()).rates.INR; }catch(e2){} }
+
+  const [prodQ, ordQ, contQ, allocQ, budQ] = await Promise.all([
+    sb.from("producers").select("region,segment,crm_status"),
+    sb.from("orders").select("producer_name,buyer,fob_value_nzd,status,ship_date,cases"),
+    sb.from("containers").select("id,name,route,cutoff_date,capacity_bottles,status"),
+    sb.from("container_allocations").select("container_id,cases,bottles_per_case,status"),
+    sb.from("budget_items").select("category,planned_nzd,actual_nzd"),
+  ]);
+  const err = prodQ.error||ordQ.error||contQ.error||allocQ.error||budQ.error;
+  if (err){ $("msg").textContent = "Could not load data: " + err.message; return; }
+  const producers=prodQ.data||[], orders=ordQ.data||[], containers=contQ.data||[], allocs=allocQ.data||[], budget=budQ.data||[];
+
+  /* hero: days to next cutoff */
+  const today=new Date(); today.setHours(0,0,0,0);
+  const future=containers.map(c=>({...c,days:Math.ceil((new Date(c.cutoff_date)-today)/86400000)})).sort((a,b)=>a.days-b.days);
+  const next=future.find(c=>c.days>=0);
+  if(next){ $("hero-val").textContent=next.days; $("hero-lbl").textContent="Days to "+next.name.replace(/ -.*/,"")+" cutoff"; $("hero-det").textContent=next.route+" · cutoff "+next.cutoff_date; }
+  else { $("hero-val").textContent="–"; $("hero-det").textContent="No upcoming cutoffs"; }
+
+  /* commissions & pipeline */
+  const val=s=>orders.filter(o=>s.includes(o.status)).reduce((a,o)=>a+(+o.fob_value_nzd||0),0);
+  const commNZ=.15*val(["confirmed","shipped","landed","paid"]);
+  const commIN=.05*val(["landed","paid"]);
+  const pipeline=val(["quoted","confirmed","shipped","landed","paid"]);
+  const bottles=allocs.reduce((a,x)=>a+(+x.cases||0)*(+x.bottles_per_case||12),0);
+  const cap=containers.reduce((a,c)=>a+(+c.capacity_bottles||0),0);
+  const indep=producers.filter(p=>p.segment==="independent").length;
+  const contacted=producers.filter(p=>p.crm_status && p.crm_status!=="uncontacted").length;
+
+  const tiles=$("tiles"); tiles.replaceChildren();
+  tiles.append(
+    tile("Commission earned", compact(commNZ+commIN), "15% producers + 5% India"),
+    tile("Pipeline value", compact(pipeline), orders.length+" order"+(orders.length===1?"":"s")+" in play"),
+    tile("Bottles committed", num(bottles), "of "+num(cap)+" across "+containers.length+" containers"),
+    tile("Producers in CRM", num(producers.length), num(indep)+" independent"),
+    tile("Contacted", num(contacted)+" of "+num(indep), contacted? "":"outreach starts now"),
+    tile("NZD → INR", fx?fx.toFixed(1)+" ₹":"–", fx?"live ECB rate":"rate unavailable"),
+  );
+  $("fx-foot").textContent = fx ? "1 NZD = "+fx.toFixed(2)+" INR (live)" : "";
+
+  /* container fill */
+  const fillItems=containers.sort((a,b)=>a.cutoff_date<b.cutoff_date?-1:1).map(c=>{
+    const mine=allocs.filter(a=>a.container_id===c.id);
+    const sum=st=>mine.filter(a=>a.status===st).reduce((a,x)=>a+(+x.cases||0)*(+x.bottles_per_case||12),0);
+    const days=Math.ceil((new Date(c.cutoff_date)-today)/86400000);
+    return {label:c.name, cap:+c.capacity_bottles||12000, confirmed:sum("confirmed"), tentative:sum("tentative"), route:c.route, cutoff:c.cutoff_date, days:days>=0?days:null};
+  });
+  meter("chart-fill", fillItems);
+  dataTable("c-fill", ["Container","Confirmed","Tentative","Free","Cutoff"],
+    fillItems.map(i=>[i.label,num(i.confirmed),num(i.tentative),num(Math.max(0,i.cap-i.confirmed-i.tentative)),i.cutoff]));
+
+  /* pipeline chart */
+  const stages=["quoted","confirmed","shipped","landed","paid"];
+  const stageVals=stages.map(s=>val([s]));
+  if(pipeline>0){
+    hbar("chart-pipe", stages.map((s,i)=>({label:s[0].toUpperCase()+s.slice(1), values:[{v:stageVals[i], color:"#4E5BA6"}]})), {fmt:compact, labelW:100, aria:"FOB value by pipeline stage"});
+  } else {
+    emptyState("chart-pipe","No orders yet. Enter your first quote on the ","finance board","/finance.html"," and this chart comes alive.");
+  }
+  dataTable("c-pipe", ["Stage","FOB value"], stages.map((s,i)=>[s, nz(stageVals[i])]));
+
+  /* regions */
+  const byRegion={};
+  producers.filter(p=>p.segment==="independent").forEach(p=>{ const r=p.region||"Other/Unknown"; byRegion[r]=(byRegion[r]||0)+1; });
+  const regionRows=Object.entries(byRegion).sort((a,b)=>b[1]-a[1]);
+  const top=regionRows.slice(0,8); const restN=regionRows.slice(8).reduce((a,x)=>a+x[1],0);
+  const regionData=[...top, ...(restN?[["All other regions",restN]]:[])];
+  hbar("chart-region", regionData.map(([r,n])=>({label:r, values:[{v:n, color:"#4E5BA6"}]})), {labelW:150, aria:"Independent wineries by region"});
+  dataTable("c-region", ["Region","Wineries"], regionRows.map(([r,n])=>[r,num(n)]));
+
+  /* outreach */
+  const statuses=["uncontacted","contacted","in discussion","heads of terms","signed","declined"];
+  const byStatus={}; producers.forEach(p=>{ const s=(p.crm_status||"uncontacted").toLowerCase(); byStatus[s]=(byStatus[s]||0)+1; });
+  const crmRows=statuses.filter(s=>byStatus[s]).map(s=>[s,byStatus[s]]);
+  Object.keys(byStatus).filter(s=>!statuses.includes(s)).forEach(s=>crmRows.push([s,byStatus[s]]));
+  hbar("chart-crm", crmRows.map(([s,n])=>({label:s[0].toUpperCase()+s.slice(1), values:[{v:n, color:"#4E5BA6"}]})), {labelW:140, aria:"Producers by CRM status"});
+  dataTable("c-crm", ["Status","Producers"], crmRows.map(([s,n])=>[s,num(n)]));
+
+  /* budget */
+  const byCat={};
+  budget.forEach(b=>{ const c=b.category||"Other"; byCat[c]=byCat[c]||{p:0,a:0}; byCat[c].p+=+b.planned_nzd||0; byCat[c].a+=+b.actual_nzd||0; });
+  const catRows=Object.entries(byCat);
+  hbar("chart-budget", catRows.map(([c,v])=>({label:c, values:[{v:v.p, color:"#4E5BA6", name:"Planned"},{v:v.a, color:"#C97B1E", name:"Actual"}]})), {fmt:compact, labelW:110, aria:"Budget planned versus actual by category"});
+  dataTable("c-budget", ["Category","Planned","Actual"], catRows.map(([c,v])=>[c,nz(v.p),nz(v.a)]));
+
+  /* commission scenarios (stretch model) */
+  const scen=[["Year 1 conservative",288000],["Year 1 stretch",864000],["Year 3 stretch",3456000]];
+  hbar("chart-target", scen.map(([l,v])=>({label:l, values:[{v, color:"#4E5BA6"}]})), {fmt:compact, labelW:150, aria:"Commission revenue scenarios"});
+  dataTable("c-target", ["Scenario","Commission revenue"], scen.map(([l,v])=>[l,nz(v)]));
+}
+
+let resizeT; addEventListener("resize", ()=>{ clearTimeout(resizeT); resizeT=setTimeout(()=>{ if(!$("app").hidden) load(); }, 250); });
+boot();
+</script>
+</body>
+</html>
