@@ -6,14 +6,14 @@
 <title>Market Access Partners — First into India</title>
 <meta name="description" content="Market Access Partners gets New Zealand's independent wine, craft beer and mānuka honey producers into India's premium market ahead of the NZ–India FTA.">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,600&family=Archivo:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fjalla+One&family=Libre+Franklin:ital,wght@0,300..800;1,400&display=swap">
 <style>
 :root{
   --ink:#161B24; --ink-2:#1F2633; --ivory:#F5F1E6; --paper:#FBF9F2;
   --saffron:#D98324; --saffron-deep:#B26A15; --vine:#3D5C4A;
   --mist:#9AA1AD; --line:rgba(22,27,36,.14); --line-inv:rgba(245,241,230,.16);
-  --serif:"Fraunces",Georgia,"Times New Roman",serif;
-  --sans:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --serif:"Fjalla One","Arial Narrow",Arial,sans-serif;
+  --sans:"Libre Franklin","Helvetica Neue",Arial,sans-serif;
 }
 *{box-sizing:border-box;margin:0}
 html{scroll-behavior:smooth}
@@ -42,7 +42,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--saffron);outline-of
   background:radial-gradient(60% 100% at 50% 100%, rgba(217,131,36,.22), transparent 70%)}
 .hero .wrap{position:relative}
 .hero h1{font-size:clamp(38px,6vw,64px);line-height:1.06;max-width:15ch;margin:18px 0 22px}
-.hero h1 em{font-style:italic;color:var(--saffron)}
+.hero h1 em{font-style:normal;color:var(--saffron)}
 .hero p.lede{max-width:56ch;color:#C9CDD6;font-size:18px}
 .hero .cta-row{display:flex;gap:14px;margin-top:34px;flex-wrap:wrap}
 .btn{display:inline-block;padding:13px 26px;font:600 14px var(--sans);letter-spacing:.04em;text-decoration:none;border-radius:2px}
@@ -252,7 +252,23 @@ footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
     <span>© 2026 Market Access Partners Limited · New Zealand</span>
     <span>myaccesspartners.com</span>
   </div>
+  <div class="wrap as-row">
+    <span class="as-brand">
+      <img src="/agile-strategy-logo.png" alt="Agile Strategy" width="52" height="38" loading="lazy">
+      <span>A venture of <a href="https://www.agilestrategy.co.nz" rel="noopener">Agile Strategy</a></span>
+    </span>
+    <a class="crew" href="/landed-price.html">Crew access</a>
+  </div>
 </footer>
+<style>
+.as-row{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;margin-top:18px;padding-top:18px;border-top:1px solid var(--line-inv)}
+.as-brand{display:flex;align-items:center;gap:12px;font-size:12.5px;color:#7A8090}
+.as-brand img{display:block;filter:brightness(1.05)}
+.as-brand a{color:#B9BFC9;text-decoration:none;border-bottom:1px solid rgba(245,241,230,.25)}
+.as-brand a:hover{color:var(--ivory)}
+.crew{font:600 11px var(--sans);letter-spacing:.1em;text-transform:uppercase;color:var(--mist);text-decoration:none;border:1px solid var(--line-inv);padding:7px 14px;border-radius:2px}
+.crew:hover,.crew:focus-visible{color:var(--saffron);border-color:var(--saffron)}
+</style>
 
 </body>
 </html>
