@@ -87,19 +87,7 @@ td .pct{color:#8A8F9B;font-size:11px}
 </head>
 <body>
 
-<div id="gate">
-  <div class="card">
-    <span class="eyebrow">Market Access Partners</span>
-    <h2>Directors &amp; shareholders</h2>
-    <p>This tool is private. Sign in with the email address your access was issued to.</p>
-    <input id="em" type="email" placeholder="Email" autocomplete="username">
-    <input id="pw" type="password" placeholder="Password" autocomplete="current-password">
-    <button id="signin">Sign in</button>
-    <div class="err" id="err"></div>
-  </div>
-</div>
-
-<div id="app" hidden>
+<div id="app">
 <header>
   <div class="wrap">
     <span class="mark">Market <b>Access</b> Partners · Internal</span>
@@ -153,34 +141,9 @@ td .pct{color:#8A8F9B;font-size:11px}
 </div>
 
 <script>
-// ---- Access configuration (filled at deploy) ----
-const SUPABASE_URL = "https://iwdibogfypdjgsinwube.supabase.co";
-const SUPABASE_ANON = "sb_publishable_BRmzLQw94Lt49xLFmDHJVQ_yoo68o4c";
-
+// Calculator is gated by the site-wide password only; no personal login needed.
 const $ = id => document.getElementById(id);
-const configured = SUPABASE_URL.startsWith("https://");
-let sb = null;
-if (configured) sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
-
-async function boot(){
-  if(!configured){ $("err").textContent = "Access control is not configured yet — ask Paul."; return; }
-  const { data:{ session } } = await sb.auth.getSession();
-  if (session) show(session);
-}
-function show(session){
-  $("gate").hidden = true; $("app").hidden = false;
-  $("who").innerHTML = session.user.email + '<button id="out">Sign out</button>';
-  $("out").onclick = async ()=>{ await sb.auth.signOut(); location.reload(); };
-  calc();
-}
-$("signin").onclick = async ()=>{
-  if(!configured){ $("err").textContent = "Access control is not configured yet — ask Paul."; return; }
-  $("err").textContent = "";
-  const { data, error } = await sb.auth.signInWithPassword({ email: $("em").value.trim(), password: $("pw").value });
-  if (error) { $("err").textContent = "Sign-in failed: " + error.message; return; }
-  show(data.session);
-};
-$("pw").addEventListener("keydown", e=>{ if(e.key==="Enter") $("signin").click(); });
+document.getElementById("who").textContent = "Crew preview";
 
 // ---- Calculator ----
 const fmtI = n => "₹" + n.toLocaleString("en-IN",{maximumFractionDigits:0});
@@ -255,7 +218,7 @@ async function liveFx(){
   }
 }
 liveFx();
-boot();
+calc();
 </script>
 </body>
 </html>
