@@ -136,6 +136,10 @@ footer .wrap{display:flex;justify-content:space-between;align-items:center;gap:1
   <p class="sub">Every independent producer we could approach, and every document we approach them with. Pick a name, set its status, grab the pack. All of it saves straight back to the shared CRM.</p>
   <div id="msg"></div>
 
+  <h2 class="sec">Category packs</h2>
+  <p class="secnote">The pitch deck and one pager for each portfolio: open in Drive or download straight to your machine, ready to attach.</p>
+  <div class="docgrid" id="packs"></div>
+
   <h2 class="sec">The templates</h2>
   <p class="secnote">All in MAP colours and letterhead, filed in the shared Drive folder. <a class="plain" href="https://drive.google.com/drive/folders/14FcLH-9mgiQNljWfSFspM5Z2mR2ePOA4" target="_blank" rel="noopener">Open the Drive folder</a></p>
   <div class="docgrid" id="docs"></div>
@@ -226,6 +230,32 @@ const DOCS = [
   {t:"NZ wineries directory", tag:"directory", d:"All 533 NZ wineries with ownership research: the source of the CRM.", url:"https://docs.google.com/spreadsheets/d/149DwD57bnd1ERNlvFp7BX-Gxa8vfodvt9eXyNfXkLw8/edit"},
 ];
 const TAGNAMES = {deck:"Slide deck", onepager:"One pager", contract:"Contract / form", brief:"Brief", directory:"Directory"};
+const PACKS = [
+  {t:"Wine", tag:"onepager", d:"66-83% tariff cut, US$985m market by 2034, boutique family wineries first onto the premium shelf.",
+   deck:"1f-YpVtV8n-OpMpQNA7UUTpkCttlxHI-s", op:"1eFUMlGyHpzZm-n3aRiRI-zsrJ0qI6Xss"},
+  {t:"Mānuka honey", tag:"onepager", d:"The first honey concession India has ever granted: 75% off, for NZ alone. Wellness and gifting channels.",
+   deck:"1HzlbEK11JVilVvSpPN9V-IrtVwAME9O9", op:"1aLEagtuMAiM8JG2TlKpCU4DA8rlRc3Co"},
+  {t:"Whisky &amp; bespoke spirits", tag:"onepager", d:"The world's largest whisky market meets the next 100 years' flex: manuka smoke, totara casks, tiny allocations.",
+   deck:"1tK4whcensH42kYGSvzgMM7xm5OE96THe", op:"1kHzco3DhijqNtPfHNKGoxCJ55GNjTybb"},
+];
+(function renderPacks(){
+  const g = document.getElementById("packs");
+  PACKS.forEach(x=>{
+    const card=document.createElement("div"); card.className="doc";
+    const tag=document.createElement("span"); tag.className="tag deck"; tag.textContent="Category pack";
+    const h=document.createElement("h3"); h.innerHTML=x.t;
+    const p=document.createElement("p"); p.innerHTML=x.d;
+    const row=document.createElement("div"); row.style.cssText="display:flex;gap:8px;flex-wrap:wrap";
+    const mk=(label,href)=>{ const a=document.createElement("a"); a.textContent=label; a.href=href; a.target="_blank"; a.rel="noopener"; return a; };
+    row.append(
+      mk("Deck","https://drive.google.com/file/d/"+x.deck+"/view"),
+      mk("⭳ Deck","https://drive.google.com/uc?export=download&id="+x.deck),
+      mk("One pager","https://drive.google.com/file/d/"+x.op+"/view"),
+      mk("⭳ One pager","https://drive.google.com/uc?export=download&id="+x.op),
+    );
+    card.append(tag,h,p,row); g.appendChild(card);
+  });
+})();
 (function renderDocs(){
   const g = $("docs");
   DOCS.forEach(x=>{

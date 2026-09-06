@@ -120,7 +120,11 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid 
 
   <div class="tiles" id="tiles"></div>
 
-  <h2 class="sec">Sales pipeline</h2>
+  <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap">
+    <h2 class="sec">Sales pipeline</h2>
+    <button class="primary" id="xero" style="border-radius:999px">Xero invoice CSV</button>
+  </div>
+  <p style="font-size:12px;color:#6A6F7A;margin:2px 0 8px">One line per confirmed-or-later order: your 15% producer fee (15% GST on income), plus the 5% receiver fee (zero rated) once an order lands. Import in Xero via Business → Invoices → Import, then approve and send. Invoice numbers are MAP-[order]-P / MAP-[order]-IN so re-imports never double up.</p>
   <div class="tblwrap"><table id="orders"><thead></thead><tbody></tbody></table></div>
   <div class="addrow orders">
     <div><label>Producer</label><input id="o-prod" placeholder="Winery name"></div>
@@ -195,7 +199,9 @@ async function load(){
   render(o.data||[], b.data||[], c.data||[]);
 }
 
+let lastOrders=[], lastContainers=[];
 function render(orders,budget,containers){
+  lastOrders=orders; lastContainers=containers;
   const conf = orders.filter(x=>x.status!=="quoted");
   const pipeline = orders.filter(x=>x.status==="quoted").reduce((s,x)=>s+ +x.fob_value_nzd,0);
   const confirmed = conf.reduce((s,x)=>s+ +x.fob_value_nzd,0);
@@ -278,6 +284,44 @@ $("b-add").onclick=async()=>{
     planned_nzd:+$("b-plan").value||0, actual_nzd:+$("b-act").value||0, due_date:$("b-due").value||null });
   if(error){$("msg").textContent=error.message;return;} $("b-item").value=""; load();
 };
+/* ---------- Xero invoice CSV ---------- */
+$("xero").onclick = async ()=>{
+  const billable = lastOrders.filter(o=>["confirmed","shipped","landed","paid"].includes(o.status));
+  if(!billable.length){ $("msg").textContent="Nothing to invoice yet: no orders at confirmed or later."; return; }
+  // producer categories for Xero tracking
+  let cats={};
+  try{
+    const { data } = await sb.from("producers").select("name,category");
+    (data||[]).forEach(p=>{ cats[(p.name||"").toLowerCase()]=p.category||""; });
+  }catch(e){}
+  const cname = id => (lastContainers.find(c=>c.id===id)||{}).name || "";
+  const today = new Date(), due = new Date(Date.now()+14*864e5);
+  const d = x => x.toISOString().slice(0,10);
+  const q = v => '"'+String(v==null?"":v).replace(/"/g,'""')+'"';
+  const H = ["*ContactName","EmailAddress","POAddressLine1","POAddressLine2","POAddressLine3","POAddressLine4","POCity","PORegion","POPostalCode","POCountry","*InvoiceNumber","Reference","*InvoiceDate","*DueDate","InventoryItemCode","*Description","*Quantity","*UnitAmount","Discount","*AccountCode","*TaxType","TrackingName1","TrackingOption1","TrackingName2","TrackingOption2","Currency","BrandingTheme"];
+  const rows=[H.join(",")];
+  const line=(contact,invno,ref,desc,amount,tax,cat)=>rows.push([
+    q(contact),"","","","","","","","","",q(invno),q(ref),d(today),d(due),"",q(desc),"1",amount.toFixed(2),"","200",q(tax),
+    q(cat?"Category":""),q(cat||""),"","","NZD",""].join(","));
+  billable.forEach(o=>{
+    const cat=(cats[(o.producer_name||"").toLowerCase()]||"").replace(/^\w/,c=>c.toUpperCase());
+    const ref=[cname(o.container_id),"Order #"+o.id].filter(Boolean).join(" · ");
+    line(o.producer_name, "MAP-"+o.id+"-P", ref,
+      "MAP success fee: 15% of FOB NZ$"+Math.round(o.fob_value_nzd).toLocaleString()+" ("+(o.cases||0)+" cases)"+(o.ship_date?", shipped "+o.ship_date:""),
+      .15*o.fob_value_nzd, "15% GST on Income", cat);
+    if(["landed","paid"].includes(o.status) && o.buyer){
+      line(o.buyer, "MAP-"+o.id+"-IN", ref,
+        "MAP receiver fee: 5% of FOB NZ$"+Math.round(o.fob_value_nzd).toLocaleString()+" on landing, order #"+o.id,
+        .05*o.fob_value_nzd, "Zero Rated", cat);
+    }
+  });
+  const blob=new Blob([rows.join("\r\n")],{type:"text/csv"});
+  const a=document.createElement("a"); a.href=URL.createObjectURL(blob);
+  a.download="MAP_Xero_Invoices_"+d(today)+".csv"; a.click(); URL.revokeObjectURL(a.href);
+  $("msg").style.color="var(--good)"; $("msg").textContent=rows.length-1+" invoice line(s) exported for Xero.";
+  setTimeout(()=>{ $("msg").textContent=""; $("msg").style.color=""; },5000);
+};
+
 boot();
 </script>
 </body>
