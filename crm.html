@@ -1,0 +1,385 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MAP CRM</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fjalla+One&family=Libre+Franklin:ital,wght@0,300..800;1,400&display=swap">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<style>
+:root{
+  --ink:#161B24; --ivory:#F5F1E6; --paper:#FBF9F2; --saffron:#C97B1E;
+  --mist:#9AA1AD; --line:rgba(22,27,36,.14);
+  --good:#2E7D51; --warn:#C97B1E; --bad:#A33B2E;
+  --grid:#E5E2D8; --muted:#6A6F7A; --secondary:#4A5160;
+  --serif:"Fjalla One","Arial Narrow",Arial,sans-serif; --sans:"Libre Franklin","Helvetica Neue",Arial,sans-serif;
+}
+*{box-sizing:border-box;margin:0}
+body{background:var(--paper);color:var(--ink);font:400 15px/1.55 var(--sans)}
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+header{background:var(--ink);color:var(--ivory);padding:18px 0}
+header .wrap{display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap}
+.mark{font:700 14px var(--sans);letter-spacing:.06em;text-transform:uppercase}
+.mark b{color:var(--saffron)}
+.mark a{color:inherit;text-decoration:none}
+nav.tools{display:flex;gap:18px;font-size:12.5px}
+nav.tools a{color:var(--mist);text-decoration:none}
+nav.tools a:hover{color:var(--ivory)}
+#who{font-size:12.5px;color:var(--mist)}
+#who button{background:none;border:1px solid rgba(245,241,230,.3);color:var(--ivory);padding:4px 12px;margin-left:10px;font:500 12px var(--sans);cursor:pointer;border-radius:999px}
+h1{font-family:var(--serif);font-weight:400;font-size:clamp(26px,3.6vw,38px);margin:34px 0 6px}
+.sub{color:var(--secondary);max-width:76ch;margin-bottom:22px}
+.eyebrow{font:600 11px var(--sans);letter-spacing:.18em;text-transform:uppercase;color:var(--saffron)}
+h2.sec{font-family:var(--serif);font-weight:400;font-size:22px;margin:8px 0 4px}
+.secnote{font-size:12.5px;color:var(--muted);margin-bottom:14px}
+a.plain{color:var(--saffron)}
+
+.docgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px;margin:6px 0 34px}
+.doc{background:#fff;border:1px solid var(--line);padding:14px 16px;display:flex;flex-direction:column;gap:6px}
+.doc .tag{align-self:flex-start;font:600 10px var(--sans);letter-spacing:.1em;text-transform:uppercase;color:#fff;background:var(--good);padding:2px 9px;border-radius:999px}
+.doc .tag.deck{background:#4E5BA6}.doc .tag.contract{background:var(--saffron)}.doc .tag.brief{background:var(--ink)}.doc .tag.directory{background:#7A6A4F}
+.doc h3{font-family:var(--serif);font-weight:400;font-size:16px}
+.doc p{font-size:12px;color:var(--muted);flex:1}
+.doc a{align-self:flex-start;font:600 12px var(--sans);color:var(--ink);background:var(--ivory);border:1px solid var(--line);text-decoration:none;padding:6px 14px;border-radius:999px}
+.doc a:hover{background:var(--saffron);color:#fff;border-color:var(--saffron)}
+
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:8px 0 12px}
+.toolbar input[type=search]{flex:1;min-width:180px;padding:9px 16px;border:1px solid var(--line);border-radius:999px;font:400 13.5px var(--sans);background:#fff}
+.toolbar select{padding:8px 12px;border:1px solid var(--line);border-radius:999px;font:500 12.5px var(--sans);background:#fff;color:var(--ink)}
+button.pill{background:var(--saffron);border:none;color:var(--ink);font:600 12.5px var(--sans);padding:9px 18px;border-radius:999px;cursor:pointer}
+button.pill.ghost{background:#fff;border:1px solid var(--line);color:var(--secondary);font-weight:500}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--saffron);outline-offset:1px}
+#counts{font-size:12.5px;color:var(--secondary);margin-bottom:10px}
+#counts b{color:var(--ink)}
+
+.tablewrap{background:#fff;border:1px solid var(--line);overflow-x:auto;margin-bottom:16px}
+table{width:100%;border-collapse:collapse;min-width:880px}
+th,td{padding:8px 10px;border-bottom:1px solid var(--grid);font-size:12.5px;text-align:left;vertical-align:top}
+thead th{font:600 10.5px var(--sans);text-transform:uppercase;letter-spacing:.06em;color:var(--muted);background:var(--ivory);position:sticky;top:0;cursor:pointer;white-space:nowrap}
+tr:hover td{background:#FDFCF7}
+td .nm{font-weight:600;cursor:pointer}
+td .rg{font-size:11px;color:var(--muted)}
+.chip{display:inline-block;font:600 10px var(--sans);letter-spacing:.06em;text-transform:uppercase;padding:2px 9px;border-radius:999px;border:1px solid var(--line);color:var(--secondary)}
+.chip.wine{background:#F1EDF7;color:#4E5BA6;border-color:#D8D2E8}
+.chip.whisky{background:#F7EFE3;color:#8A5A12;border-color:#E8D8BE}
+.chip.corp{background:#F5E9E7;color:var(--bad);border-color:#E5CFCB}
+td select.status{padding:4px 10px;border:1px solid var(--line);border-radius:999px;font:500 11.5px var(--sans);background:#fff;max-width:140px}
+td select.status.s-signed{background:#E9F2EC;border-color:#BCD6C6;color:var(--good)}
+td select.status.s-declined{background:#F5E9E7;color:var(--bad)}
+td select.status.s-live{background:#FBF3E6;border-color:#E8D8BE;color:#8A5A12}
+button.star{background:none;border:none;cursor:pointer;font-size:15px;color:#C9C4B4;padding:2px 4px}
+button.star.on{color:var(--saffron)}
+button.mini{background:#fff;border:1px solid var(--line);border-radius:999px;font:500 11px var(--sans);color:var(--secondary);padding:3px 11px;cursor:pointer;white-space:nowrap}
+button.mini:hover{border-color:var(--saffron);color:var(--ink)}
+tr.detail td{background:var(--ivory);padding:14px 16px}
+.detail .drow{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:8px}
+.detail label{font:600 10.5px var(--sans);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.detail input[type=text],.detail input[type=date]{padding:6px 12px;border:1px solid var(--line);border-radius:999px;font:400 12.5px var(--sans);background:#fff}
+.detail textarea{width:100%;min-height:64px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;font:400 12.5px var(--sans);background:#fff;resize:vertical}
+.detail .meta{font-size:11.5px;color:var(--muted);margin-top:6px}
+#savemsg{font-size:12px;min-height:16px;color:var(--good)}
+#msg{font-size:12.5px;color:var(--bad);min-height:16px;margin:8px 0}
+
+#addbox{background:#fff;border:1px solid var(--line);border-top:3px solid var(--saffron);padding:16px 18px;margin-bottom:40px}
+#addbox h3{font-family:var(--serif);font-weight:400;font-size:17px;margin-bottom:8px}
+#addbox .row{display:flex;gap:10px;flex-wrap:wrap}
+#addbox input,#addbox select{padding:8px 14px;border:1px solid var(--line);border-radius:999px;font:400 13px var(--sans);background:#fff}
+#addbox input{flex:1;min-width:140px}
+
+footer{background:var(--ink);color:var(--mist);padding:20px 0;font-size:12px;margin-top:20px}
+footer .wrap{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}
+
+#gate{position:fixed;inset:0;background:var(--ink);display:flex;align-items:center;justify-content:center;z-index:50}
+#gate .card{background:var(--paper);padding:38px;max-width:380px;width:92%;border-top:3px solid var(--saffron);border-radius:6px}
+#gate h2{font-family:var(--serif);font-weight:400;font-size:24px;margin:10px 0 6px}
+#gate p{font-size:13px;color:var(--secondary);margin-bottom:16px}
+#gate input{width:100%;padding:10px 16px;border:1px solid var(--line);margin-bottom:10px;font:500 14px var(--sans);border-radius:999px}
+#gate button{width:100%;padding:12px;background:var(--saffron);border:none;font:600 14px var(--sans);cursor:pointer;border-radius:999px;color:var(--ink);box-shadow:0 1px 3px rgba(22,27,36,.18)}
+#gate button:hover{filter:brightness(1.05)}
+#gate .err{color:var(--bad);font-size:12.5px;min-height:18px;margin-top:8px}
+#gate button.ghost{background:transparent;border:1px solid var(--line);color:var(--ink);font-weight:500;box-shadow:none}
+#gate .alt{font-size:11.5px;color:#8A8F9C;text-align:center;margin:14px 0 10px;letter-spacing:.04em;text-transform:uppercase}
+[hidden]{display:none!important}
+@media(max-width:720px){.toolbar{flex-direction:column;align-items:stretch}}
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <div class="card">
+    <span class="eyebrow">Market Access Partners</span>
+    <h2>Directors &amp; shareholders</h2>
+    <p>This tool is private. Sign in with the Google account your access was issued to.</p>
+    <button id="signin-google"><svg width="16" height="16" viewBox="0 0 48 48" style="vertical-align:-3px;margin-right:8px"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>Continue with Google</button>
+    <div class="alt">or with email and password</div>
+    <input id="em" type="email" placeholder="Email" autocomplete="username">
+    <input id="pw" type="password" placeholder="Password" autocomplete="current-password">
+    <button id="signin" class="ghost">Sign in</button>
+    <div class="err" id="err"></div>
+  </div>
+</div>
+
+<div id="app" hidden>
+<header>
+  <div class="wrap">
+    <span class="mark"><a href="/">Market <b>Access</b> Partners · Internal</a></span>
+    <nav class="tools"><a href="/dashboard.html">Dashboard</a><a href="/crm.html" style="color:var(--ivory)">CRM</a><a href="/landed-price.html">Calculator</a><a href="/containers.html">Containers</a><a href="/finance.html">Finance</a></nav>
+    <span id="who"></span>
+  </div>
+</header>
+
+<div class="wrap">
+  <p class="eyebrow" style="margin-top:36px">Back office</p>
+  <h1>CRM: targets, templates, next moves</h1>
+  <p class="sub">Every independent producer we could approach, and every document we approach them with. Pick a name, set its status, grab the pack. All of it saves straight back to the shared CRM.</p>
+  <div id="msg"></div>
+
+  <h2 class="sec">The templates</h2>
+  <p class="secnote">All in MAP colours and letterhead, filed in the shared Drive folder. <a class="plain" href="https://drive.google.com/drive/folders/14FcLH-9mgiQNljWfSFspM5Z2mR2ePOA4" target="_blank" rel="noopener">Open the Drive folder</a></p>
+  <div class="docgrid" id="docs"></div>
+
+  <h2 class="sec">Outreach targets</h2>
+  <p class="secnote">533 wineries plus the first 13 whisky distilleries, independent and corporate separated. Click a name to work it.</p>
+  <div class="toolbar">
+    <input id="q" type="search" placeholder="Search producers, regions, notes…" aria-label="Search producers">
+    <select id="f-cat" aria-label="Category"><option value="">All categories</option><option value="wine">Wine</option><option value="whisky">Whisky</option></select>
+    <select id="f-seg" aria-label="Segment"><option value="independent" selected>Independent</option><option value="corporate">Corporate</option><option value="">Both</option></select>
+    <select id="f-status" aria-label="Status"><option value="">Any status</option><option>uncontacted</option><option>contacted</option><option>in discussion</option><option>heads of terms</option><option>signed</option><option>declined</option></select>
+    <select id="f-region" aria-label="Region"><option value="">All regions</option></select>
+    <button class="pill ghost" id="f-short" aria-pressed="false">★ Shortlist</button>
+  </div>
+  <div id="counts"></div>
+  <div class="tablewrap">
+    <table id="tbl">
+      <thead><tr>
+        <th data-k="name">Producer</th><th data-k="category">Category</th><th data-k="segment">Segment</th>
+        <th data-k="crm_status">Status</th><th>★</th><th data-k="assigned_to">Assigned</th><th data-k="last_contacted">Last contact</th><th></th>
+      </tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+  <div id="savemsg" role="status"></div>
+
+  <div id="addbox">
+    <h3>Add a business to approach</h3>
+    <div class="row">
+      <input id="a-name" type="text" placeholder="Business name">
+      <input id="a-region" type="text" placeholder="Region">
+      <select id="a-cat"><option value="wine">Wine</option><option value="whisky">Whisky</option><option value="beer">Craft beer</option><option value="honey">Mānuka honey</option></select>
+      <select id="a-seg"><option value="independent">Independent</option><option value="corporate">Corporate</option></select>
+      <button class="pill" id="a-add">Add to CRM</button>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">
+    <span>Market Access Partners Limited · A venture of Agile Strategy</span>
+    <span>Exclusive and limited.</span>
+  </div>
+</footer>
+</div>
+
+<script>
+const SUPABASE_URL = "https://iwdibogfypdjgsinwube.supabase.co";
+const SUPABASE_ANON = "sb_publishable_BRmzLQw94Lt49xLFmDHJVQ_yoo68o4c";
+const $ = id => document.getElementById(id);
+let sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+let me = "";
+
+/* ---------- gate ---------- */
+async function boot(){
+  const { data:{ session } } = await sb.auth.getSession();
+  if (session) show(session);
+}
+function show(session){
+  $("gate").hidden = true; $("app").hidden = false;
+  me = session.user.email || "";
+  $("who").innerHTML = me + '<button id="out">Sign out</button>';
+  $("out").onclick = async ()=>{ await sb.auth.signOut(); location.reload(); };
+  load();
+}
+$("signin-google").onclick = async ()=>{
+  const { error } = await sb.auth.signInWithOAuth({ provider: "google", options: { redirectTo: location.origin + location.pathname } });
+  if (error) $("err").textContent = "Google sign-in failed: " + error.message;
+};
+$("signin").onclick = async ()=>{
+  const { data, error } = await sb.auth.signInWithPassword({ email: $("em").value.trim(), password: $("pw").value });
+  if (error) { $("err").textContent = "Sign-in failed: " + error.message; return; }
+  show(data.session);
+};
+$("pw").addEventListener("keydown", e=>{ if(e.key==="Enter") $("signin").click(); });
+
+/* ---------- template cards ---------- */
+const DOCS = [
+  {t:"Producer pitch deck", tag:"deck", d:"The 8-slide first meeting: why now, the prize, the deal, two containers before Christmas.", id:"1YmomEapIACp0Fsyc2U6-y_2AxUBj8T1I"},
+  {t:"One pager", tag:"onepager", d:"Leave-behind for a first call or email: the FTA window and what MAP does, on one page.", id:"1KDT4yH7ZzUPOHgQJJVpehRLcTTp5uFA_"},
+  {t:"Producer heads of terms", tag:"contract", d:"The deal on paper: exclusive 3 years, 15% FOB + 5% India, no retainers, renewal in their favour.", id:"1rLgTOMXX7UlA6edBx2TkMYF7FsEKSyf8"},
+  {t:"Export stock list template", tag:"contract", d:"What a producer fills in to join a container: SKUs, volumes, pricing, stories.", id:"1UwDANpZEnU-D3D4YDdRTzoF5CpcMvzsX"},
+  {t:"Brand positioning", tag:"brief", d:"How MAP talks: accessible premium, exclusive and limited, the voice and the palette.", id:"1D5wXdZJpuuppKp-z0VDyO7zdVqbYwTcH"},
+  {t:"India brands &amp; imagery brief", tag:"brief", d:"India's most trusted brands and the imagery that sells NZ to Indian travellers.", id:"1lMybyZJZt1yEqgBR-XSttLnqxtBezPmd"},
+  {t:"Trusted brand codes (logo thinking)", tag:"brief", d:"Macallan, Titan and the travel agents decoded: borrow the feeling, never the shape. Three logo directions.", id:"17s4IaYXbjE21fau7O-AlXdCMy97ByZFk"},
+  {t:"NZ whisky story brief (JC)", tag:"brief", d:"Scotland and Japan are the past hundred years. NZ is the next hundred. JC's story frame per distillery.", id:"1944mml2e24_83PzDKMuHW0rI8PrLuLeD"},
+  {t:"NZ distilleries directory", tag:"directory", d:"All NZ whisky distilleries, independent and corporate tabs, with India angles.", id:"1Pmvu2GgAj9mPnStLj2SAGjbbmHYsF2ed"},
+  {t:"NZ wineries directory", tag:"directory", d:"All 533 NZ wineries with ownership research: the source of the CRM.", url:"https://docs.google.com/spreadsheets/d/149DwD57bnd1ERNlvFp7BX-Gxa8vfodvt9eXyNfXkLw8/edit"},
+];
+const TAGNAMES = {deck:"Slide deck", onepager:"One pager", contract:"Contract / form", brief:"Brief", directory:"Directory"};
+(function renderDocs(){
+  const g = $("docs");
+  DOCS.forEach(x=>{
+    const card=document.createElement("div"); card.className="doc";
+    const tag=document.createElement("span"); tag.className="tag "+x.tag; tag.textContent=TAGNAMES[x.tag]||x.tag;
+    const h=document.createElement("h3"); h.innerHTML=x.t;
+    const p=document.createElement("p"); p.textContent=x.d;
+    const a=document.createElement("a"); a.textContent="Open in Drive"; a.target="_blank"; a.rel="noopener";
+    a.href = x.url || ("https://drive.google.com/file/d/"+x.id+"/view");
+    card.append(tag,h,p,a); g.appendChild(card);
+  });
+})();
+
+/* ---------- producers ---------- */
+const STATUSES=["uncontacted","contacted","in discussion","heads of terms","signed","declined"];
+let all=[], sortK="name", sortAsc=true, openId=null;
+
+async function load(){
+  const { data, error } = await sb.from("producers")
+    .select("id,name,region,segment,category,crm_status,priority,assigned_to,last_contacted,crm_notes,website,key_person,email,phone,notes,ownership_type")
+    .order("name");
+  if(error){ $("msg").textContent="Could not load producers: "+error.message; return; }
+  all = data||[];
+  const regions=[...new Set(all.map(p=>p.region).filter(Boolean))].sort();
+  const rf=$("f-region");
+  regions.forEach(r=>{ const o=document.createElement("option"); o.value=r; o.textContent=r; rf.appendChild(o); });
+  render();
+}
+
+function filtered(){
+  const q=$("q").value.trim().toLowerCase(), cat=$("f-cat").value, seg=$("f-seg").value,
+        st=$("f-status").value, rg=$("f-region").value, short=$("f-short").getAttribute("aria-pressed")==="true";
+  let rows = all.filter(p=>
+    (!cat || (p.category||"")===cat) &&
+    (!seg || (p.segment||"")===seg) &&
+    (!st || (p.crm_status||"uncontacted")===st) &&
+    (!rg || (p.region||"")===rg) &&
+    (!short || p.priority===1) &&
+    (!q || [p.name,p.region,p.crm_notes,p.notes,p.key_person,p.assigned_to].join(" ").toLowerCase().includes(q))
+  );
+  rows.sort((a,b)=>{ const x=(a[sortK]??"")+"", y=(b[sortK]??"")+""; return (x.localeCompare(y,undefined,{numeric:true}))*(sortAsc?1:-1); });
+  return rows;
+}
+
+function render(){
+  const rows=filtered(), tb=$("rows"); tb.replaceChildren();
+  const cWine=rows.filter(p=>p.category==="wine").length, cWhisky=rows.filter(p=>p.category==="whisky").length;
+  const contacted=rows.filter(p=>p.crm_status && p.crm_status!=="uncontacted").length;
+  $("counts").innerHTML="<b>"+rows.length+"</b> shown · "+cWine+" wine · "+cWhisky+" whisky · <b>"+contacted+"</b> worked so far";
+  rows.forEach(p=>{
+    const tr=document.createElement("tr");
+    const tdN=document.createElement("td");
+    const nm=document.createElement("div"); nm.className="nm"; nm.textContent=p.name; nm.onclick=()=>toggleDetail(p, tr);
+    const rgd=document.createElement("div"); rgd.className="rg"; rgd.textContent=p.region||""; tdN.append(nm,rgd);
+    const tdC=document.createElement("td");
+    const ch=document.createElement("span"); ch.className="chip "+(p.category==="whisky"?"whisky":p.category==="wine"?"wine":""); ch.textContent=p.category||"—"; tdC.appendChild(ch);
+    const tdS=document.createElement("td");
+    const sg=document.createElement("span"); sg.className="chip"+(p.segment==="corporate"?" corp":""); sg.textContent=p.segment||"—"; tdS.appendChild(sg);
+    const tdSt=document.createElement("td");
+    const sel=document.createElement("select"); sel.className="status";
+    STATUSES.forEach(s=>{ const o=document.createElement("option"); o.value=s; o.textContent=s; sel.appendChild(o); });
+    sel.value=p.crm_status||"uncontacted"; styleStatus(sel);
+    sel.onchange=async ()=>{ p.crm_status=sel.value; styleStatus(sel); await save(p,{crm_status:sel.value, last_contacted: sel.value==="uncontacted"?p.last_contacted:(p.last_contacted||today())}); };
+    tdSt.appendChild(sel);
+    const tdP=document.createElement("td");
+    const st=document.createElement("button"); st.className="star"+(p.priority===1?" on":""); st.textContent="★"; st.title="Shortlist";
+    st.onclick=async ()=>{ p.priority=(p.priority===1?3:1); st.classList.toggle("on",p.priority===1); await save(p,{priority:p.priority}); };
+    tdP.appendChild(st);
+    const tdA=document.createElement("td"); tdA.textContent=p.assigned_to||""; tdA.style.color="var(--secondary)";
+    const tdL=document.createElement("td"); tdL.textContent=p.last_contacted||""; tdL.style.color="var(--secondary)";
+    const tdX=document.createElement("td");
+    const wk=document.createElement("button"); wk.className="mini"; wk.textContent="Work it";
+    wk.onclick=()=>toggleDetail(p, tr); tdX.appendChild(wk);
+    tr.append(tdN,tdC,tdS,tdSt,tdP,tdA,tdL,tdX);
+    tb.appendChild(tr);
+  });
+}
+function styleStatus(sel){
+  sel.className="status"+(sel.value==="signed"?" s-signed":sel.value==="declined"?" s-declined":sel.value!=="uncontacted"?" s-live":"");
+}
+const today=()=> new Date().toISOString().slice(0,10);
+
+function toggleDetail(p, tr){
+  const existing=document.querySelector("tr.detail");
+  if(existing){ const was=existing.dataset.pid; existing.remove(); if(String(p.id)===was) return; }
+  const dtr=document.createElement("tr"); dtr.className="detail"; dtr.dataset.pid=p.id;
+  const td=document.createElement("td"); td.colSpan=8;
+  const box=document.createElement("div"); box.className="detail";
+
+  const r1=document.createElement("div"); r1.className="drow";
+  const mk=(lbl,el)=>{ const w=document.createElement("span"); const l=document.createElement("label"); l.textContent=lbl+" "; w.append(l,el); return w; };
+  const asg=document.createElement("input"); asg.type="text"; asg.value=p.assigned_to||""; asg.placeholder="who owns this?"; asg.size=14;
+  const meBtn=document.createElement("button"); meBtn.className="mini"; meBtn.textContent="me";
+  meBtn.onclick=()=>{ asg.value=me.split("@")[0]; };
+  const lc=document.createElement("input"); lc.type="date"; lc.value=p.last_contacted||"";
+  const tdy=document.createElement("button"); tdy.className="mini"; tdy.textContent="today"; tdy.onclick=()=>{ lc.value=today(); };
+  r1.append(mk("Assigned",asg),meBtn,mk("Last contact",lc),tdy);
+
+  const notes=document.createElement("textarea"); notes.value=p.crm_notes||""; notes.placeholder="Call notes, who said what, next step…";
+
+  const r2=document.createElement("div"); r2.className="drow"; r2.style.marginTop="8px";
+  const saveB=document.createElement("button"); saveB.className="pill"; saveB.textContent="Save";
+  saveB.onclick=async ()=>{ p.assigned_to=asg.value.trim()||null; p.last_contacted=lc.value||null; p.crm_notes=notes.value.trim()||null;
+    await save(p,{assigned_to:p.assigned_to,last_contacted:p.last_contacted,crm_notes:p.crm_notes}); render(); };
+  const copyB=document.createElement("button"); copyB.className="pill ghost"; copyB.textContent="Copy intro email";
+  copyB.onclick=async ()=>{
+    const first=(p.key_person||"there").split(",")[0].split("(")[0].trim();
+    const prod = p.category==="whisky" ? "single malt" : "wines";
+    const txt = "Subject: India is opening. "+p.name+" should be first through the door.\n\n"+
+"Kia ora "+first+",\n\n"+
+"The NZ-India FTA was signed in April and takes effect next year. We are Market Access Partners, the exclusive route to market taking a limited portfolio of independent NZ producers into India ahead of entry into force, and "+p.name+" is on our shortlist.\n\n"+
+"Two 20ft containers ship to Mumbai before Christmas (cutoffs 20 Nov and 5 Dec). No retainers and no listing fees: we earn 15% of FOB only when your order confirms.\n\n"+
+"I have attached a one pager and our producer deck. Worth a 20 minute call this week about getting your "+prod+" on the water?\n\n"+
+"Ngā mihi,\n"+(me.split("@")[0]||"The MAP team")+"\nMarket Access Partners · myaccesspartners.com\n\n"+
+"Attach from Drive: MAP_One_Pager.docx + MAP_Producer_Pitch_Deck.pptx"+(p.category==="whisky"?" + MAP_NZ_Whisky_Story_Brief.docx":"");
+    try{ await navigator.clipboard.writeText(txt); flash("Intro email for "+p.name+" copied. Paste into Gmail and attach the pack."); }
+    catch(e){ flash("Could not copy: "+e.message, true); }
+  };
+  const site=document.createElement("a"); site.className="mini"; site.style.textDecoration="none"; site.style.padding="5px 12px"; site.style.border="1px solid var(--line)"; site.style.borderRadius="999px"; site.style.font="500 11px var(--sans)"; site.style.color="var(--secondary)";
+  if(p.website){ site.textContent="Website"; site.href=p.website.startsWith("http")?p.website:"https://"+p.website; site.target="_blank"; site.rel="noopener"; }
+  r2.append(saveB,copyB); if(p.website) r2.append(site);
+
+  const meta=document.createElement("div"); meta.className="meta";
+  meta.textContent=[p.ownership_type,p.key_person,p.email,p.phone].filter(Boolean).join(" · ");
+  const bg=document.createElement("div"); bg.className="meta"; bg.textContent=p.notes||"";
+
+  box.append(r1,notes,r2,meta,bg); td.appendChild(box); dtr.appendChild(td);
+  tr.after(dtr);
+}
+
+async function save(p, patch){
+  patch.updated_at=new Date().toISOString();
+  const { error } = await sb.from("producers").update(patch).eq("id", p.id);
+  if(error){ flash("Save failed: "+error.message, true); return; }
+  Object.assign(p, patch); flash("Saved "+p.name+".");
+}
+function flash(t, bad){ const m=$("savemsg"); m.textContent=t; m.style.color=bad?"var(--bad)":"var(--good)"; clearTimeout(flash._t); flash._t=setTimeout(()=>{m.textContent="";},4000); }
+
+$("a-add").onclick=async ()=>{
+  const name=$("a-name").value.trim(); if(!name){ flash("Give it a name first.", true); return; }
+  const row={ name, region:$("a-region").value.trim()||null, category:$("a-cat").value, segment:$("a-seg").value,
+    slug:name.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,""), crm_status:"uncontacted", priority:2,
+    ownership_type:$("a-seg").value==="independent"?"Family/private":"Corporate/multinational subsidiary",
+    notes:"Added via CRM by "+me+" on "+today()+"." };
+  const { data, error } = await sb.from("producers").insert(row).select().single();
+  if(error){ flash("Could not add: "+error.message, true); return; }
+  all.push(data); $("a-name").value=""; $("a-region").value=""; render(); flash("Added "+name+" to the CRM.");
+};
+
+["q","f-cat","f-seg","f-status","f-region"].forEach(id=>{ $(id).addEventListener("input", render); });
+$("f-short").onclick=()=>{ const b=$("f-short"); b.setAttribute("aria-pressed", b.getAttribute("aria-pressed")==="true"?"false":"true"); b.style.background=b.getAttribute("aria-pressed")==="true"?"var(--saffron)":"#fff"; render(); };
+document.querySelectorAll("thead th[data-k]").forEach(th=>{ th.onclick=()=>{ const k=th.dataset.k; if(sortK===k) sortAsc=!sortAsc; else {sortK=k; sortAsc=true;} render(); }; });
+
+boot();
+</script>
+</body>
+</html>

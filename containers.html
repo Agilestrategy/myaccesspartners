@@ -27,7 +27,7 @@ nav.tools{display:flex;gap:18px;font-size:12.5px}
 nav.tools a{color:var(--mist);text-decoration:none}
 nav.tools a:hover{color:var(--ivory)}
 #who{font-size:12.5px;color:var(--mist)}
-#who button{background:none;border:1px solid rgba(245,241,230,.3);color:var(--ivory);padding:4px 10px;margin-left:10px;font:500 12px var(--sans);cursor:pointer;border-radius:2px}
+#who button{background:none;border:1px solid rgba(245,241,230,.3);color:var(--ivory);padding:4px 12px;margin-left:10px;font:500 12px var(--sans);cursor:pointer;border-radius:999px}
 h1{font-family:var(--serif);font-weight:400;font-size:clamp(26px,3.6vw,38px);margin:34px 0 6px}
 .sub{color:#4A5160;max-width:70ch;margin-bottom:26px}
 .eyebrow{font:600 11px var(--sans);letter-spacing:.18em;text-transform:uppercase;color:var(--saffron)}
@@ -69,10 +69,12 @@ thead th{font:600 11.5px var(--sans);text-transform:uppercase;letter-spacing:.06
 #gate .card{background:var(--paper);padding:38px;max-width:380px;width:92%;border-top:3px solid var(--saffron)}
 #gate h2{font-family:var(--serif);font-weight:400;font-size:24px;margin:10px 0 6px}
 #gate p{font-size:13px;color:#4A5160;margin-bottom:16px}
-#gate input{width:100%;padding:10px;border:1px solid var(--line);margin-bottom:10px;font:500 14px var(--sans);border-radius:2px}
-#gate button{width:100%;padding:11px;background:var(--saffron);border:none;font:600 14px var(--sans);cursor:pointer;border-radius:2px;color:var(--ink)}
+#gate input{width:100%;padding:10px 16px;border:1px solid var(--line);margin-bottom:10px;font:500 14px var(--sans);border-radius:999px}
+#gate button{width:100%;padding:12px;background:var(--saffron);border:none;font:600 14px var(--sans);cursor:pointer;border-radius:999px;color:var(--ink);box-shadow:0 1px 3px rgba(22,27,36,.18)}
+#gate button:hover{filter:brightness(1.05)}
+#gate .card{border-radius:6px}
 #gate .err{color:#A33B2E;font-size:12.5px;min-height:18px;margin-top:8px}
-#gate button.ghost{background:transparent;border:1px solid var(--line);color:var(--ink);font-weight:500}
+#gate button.ghost{background:transparent;border:1px solid var(--line);color:var(--ink);font-weight:500;box-shadow:none}
 #gate .alt{font-size:11.5px;color:#8A8F9C;text-align:center;margin:14px 0 10px;letter-spacing:.04em;text-transform:uppercase}
 [hidden]{display:none!important}
 @media(max-width:760px){.addrow{grid-template-columns:1fr 1fr}.newc .addrow{grid-template-columns:1fr 1fr}}
@@ -98,7 +100,7 @@ thead th{font:600 11.5px var(--sans);text-transform:uppercase;letter-spacing:.06
 <header>
   <div class="wrap">
     <span class="mark"><a href="/landed-price.html">Market <b>Access</b> Partners · Internal</a></span>
-    <nav class="tools"><a href="/dashboard.html">Dashboard</a><a href="/landed-price.html">Calculator</a><a href="/containers.html" style="color:var(--ivory)">Containers</a><a href="/finance.html">Finance</a></nav>
+    <nav class="tools"><a href="/dashboard.html">Dashboard</a><a href="/crm.html">CRM</a><a href="/landed-price.html">Calculator</a><a href="/containers.html" style="color:var(--ivory)">Containers</a><a href="/finance.html">Finance</a></nav>
     <span id="who"></span>
   </div>
 </header>
