@@ -8,6 +8,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fjalla+One&family=Libre+Franklin:ital,wght@0,300..800;1,400&display=swap">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.js" defer></script>
 <style>
 :root{
   --ink:#161B24; --ivory:#F5F1E6; --paper:#FBF9F2; --saffron:#C97B1E;
@@ -125,7 +127,7 @@ footer .wrap{display:flex;justify-content:space-between;align-items:center;gap:1
 <header>
   <div class="wrap">
     <span class="mark"><a href="/">Market <b>Access</b> Partners · Internal</a></span>
-    <nav class="tools"><a href="/dashboard.html">Dashboard</a><a href="/crm.html" style="color:var(--ivory)">CRM</a><a href="/landed-price.html">Calculator</a><a href="/containers.html">Containers</a><a href="/finance.html">Finance</a></nav>
+    <nav class="tools"><a href="/dashboard.html">Dashboard</a><a href="/crm.html" style="color:var(--ivory)">CRM</a><a href="/distributors.html">Distributors</a><a href="/landed-price.html">Calculator</a><a href="/containers.html">Containers</a><a href="/finance.html">Finance</a></nav>
     <span id="who"></span>
   </div>
 </header>
@@ -139,6 +141,16 @@ footer .wrap{display:flex;justify-content:space-between;align-items:center;gap:1
   <h2 class="sec">Category packs</h2>
   <p class="secnote">The pitch deck and one pager for each portfolio: open in Drive or download straight to your machine, ready to attach.</p>
   <div class="docgrid" id="packs"></div>
+
+  <h2 class="sec">Client collateral builder</h2>
+  <p class="secnote">Pick a category, pick the client, and it builds their personalised one pager and slide deck on the spot: their name on the cover, their story inside, our deal at the back.</p>
+  <div class="toolbar" style="margin-bottom:6px">
+    <select id="g-cat" aria-label="Collateral category"><option value="wine">Wine</option><option value="honey">Mānuka honey</option><option value="whisky">Whisky &amp; spirits</option></select>
+    <select id="g-prod" aria-label="Client" style="flex:1;min-width:220px"><option value="">Loading producers…</option></select>
+    <button class="pill" id="g-doc">Build one pager (.docx)</button>
+    <button class="pill" id="g-deck">Build slide deck (.pptx)</button>
+  </div>
+  <div id="g-msg" role="status" style="font-size:12px;min-height:16px;color:var(--good);margin-bottom:20px"></div>
 
   <h2 class="sec">The templates</h2>
   <p class="secnote">All in MAP colours and letterhead, filed in the shared Drive folder. <a class="plain" href="https://drive.google.com/drive/folders/14FcLH-9mgiQNljWfSFspM5Z2mR2ePOA4" target="_blank" rel="noopener">Open the Drive folder</a></p>
@@ -279,6 +291,7 @@ async function load(){
     .order("name");
   if(error){ $("msg").textContent="Could not load producers: "+error.message; return; }
   all = data||[];
+  fillProdDropdown();
   const regions=[...new Set(all.map(p=>p.region).filter(Boolean))].sort();
   const rf=$("f-region");
   regions.forEach(r=>{ const o=document.createElement("option"); o.value=r; o.textContent=r; rf.appendChild(o); });
@@ -403,6 +416,137 @@ $("a-add").onclick=async ()=>{
   const { data, error } = await sb.from("producers").insert(row).select().single();
   if(error){ flash("Could not add: "+error.message, true); return; }
   all.push(data); $("a-name").value=""; $("a-region").value=""; render(); flash("Added "+name+" to the CRM.");
+};
+
+/* ---------- client collateral builder ---------- */
+const CAT_COPY = {
+  wine: {
+    label:"Wine", headline:"Be first into India, before wine tariffs fall.",
+    intro:n=>"The NZ-India FTA, signed 27 April 2026, cuts wine tariffs 66 to 83% over ten years with an MFN guarantee for New Zealand. India's premium wine market is forecast to nearly quadruple by 2034, and its price ladders are still being decided. "+n+" belongs on the shelf that decade is built around.",
+    stats:[["~150%","Customs duty on imported wine today, falling 66-83% over ten years under the FTA"],
+           ["US$985m","Forecast wine market by 2034, from US$266m today, ~15% growth a year"],
+           ["98%","Of NZ vineyard area certified sustainable: the cleanest premium origin on earth"]],
+    why:n=>[n+" is exactly the kind of boutique, family-grade producer MAP takes to India: provenance first, volume second.",
+            "We place wines into hotels, clubs and fine retail in Delhi NCR, Mumbai and Bengaluru through vetted importers.",
+            "FSSAI registration, labelling, state excise strategy and duty-proof pricing are handled end to end."],
+  },
+  honey: {
+    label:"Mānuka honey", headline:"India cut honey tariffs for one country. Ours.",
+    intro:n=>"New Zealand is the first country India has ever granted a honey tariff concession: 75% off over five years, for mānuka alone. In a wellness-obsessed, gifting-driven market of 1.4 billion people, "+n+" can claim the shelf before the copycats arrive.",
+    stats:[["−75%","Mānuka tariffs over five years, from 60%+ today: a first in any Indian FTA"],
+           ["1 origin","Mānuka grows wild in New Zealand and nowhere else; the moat is botanical"],
+           ["UMF/MGO","Independently certified potency: a premium Indian buyers can verify"]],
+    why:n=>[n+"'s certified mānuka arrives as the world's most studied honey, with grading Indian premium buyers can trust.",
+            "Diwali and wedding-season gifting run on prestige: a certified jar is the health-forward luxury gift the market has been waiting for.",
+            "We place a limited portfolio of independent apiaries into premium retail, hotels and gifting channels, FSSAI handled."],
+  },
+  whisky: {
+    label:"Whisky & bespoke spirits", headline:"Scotland is the past hundred years. NZ is the next.",
+    intro:n=>"India is the world's largest whisky market by volume, and its premium drinkers already collect Macallan, Yamazaki and their own sold-out single malts. "+n+" arrives as the new-world origin, in allocations small enough that owning one is the whole point.",
+    stats:[["No.1","India is the largest whisky market on earth by volume; single malt its fastest-growing tier"],
+           ["10 yrs","Is all it took Indian single malts to go from novelty to sold-out collector items"],
+           ["0","Other countries can make mānuka-smoked or tōtara-cask whisky; the flavours are ours alone"]],
+    why:n=>[n+" is positioned against Scotch and Japanese prices, never under them, into collector and gifting channels.",
+            "India's collectors know what early looks like: NZ single malt is that moment again, cleaner, greener, more bespoke.",
+            "Every allocation ships with its story, cellar door to bar cart, priced to work at today's duties."],
+  },
+};
+const DEAL_LINES = [
+  "Success fees only: 15% of FOB when your order confirms, plus 5% paid by the Indian receiver on landing. No retainers, no listing fees.",
+  "Exclusive route to India for 3 years, with a right of renewal in your favour. Floor prices held: no discounting without your consent.",
+  "Two 20ft containers ship to Mumbai before Christmas 2026: cutoffs 20 November and 5 December.",
+];
+const INKC="161B24", SAFFRONC="C97B1E", VINEC="2E7D51", IVORYC="F5F1E6", PAPERC="FBF9F2", MISTC="9AA1AD", DIMC="6A6F7A";
+const SERIFC="Fjalla One", SANSC="Libre Franklin";
+const gmsg=(t,bad)=>{ const m=$("g-msg"); m.textContent=t; m.style.color=bad?"var(--bad)":"var(--good)"; };
+const fileSafe=n=>n.replace(/[^A-Za-z0-9]+/g,"_").replace(/^_|_$/g,"");
+
+function fillProdDropdown(){
+  const cat=$("g-cat").value, sel=$("g-prod"); sel.replaceChildren();
+  const opts=all.filter(p=>p.category===cat).sort((a,b)=>a.name.localeCompare(b.name));
+  if(!opts.length){ const o=document.createElement("option"); o.value=""; o.textContent="No "+cat+" producers in the CRM yet"; sel.appendChild(o); return; }
+  opts.forEach(p=>{ const o=document.createElement("option"); o.value=p.id; o.textContent=p.name+(p.segment==="corporate"?" (corporate)":""); sel.appendChild(o); });
+}
+$("g-cat").addEventListener("input", fillProdDropdown);
+function pickedProducer(){
+  const p=all.find(x=>String(x.id)===$("g-prod").value);
+  if(!p){ gmsg("Pick a client first.", true); return null; } return p;
+}
+
+$("g-deck").onclick = async ()=>{
+  const p=pickedProducer(); if(!p) return;
+  if(typeof PptxGenJS==="undefined"){ gmsg("Deck engine still loading, try again in a moment.", true); return; }
+  const C=CAT_COPY[$("g-cat").value]; const W=13.33,H=7.5;
+  const d=new PptxGenJS(); d.layout="LAYOUT_WIDE";
+  const wm=(s,x,y,size,light)=>s.addText([{text:"MARKET ",options:{color:light?IVORYC:INKC}},{text:"ACCESS",options:{color:SAFFRONC}},{text:" PARTNERS",options:{color:light?IVORYC:INKC}}],{x,y,w:6,h:.4,fontFace:SERIFC,fontSize:size,isTextBox:true,margin:0,charSpacing:2});
+  const foot=(s,n)=>{ s.addText("Market Access Partners Limited · myaccesspartners.com",{x:.6,y:H-.45,w:6,h:.3,fontFace:SANSC,fontSize:9,color:DIMC,isTextBox:true,margin:0}); s.addText(String(n),{x:W-1,y:H-.45,w:.4,h:.3,fontFace:SANSC,fontSize:9,color:DIMC,align:"right",isTextBox:true,margin:0}); };
+  let s=d.addSlide(); s.background={color:INKC};
+  wm(s,.8,.8,20,true);
+  s.addText("Prepared for "+p.name,{x:.8,y:2.0,w:11.7,h:.5,fontFace:SANSC,fontSize:16,color:SAFFRONC,isTextBox:true,margin:0});
+  s.addText(C.headline,{x:.8,y:2.6,w:11.7,h:1.9,fontFace:SERIFC,fontSize:48,color:IVORYC,isTextBox:true,margin:0});
+  s.addText(C.label+" · "+(p.region||"New Zealand")+" · "+new Date().toLocaleDateString("en-NZ",{month:"long",year:"numeric"}),{x:.8,y:6.5,w:11,h:.35,fontFace:SANSC,fontSize:12,color:MISTC,isTextBox:true,margin:0});
+  s=d.addSlide(); s.background={color:"FFFFFF"};
+  s.addText("THE WINDOW",{x:.6,y:.55,w:10,h:.35,fontFace:SANSC,fontSize:12,bold:true,color:SAFFRONC,charSpacing:3,isTextBox:true,margin:0});
+  s.addText("The FTA opens the door. First movers keep the shelf.",{x:.6,y:.95,w:12.1,h:.8,fontFace:SERIFC,fontSize:32,color:INKC,isTextBox:true,margin:0});
+  s.addText(C.intro(p.name),{x:.6,y:2.0,w:12.1,h:1.3,fontFace:SANSC,fontSize:15,color:INKC,isTextBox:true,margin:0});
+  C.stats.forEach((st,i)=>{ const x=.6+i*4.28; s.addShape("roundRect",{x,y:3.7,w:3.95,h:2.3,rectRadius:.06,fill:{color:PAPERC},shadow:{type:"outer",color:"AAAAAA",blur:6,offset:2,angle:90,opacity:.25}}); s.addText(st[0],{x:x+.3,y:3.95,w:3.4,h:.8,fontFace:SERIFC,fontSize:34,color:i===1?VINEC:SAFFRONC,isTextBox:true,margin:0}); s.addText(st[1],{x:x+.3,y:4.75,w:3.45,h:1.1,fontFace:SANSC,fontSize:11.5,color:INKC,isTextBox:true,margin:0}); });
+  foot(s,2);
+  s=d.addSlide(); s.background={color:"FFFFFF"};
+  s.addText("WHY "+p.name.toUpperCase(),{x:.6,y:.55,w:12,h:.35,fontFace:SANSC,fontSize:12,bold:true,color:SAFFRONC,charSpacing:3,isTextBox:true,margin:0});
+  s.addText("Built for India's premium shelf.",{x:.6,y:.95,w:12.1,h:.8,fontFace:SERIFC,fontSize:32,color:INKC,isTextBox:true,margin:0});
+  const facts=[["Who you are",[p.region,p.ownership_type].filter(Boolean).join(" · ")+(p.key_person?" · "+p.key_person:"")],["What you make",p.wines||"—"],["Why we called",(p.notes||"A producer whose story India's premium consumer will pay for.").slice(0,300)]];
+  facts.forEach((f,i)=>{ const y=2.1+i*1.45; s.addShape("roundRect",{x:.6,y,w:.14,h:1.15,rectRadius:.05,fill:{color:i===1?VINEC:SAFFRONC}}); s.addText(f[0],{x:1.0,y:y-.02,w:11.4,h:.38,fontFace:SERIFC,fontSize:16,color:INKC,isTextBox:true,margin:0}); s.addText(f[1],{x:1.0,y:y+.4,w:11.6,h:.9,fontFace:SANSC,fontSize:12.5,color:DIMC,isTextBox:true,margin:0}); });
+  C.why(p.name).slice(0,1).forEach(t=>s.addText(t,{x:.6,y:6.35,w:12.1,h:.6,fontFace:SANSC,fontSize:13,italic:true,color:INKC,isTextBox:true,margin:0}));
+  foot(s,3);
+  s=d.addSlide(); s.background={color:"FFFFFF"};
+  s.addText("THE DEAL",{x:.6,y:.55,w:10,h:.35,fontFace:SANSC,fontSize:12,bold:true,color:SAFFRONC,charSpacing:3,isTextBox:true,margin:0});
+  s.addText("Success fees only. We earn when you sell.",{x:.6,y:.95,w:12.1,h:.8,fontFace:SERIFC,fontSize:32,color:INKC,isTextBox:true,margin:0});
+  s.addShape("roundRect",{x:.6,y:2.1,w:5.9,h:4.2,rectRadius:.06,fill:{color:INKC}});
+  s.addText("15%",{x:1.0,y:2.45,w:3.5,h:.95,fontFace:SERIFC,fontSize:54,color:SAFFRONC,isTextBox:true,margin:0});
+  s.addText("of FOB value, payable when an order is confirmed. Recoverable in your export pricing.",{x:1.0,y:3.45,w:5.1,h:.7,fontFace:SANSC,fontSize:12.5,color:IVORYC,isTextBox:true,margin:0});
+  s.addText("+5%",{x:1.0,y:4.25,w:3.5,h:.7,fontFace:SERIFC,fontSize:34,color:VINEC,isTextBox:true,margin:0});
+  s.addText("paid by the Indian receiver on landing. Disclosed for transparency.",{x:1.0,y:4.95,w:5.1,h:.6,fontFace:SANSC,fontSize:12.5,color:IVORYC,isTextBox:true,margin:0});
+  s.addText("No retainers. No listing fees. No cost to look.",{x:1.0,y:5.7,w:5.1,h:.4,fontFace:SANSC,fontSize:13,bold:true,color:SAFFRONC,isTextBox:true,margin:0});
+  [["Exclusive, 3 years","Your exclusive route to India, renewal in your favour."],["Premium held","No discounting below agreed floors without consent."],["Your story travels","Every product ships with its story and Indian-cuisine matches."],["Giving back","5% of profits to an Indian charity, 5% to a NZ charity."]].forEach((f,i)=>{ const y=2.2+i*1.05; s.addText(f[0],{x:6.95,y,w:5.7,h:.35,fontFace:SERIFC,fontSize:15,color:INKC,isTextBox:true,margin:0}); s.addText(f[1],{x:6.95,y:y+.36,w:5.75,h:.6,fontFace:SANSC,fontSize:11.5,color:DIMC,isTextBox:true,margin:0}); });
+  foot(s,4);
+  s=d.addSlide(); s.background={color:INKC};
+  wm(s,.8,.7,16,true);
+  s.addText("Two containers before Christmas.",{x:.8,y:2.3,w:11.7,h:1.1,fontFace:SERIFC,fontSize:44,color:IVORYC,isTextBox:true,margin:0});
+  s.addText("Cutoffs 20 November and 5 December 2026 · NZ → Nhava Sheva (Mumbai)",{x:.8,y:3.55,w:11.5,h:.45,fontFace:SANSC,fontSize:15,color:SAFFRONC,isTextBox:true,margin:0});
+  s.addText("There is a place held for "+p.name+". Exclusive and limited, like everything worth having.",{x:.8,y:4.3,w:10.5,h:.7,fontFace:SANSC,fontSize:14,color:MISTC,isTextBox:true,margin:0});
+  s.addText("hello@myaccesspartners.com · myaccesspartners.com",{x:.8,y:6.2,w:9,h:.4,fontFace:SANSC,fontSize:14,color:IVORYC,isTextBox:true,margin:0});
+  await d.writeFile({fileName:"MAP_"+fileSafe(p.name)+"_Pitch_Deck.pptx"});
+  gmsg("Deck built for "+p.name+": check your downloads.");
+};
+
+$("g-doc").onclick = async ()=>{
+  const p=pickedProducer(); if(!p) return;
+  if(typeof docx==="undefined"){ gmsg("Document engine still loading, try again in a moment.", true); return; }
+  const C=CAT_COPY[$("g-cat").value];
+  const {Document,Packer,Paragraph,TextRun,BorderStyle,AlignmentType}=docx;
+  const T=(t,o={})=>new TextRun({text:t,font:SANSC,size:21,color:INKC,...o});
+  const para=(t,o={})=>new Paragraph({children:[T(t)],spacing:{after:140,line:300},...o});
+  const bull=t=>new Paragraph({children:[T("–  ",{color:SAFFRONC,bold:true}),T(t)],spacing:{after:100,line:300},indent:{left:240}});
+  const eb=t=>new Paragraph({children:[new TextRun({text:t.toUpperCase(),font:SANSC,size:15,bold:true,color:SAFFRONC})],spacing:{before:240,after:60}});
+  const children=[
+    new Paragraph({children:[new TextRun({text:"MARKET ",font:SERIFC,size:26,color:INKC}),new TextRun({text:"ACCESS",font:SERIFC,size:26,color:SAFFRONC}),new TextRun({text:" PARTNERS",font:SERIFC,size:26,color:INKC})],border:{bottom:{style:BorderStyle.SINGLE,size:12,color:SAFFRONC}},spacing:{after:240}}),
+    eb("Prepared for "+p.name+" · "+C.label),
+    new Paragraph({children:[new TextRun({text:C.headline,font:SERIFC,size:38,color:INKC})],spacing:{after:120}}),
+    para(C.intro(p.name)),
+    eb("The numbers"),
+    ...C.stats.map(st=>bull(st[0]+": "+st[1])),
+    eb("Why "+p.name),
+    ...C.why(p.name).map(bull),
+    ...(p.notes?[para("Our note on you: "+p.notes)]:[]),
+    eb("The deal"),
+    ...DEAL_LINES.map(bull),
+    new Paragraph({children:[T("Talk to us this week: "),T("hello@myaccesspartners.com",{bold:true,color:SAFFRONC})],spacing:{before:160}}),
+    new Paragraph({children:[new TextRun({text:"Market Access Partners Limited · New Zealand · A venture of Agile Strategy",font:SANSC,size:15,color:"6A6F7A"})],spacing:{before:200}}),
+  ];
+  const doc=new Document({styles:{default:{document:{run:{font:SANSC,size:21,color:INKC}}}},sections:[{properties:{page:{margin:{top:1100,bottom:1000,left:1250,right:1250}}},children}]});
+  const blob=await Packer.toBlob(doc);
+  const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="MAP_"+fileSafe(p.name)+"_One_Pager.docx"; a.click(); URL.revokeObjectURL(a.href);
+  gmsg("One pager built for "+p.name+": check your downloads.");
 };
 
 ["q","f-cat","f-seg","f-status","f-region"].forEach(id=>{ $(id).addEventListener("input", render); });
