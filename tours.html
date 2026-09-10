@@ -1,0 +1,441 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MAP Tours</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fjalla+One&family=Libre+Franklin:ital,wght@0,300..800;1,400&display=swap">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<style>
+:root{
+  --ink:#161B24; --ivory:#F5F1E6; --paper:#FBF9F2; --saffron:#C97B1E;
+  --mist:#9AA1AD; --line:rgba(22,27,36,.14);
+  --good:#2E7D51; --warn:#C97B1E; --bad:#A33B2E;
+  --grid:#E5E2D8; --muted:#6A6F7A; --secondary:#4A5160;
+  --serif:"Fjalla One","Arial Narrow",Arial,sans-serif; --sans:"Libre Franklin","Helvetica Neue",Arial,sans-serif;
+}
+*{box-sizing:border-box;margin:0}
+body{background:var(--paper);color:var(--ink);font:400 15px/1.55 var(--sans)}
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+header{background:var(--ink);color:var(--ivory);padding:18px 0}
+header .wrap{display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap}
+.mark{font:700 14px var(--sans);letter-spacing:.06em;text-transform:uppercase}
+.mark b{color:var(--saffron)}
+.mark a{color:inherit;text-decoration:none}
+nav.tools{display:flex;gap:18px;font-size:12.5px;flex-wrap:wrap}
+nav.tools a{color:var(--mist);text-decoration:none}
+nav.tools a:hover{color:var(--ivory)}
+#who{font-size:12.5px;color:var(--mist)}
+#who button{background:none;border:1px solid rgba(245,241,230,.3);color:var(--ivory);padding:4px 12px;margin-left:10px;font:500 12px var(--sans);cursor:pointer;border-radius:999px}
+h1{font-family:var(--serif);font-weight:400;font-size:clamp(26px,3.6vw,38px);margin:34px 0 6px}
+.sub{color:var(--secondary);max-width:76ch;margin-bottom:22px}
+.eyebrow{font:600 11px var(--sans);letter-spacing:.18em;text-transform:uppercase;color:var(--saffron)}
+h2.sec{font-family:var(--serif);font-weight:400;font-size:22px;margin:26px 0 4px}
+.secnote{font-size:12.5px;color:var(--muted);margin-bottom:14px;max-width:80ch}
+button.pill{background:var(--saffron);border:none;color:var(--ink);font:600 12.5px var(--sans);padding:9px 18px;border-radius:999px;cursor:pointer}
+button.pill.ghost{background:#fff;border:1px solid var(--line);color:var(--secondary);font-weight:500}
+button.pill:disabled{opacity:.45;cursor:not-allowed}
+button.mini{background:#fff;border:1px solid var(--line);border-radius:999px;font:500 11px var(--sans);color:var(--secondary);padding:3px 11px;cursor:pointer;white-space:nowrap}
+button.mini:hover{border-color:var(--saffron);color:var(--ink)}
+button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--saffron);outline-offset:1px}
+input,select,textarea{padding:8px 12px;border:1px solid var(--line);border-radius:999px;font:400 13px var(--sans);background:#fff;color:var(--ink)}
+textarea{border-radius:10px;width:100%;min-height:60px;resize:vertical}
+label.f{display:block;font:600 10.5px var(--sans);text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:3px}
+.grid{display:grid;gap:10px}
+.g4{grid-template-columns:repeat(4,1fr)}
+.g3{grid-template-columns:repeat(3,1fr)}
+.box{background:#fff;border:1px solid var(--line);padding:16px 18px;margin-bottom:18px}
+.box.new{border-top:3px solid var(--saffron)}
+.chip{display:inline-block;font:600 10px var(--sans);letter-spacing:.06em;text-transform:uppercase;padding:2px 9px;border-radius:999px;border:1px solid var(--line);color:var(--secondary);white-space:nowrap}
+.chip.partner{background:#E9F2EC;color:var(--good);border-color:#BCD6C6}
+.chip.approached{background:#FBF3E6;color:#8A5A12;border-color:#E8D8BE}
+.chip.declined,.chip.no{background:#F5E9E7;color:var(--bad);border-color:#E5CFCB}
+.chip.wine{background:#F1EDF7;color:#4E5BA6;border-color:#D8D2E8}
+.chip.whisky{background:#F7EFE3;color:#8A5A12;border-color:#E8D8BE}
+.chip.honey{background:#FBF6DF;color:#7A6A12;border-color:#EBE0A8}
+.chip.confirmed{background:#E9F2EC;color:var(--good);border-color:#BCD6C6}
+.chip.notified{background:#EAF0F7;color:#2F5C8F;border-color:#C7D6E8}
+.chip.pending{background:#F5F1E6;color:var(--muted)}
+.tablewrap{background:#fff;border:1px solid var(--line);overflow-x:auto;margin-bottom:16px}
+table{width:100%;border-collapse:collapse;min-width:820px}
+th,td{padding:8px 10px;border-bottom:1px solid var(--grid);font-size:12.5px;text-align:left;vertical-align:top}
+thead th{font:600 10.5px var(--sans);text-transform:uppercase;letter-spacing:.06em;color:var(--muted);background:var(--ivory);white-space:nowrap}
+tr.bk{cursor:pointer}
+tr.bk:hover td{background:#FDFCF7}
+tr.bk.open td{background:var(--ivory)}
+td select.st{padding:4px 10px;font:500 11.5px var(--sans);max-width:150px}
+.detail{background:var(--ivory);border:1px solid var(--line);border-top:none;padding:16px 18px;margin:-16px 0 16px}
+.stoprow{display:grid;grid-template-columns:110px 60px 2.2fr 1.4fr 70px 150px auto;gap:8px;align-items:center;padding:7px 0;border-bottom:1px dashed var(--line);font-size:12.5px}
+.stoprow input,.stoprow select{width:100%;padding:5px 9px;font-size:12px}
+.stoprow .kind{font:600 10.5px var(--sans);text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.stoprow .acts{display:flex;gap:5px;flex-wrap:wrap}
+.warnbar{background:#F5E9E7;color:var(--bad);border:1px solid #E5CFCB;padding:8px 12px;font-size:12.5px;border-radius:6px;margin:10px 0}
+.okbar{background:#E9F2EC;color:var(--good);border:1px solid #BCD6C6;padding:8px 12px;font-size:12.5px;border-radius:6px;margin:10px 0}
+#msg{font-size:12.5px;min-height:16px;margin:8px 0;color:var(--good)}
+#msg.bad{color:var(--bad)}
+.mods{display:flex;gap:8px;flex-wrap:wrap}
+.mod{display:flex;align-items:center;gap:6px;background:var(--ivory);border:1px solid var(--line);border-radius:999px;padding:5px 12px;font-size:12.5px;cursor:pointer}
+.mod input{width:auto;margin:0}
+.partners{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:8px}
+.pcard{background:#fff;border:1px solid var(--line);padding:10px 12px;font-size:12.5px;display:flex;flex-direction:column;gap:5px}
+.pcard b{font-weight:600}
+.pcard .row{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.pcard select{padding:3px 9px;font-size:11.5px}
+.pcard .exp{color:var(--muted);font-size:11.5px}
+.mailbox{background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px;margin-top:10px}
+.mailbox textarea{min-height:220px;font-family:ui-monospace,Menlo,monospace;font-size:12px;border-radius:8px}
+footer{background:var(--ink);color:var(--mist);padding:20px 0;font-size:12px;margin-top:40px}
+footer .wrap{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}
+#gate{position:fixed;inset:0;background:var(--ink);display:flex;align-items:center;justify-content:center;z-index:50}
+#gate .card{background:var(--paper);padding:38px;max-width:380px;width:92%;border-top:3px solid var(--saffron);border-radius:6px}
+#gate h2{font-family:var(--serif);font-weight:400;font-size:24px;margin:10px 0 6px}
+#gate p{font-size:13px;color:var(--secondary);margin-bottom:16px}
+#gate input{width:100%;margin-bottom:10px;font:500 14px var(--sans);padding:10px 16px}
+#gate button{width:100%;padding:12px;background:var(--saffron);border:none;font:600 14px var(--sans);cursor:pointer;border-radius:999px;color:var(--ink);box-shadow:0 1px 3px rgba(22,27,36,.18)}
+#gate button.ghost{background:transparent;border:1px solid var(--line);color:var(--ink);font-weight:500;box-shadow:none}
+#gate .alt{font-size:11.5px;color:#8A8F9C;text-align:center;margin:14px 0 10px;letter-spacing:.04em;text-transform:uppercase}
+#gate .err{color:var(--bad);font-size:12.5px;min-height:18px;margin-top:8px}
+[hidden]{display:none!important}
+@media(max-width:860px){.g4,.g3{grid-template-columns:1fr 1fr}.stoprow{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <div class="card">
+    <span class="eyebrow">Market Access Partners</span>
+    <h2>Directors &amp; shareholders</h2>
+    <p>This tool is private. Sign in with the Google account your access was issued to.</p>
+    <button id="signin-google"><svg width="16" height="16" viewBox="0 0 48 48" style="vertical-align:-3px;margin-right:8px"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>Continue with Google</button>
+    <div class="alt">or with email and password</div>
+    <input id="em" type="email" placeholder="Email" autocomplete="username">
+    <input id="pw" type="password" placeholder="Password" autocomplete="current-password">
+    <button id="signin" class="ghost">Sign in</button>
+    <div class="err" id="err"></div>
+  </div>
+</div>
+
+<div id="app" hidden>
+<header>
+  <div class="wrap">
+    <span class="mark"><a href="/">Market <b>Access</b> Partners · Internal</a></span>
+    <nav class="tools"><a href="/dashboard.html">Dashboard</a><a href="/crm.html">CRM</a><a href="/distributors.html">Distributors</a><a href="/tours.html" style="color:var(--ivory)">Tours</a><a href="/landed-price.html">Calculator</a><a href="/containers.html">Containers</a><a href="/finance.html">Finance</a></nav>
+    <span id="who"></span>
+  </div>
+</header>
+
+<div class="wrap">
+  <p class="eyebrow" style="margin-top:36px">Travel</p>
+  <h1>Tour bookings: Club7 groups, partner stops, supplier notices</h1>
+  <p class="sub">Every tour a travel partner books lands here. Build it from the itinerary modules, put a Market Access Partner producer on every stop, then send each producer their notice with one click. A booking can only be confirmed when every producer on it is a tour partner. No partner, no visit.</p>
+  <div id="msg" role="status"></div>
+
+  <div class="box new">
+    <h2 class="sec" style="margin-top:0">New booking</h2>
+    <p class="secnote">Tick the modules the group is taking. Stops are generated from the templates and dated from the arrival date; you can change any producer afterwards.</p>
+    <div class="grid g4">
+      <div><label class="f">Travel partner</label><input id="b-agent" value="Club7 Holidays"></div>
+      <div><label class="f">Partner contact (email)</label><input id="b-contact" placeholder="name@club7holidays.com"></div>
+      <div><label class="f">Lead guest / group name</label><input id="b-lead" placeholder="Mehta family"></div>
+      <div><label class="f">Group size</label><input id="b-size" type="number" min="1" value="4"></div>
+      <div><label class="f">Arrival in Auckland</label><input id="b-arr" type="date"></div>
+      <div><label class="f">Auckland hotel</label><input id="b-hotel" value="Park Hyatt Auckland, Wynyard Quarter"></div>
+      <div style="grid-column:span 2"><label class="f">Modules</label><div class="mods" id="b-mods"></div></div>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center;margin-top:12px;flex-wrap:wrap">
+      <button class="pill" id="b-create">Create booking</button>
+      <span id="b-note" style="font-size:12px;color:var(--muted)"></span>
+    </div>
+  </div>
+
+  <h2 class="sec">Bookings</h2>
+  <p class="secnote">Click a booking to work its stops. Supplier status runs pending → notified → confirmed for every producer on the itinerary.</p>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Ref</th><th>Partner / group</th><th>Dates</th><th>Pax</th><th>Modules</th><th>Suppliers</th><th>Status</th><th></th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+  <div id="detail"></div>
+
+  <h2 class="sec">Tour partners</h2>
+  <p class="secnote">Producers who can host our groups. Only <b>tour partner</b> status (or a signed export producer) is eligible for a confirmed booking. Set the status here as agreements come back; the experience note is what the itinerary shows.</p>
+  <div style="display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap">
+    <select id="p-cat"><option value="">All categories</option><option value="wine">Wine</option><option value="whisky">Whisky</option><option value="honey">Honey</option></select>
+    <select id="p-region"><option value="">All regions</option></select>
+    <select id="p-status"><option value="">Any tour status</option><option>tour partner</option><option>approached</option><option>not approached</option><option>declined</option></select>
+    <input id="p-q" type="search" placeholder="Search…" style="flex:1;min-width:180px">
+  </div>
+  <div class="partners" id="partners"></div>
+</div>
+
+<footer>
+  <div class="wrap">
+    <span>Market Access Partners Limited · A venture of Agile Strategy</span>
+    <span>No partner, no visit.</span>
+  </div>
+</footer>
+</div>
+
+<script>
+const SUPABASE_URL = "https://iwdibogfypdjgsinwube.supabase.co";
+const SUPABASE_ANON = "sb_publishable_BRmzLQw94Lt49xLFmDHJVQ_yoo68o4c";
+const $ = id => document.getElementById(id);
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+let me = "";
+let tours=[], stops=[], bookings=[], bstops=[], producers=[], openId=null;
+const esc = s => String(s??"").replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const flash=(t,bad)=>{ const m=$("msg"); m.textContent=t; m.className=bad?"bad":""; clearTimeout(flash._t); flash._t=setTimeout(()=>{m.textContent="";},5000); };
+const fmtD = d => d ? new Date(d+"T00:00:00").toLocaleDateString("en-NZ",{weekday:"short",day:"numeric",month:"short"}) : "TBC";
+const addDays=(d,n)=>{ const x=new Date(d+"T00:00:00"); x.setDate(x.getDate()+n); return x.toISOString().slice(0,10); };
+const SLOT_ORDER={transfer:0,am:1,pm:2,eve:3,stay:4};
+const isPartner = p => p && (p.tour_status==="tour partner" || p.crm_status==="signed");
+
+/* ---------- gate ---------- */
+async function boot(){ const { data:{ session } } = await sb.auth.getSession(); if (session) show(session); }
+function show(session){
+  $("gate").hidden = true; $("app").hidden = false; me = session.user.email || "";
+  $("who").innerHTML = esc(me) + '<button id="out">Sign out</button>';
+  $("out").onclick = async ()=>{ await sb.auth.signOut(); location.reload(); };
+  load();
+}
+$("signin-google").onclick = async ()=>{ const { error } = await sb.auth.signInWithOAuth({ provider:"google", options:{ redirectTo: location.origin + location.pathname } }); if (error) $("err").textContent = "Google sign-in failed: " + error.message; };
+$("signin").onclick = async ()=>{ const { data, error } = await sb.auth.signInWithPassword({ email:$("em").value.trim(), password:$("pw").value }); if (error) { $("err").textContent = "Sign-in failed: " + error.message; return; } show(data.session); };
+$("pw").addEventListener("keydown", e=>{ if(e.key==="Enter") $("signin").click(); });
+
+/* ---------- load ---------- */
+async function load(){
+  const [t,s,b,bs,p] = await Promise.all([
+    sb.from("tours").select("*").eq("active",true).order("sort"),
+    sb.from("tour_stops").select("*").order("day_no").order("sort"),
+    sb.from("tour_bookings").select("*").order("arrival_date",{ascending:true,nullsFirst:false}),
+    sb.from("tour_booking_stops").select("*").order("stop_date").order("sort"),
+    sb.from("producers").select("id,slug,name,region,category,segment,crm_status,tour_status,tour_experience,tour_duration_mins,tour_max_pax,tour_price_pp_nzd,tour_contact_email,email,key_person").order("name"),
+  ]);
+  const err=[t,s,b,bs,p].find(x=>x.error); if(err){ flash("Load failed: "+err.error.message, true); return; }
+  tours=t.data||[]; stops=s.data||[]; bookings=b.data||[]; bstops=bs.data||[];
+  const TOUR_REGIONS=["Auckland","Hawke's Bay","Central Otago","Waikato","Marlborough","Martinborough","Wairarapa"];
+  producers=(p.data||[]).filter(x=> x.tour_status!=="not approached" || x.tour_experience || x.crm_status==="signed" || ["whisky","honey"].includes(x.category) || TOUR_REGIONS.includes(x.region));
+  renderModules(); renderBookings(); renderPartners();
+  if(openId) renderDetail(openId);
+}
+function renderModules(){
+  $("b-mods").innerHTML = tours.map(t=>`<label class="mod"><input type="checkbox" value="${t.code}" checked> ${esc(t.code)} · ${esc(t.name)} <span style="color:var(--muted)">(${t.nights}N)</span></label>`).join("");
+  updateNote();
+  $("b-mods").querySelectorAll("input").forEach(i=>i.onchange=updateNote);
+}
+function updateNote(){
+  const sel=tours.filter(t=>$("b-mods").querySelector(`input[value="${t.code}"]`)?.checked);
+  const n=sel.reduce((a,t)=>a+t.nights,0);
+  const lo=sel.reduce((a,t)=>a+(+t.price_from_pp_nzd||0),0), hi=sel.reduce((a,t)=>a+(+t.price_to_pp_nzd||0),0);
+  $("b-note").textContent = sel.length ? `${n} nights · indicative NZ$${lo.toLocaleString()} to NZ$${hi.toLocaleString()} per person, land only, twin share` : "Pick at least one module.";
+}
+
+/* ---------- create booking ---------- */
+$("b-create").onclick = async ()=>{
+  const codes=[...$("b-mods").querySelectorAll("input:checked")].map(i=>i.value);
+  if(!codes.length){ flash("Pick at least one module.", true); return; }
+  const arr=$("b-arr").value||null; const size=+$("b-size").value||2;
+  const sel=tours.filter(t=>codes.includes(t.code));
+  const nights=sel.reduce((a,t)=>a+t.nights,0);
+  const lo=sel.reduce((a,t)=>a+(+t.price_from_pp_nzd||0),0);
+  const row={ agent:$("b-agent").value.trim()||"Club7 Holidays", agent_contact:$("b-contact").value.trim()||null, lead_name:$("b-lead").value.trim()||null,
+    group_size:size, arrival_date:arr, departure_date: arr?addDays(arr,nights):null, hotel_auckland:$("b-hotel").value.trim()||null,
+    modules:codes.join("+"), status:"enquiry", price_pp_nzd:lo||null, created_by:me };
+  const { data:bk, error } = await sb.from("tour_bookings").insert(row).select().single();
+  if(error){ flash("Could not create: "+error.message, true); return; }
+  // generate stops from templates, modules in the order selected
+  let dayOffset=0; const rows=[];
+  sel.forEach(t=>{
+    stops.filter(s=>s.tour_id===t.id).forEach(s=>{
+      const p=producers.find(x=>x.slug===s.producer_slug);
+      rows.push({ booking_id:bk.id, stop_date: arr?addDays(arr,dayOffset+s.day_no-1):null, slot:s.slot, kind:s.kind, title:s.title,
+        producer_slug:s.producer_slug||null, producer_name:p?p.name:null, pax:size, duration_mins:s.duration_mins,
+        supplier_status: s.producer_slug?"pending":"n/a", notes:s.notes, sort:(dayOffset+s.day_no)*100+(SLOT_ORDER[s.slot]??5)*10+(s.sort||0) });
+    });
+    dayOffset+=t.nights;
+  });
+  if(rows.length){ const r=await sb.from("tour_booking_stops").insert(rows); if(r.error){ flash("Booking saved but stops failed: "+r.error.message, true); } }
+  $("b-lead").value=""; $("b-contact").value="";
+  openId=bk.id; await load(); flash("Booking "+bk.ref+" created with "+rows.length+" stops.");
+  document.getElementById("detail").scrollIntoView({behavior:"smooth"});
+};
+
+/* ---------- bookings table ---------- */
+function supplierSummary(b){
+  const ss=bstops.filter(s=>s.booking_id===b.id && s.producer_slug);
+  const c=ss.filter(s=>s.supplier_status==="confirmed").length, n=ss.filter(s=>s.supplier_status==="notified").length;
+  const nonPartner=ss.filter(s=>!isPartner(producers.find(p=>p.slug===s.producer_slug))).length;
+  return {total:ss.length, confirmed:c, notified:n, nonPartner};
+}
+function renderBookings(){
+  const tb=$("rows");
+  if(!bookings.length){ tb.innerHTML='<tr><td colspan="8" style="color:var(--muted)">No bookings yet. Create the first one above.</td></tr>'; return; }
+  tb.innerHTML = bookings.map(b=>{
+    const s=supplierSummary(b);
+    return `<tr class="bk${openId===b.id?" open":""}" data-id="${b.id}">
+      <td><b>${esc(b.ref)}</b></td>
+      <td>${esc(b.agent)}<div style="color:var(--muted);font-size:11.5px">${esc(b.lead_name||"")}</div></td>
+      <td>${fmtD(b.arrival_date)} → ${fmtD(b.departure_date)}</td>
+      <td>${b.group_size}</td>
+      <td>${esc(b.modules||"")}</td>
+      <td>${s.confirmed}/${s.total} confirmed${s.notified?` · ${s.notified} notified`:""}${s.nonPartner?` <span class="chip no">${s.nonPartner} not partner</span>`:""}</td>
+      <td><select class="st" data-st="${b.id}">${["enquiry","quoted","confirmed","travelling","completed","cancelled"].map(x=>`<option${x===b.status?" selected":""}>${x}</option>`).join("")}</select></td>
+      <td><button class="mini" data-open="${b.id}">${openId===b.id?"Close":"Work it"}</button></td></tr>`;
+  }).join("");
+  tb.querySelectorAll("[data-open]").forEach(x=>x.onclick=(e)=>{ e.stopPropagation(); const id=+x.dataset.open; openId = openId===id?null:id; renderBookings(); renderDetail(openId); });
+  tb.querySelectorAll("tr.bk").forEach(tr=>tr.onclick=()=>{ const id=+tr.dataset.id; openId = openId===id?null:id; renderBookings(); renderDetail(openId); });
+  tb.querySelectorAll("[data-st]").forEach(sel=>{ sel.onclick=e=>e.stopPropagation(); sel.onchange=async()=>{
+    const id=+sel.dataset.st, b=bookings.find(x=>x.id===id);
+    if(sel.value==="confirmed" && supplierSummary(b).nonPartner){ flash("Cannot confirm: a producer on this booking is not a tour partner. Swap the stop or sign them first.", true); sel.value=b.status; return; }
+    const { error } = await sb.from("tour_bookings").update({status:sel.value, updated_at:new Date().toISOString()}).eq("id",id);
+    if(error){ flash("Update failed: "+error.message, true); return; } b.status=sel.value; flash(b.ref+" → "+sel.value);
+  }; });
+}
+
+/* ---------- booking detail ---------- */
+function renderDetail(id){
+  const box=$("detail"); if(!id){ box.innerHTML=""; return; }
+  const b=bookings.find(x=>x.id===id); if(!b){ box.innerHTML=""; return; }
+  const ss=bstops.filter(s=>s.booking_id===id).sort((a,b)=>(a.sort||0)-(b.sort||0));
+  const sum=supplierSummary(b);
+  const prodOpts=(kind,cur)=>`<option value="">— no producer —</option>`+producers.filter(p=>p.category===kind || (!["wine","whisky","honey"].includes(kind))).map(p=>`<option value="${esc(p.slug)}"${p.slug===cur?" selected":""}>${esc(p.name)} (${esc(p.region||"")})${isPartner(p)?" ✓":""}</option>`).join("");
+  box.innerHTML=`<div class="detail">
+    <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:baseline">
+      <div><span class="eyebrow">${esc(b.ref)}</span> <b style="font-family:var(--serif);font-size:19px;font-weight:400;margin-left:8px">${esc(b.agent)} · ${esc(b.lead_name||"group")} · ${b.group_size} pax</b></div>
+      <div style="font-size:12px;color:var(--muted)">${fmtD(b.arrival_date)} to ${fmtD(b.departure_date)} · ${esc(b.hotel_auckland||"")} · ${esc(b.agent_contact||"no partner email yet")}</div>
+    </div>
+    ${sum.nonPartner?`<div class="warnbar">${sum.nonPartner} stop${sum.nonPartner>1?"s":""} on this booking use a producer who is <b>not a tour partner</b>. The booking cannot be confirmed until they sign or are swapped for a partner.</div>`:`<div class="okbar">Every producer on this booking is a tour partner. ${sum.confirmed}/${sum.total} have confirmed the visit.</div>`}
+    <div class="stoprow" style="border-bottom:1px solid var(--line);font:600 10.5px var(--sans);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)"><span>Date</span><span>Slot</span><span>Stop</span><span>Producer</span><span>Pax</span><span>Supplier</span><span></span></div>
+    ${ss.map(s=>{ const p=producers.find(x=>x.slug===s.producer_slug); const partner=isPartner(p);
+      return `<div class="stoprow" data-sid="${s.id}">
+        <input type="date" value="${s.stop_date||""}" data-f="stop_date">
+        <span class="kind">${esc(s.slot)}</span>
+        <div><input value="${esc(s.title)}" data-f="title" style="margin-bottom:3px"><span class="chip ${esc(s.kind)}">${esc(s.kind)}</span> ${p?`<span class="chip ${partner?"partner":(p.tour_status==="declined"?"declined":"approached")}">${partner?"tour partner":esc(p.tour_status)}</span>`:""}</div>
+        <select data-f="producer_slug">${prodOpts(s.kind,s.producer_slug)}</select>
+        <input type="number" value="${s.pax??b.group_size}" data-f="pax" min="1">
+        <span class="chip ${esc(s.supplier_status)}">${esc(s.supplier_status)}</span>
+        <div class="acts">
+          ${s.producer_slug?`<button class="mini" data-notify="${s.id}">Notice</button>`:""}
+          ${s.producer_slug&&s.supplier_status!=="confirmed"?`<button class="mini" data-conf="${s.id}">Confirmed</button>`:""}
+          <button class="mini" data-del="${s.id}" title="Remove stop">×</button>
+        </div></div>`; }).join("")}
+    <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;align-items:center">
+      <button class="pill ghost" id="s-add">+ Add stop</button>
+      <button class="pill ghost" id="s-all">Notify all pending suppliers</button>
+      <button class="pill ghost" id="s-itin">Copy itinerary for ${esc(b.agent)}</button>
+      <span style="font-size:12px;color:var(--muted)">Edits save as you leave each field.</span>
+    </div>
+    <div style="margin-top:12px"><label class="f">Booking notes</label><textarea id="b-notes">${esc(b.notes||"")}</textarea><button class="pill ghost" id="s-notes" style="margin-top:6px">Save notes</button></div>
+    <div id="mailbox"></div>
+  </div>`;
+
+  // field saves
+  box.querySelectorAll("[data-sid] [data-f]").forEach(el=>{
+    el.onchange=async()=>{
+      const sid=+el.closest("[data-sid]").dataset.sid, f=el.dataset.f; let v=el.value;
+      const patch={}; patch[f]= f==="pax"?(+v||null): (v||null);
+      if(f==="producer_slug"){ const p=producers.find(x=>x.slug===v); patch.producer_name=p?p.name:null; patch.supplier_status=v?"pending":"n/a"; patch.notified_at=null; patch.confirmed_at=null; }
+      const { error } = await sb.from("tour_booking_stops").update(patch).eq("id",sid);
+      if(error){ flash("Save failed: "+error.message, true); return; }
+      const s=bstops.find(x=>x.id===sid); Object.assign(s,patch); renderBookings(); renderDetail(id);
+    };
+  });
+  box.querySelectorAll("[data-notify]").forEach(x=>x.onclick=()=>showNotice(b, bstops.find(s=>s.id===+x.dataset.notify)));
+  box.querySelectorAll("[data-conf]").forEach(x=>x.onclick=async()=>{
+    const sid=+x.dataset.conf; const { error } = await sb.from("tour_booking_stops").update({supplier_status:"confirmed",confirmed_at:new Date().toISOString()}).eq("id",sid);
+    if(error){ flash("Update failed: "+error.message, true); return; } const s=bstops.find(z=>z.id===sid); s.supplier_status="confirmed"; renderBookings(); renderDetail(id); flash("Marked confirmed.");
+  });
+  box.querySelectorAll("[data-del]").forEach(x=>x.onclick=async()=>{
+    if(!confirm("Remove this stop?")) return;
+    const sid=+x.dataset.del; const { error } = await sb.from("tour_booking_stops").delete().eq("id",sid);
+    if(error){ flash("Remove failed: "+error.message, true); return; } bstops=bstops.filter(z=>z.id!==sid); renderBookings(); renderDetail(id);
+  });
+  $("s-add").onclick=async()=>{
+    const last=ss[ss.length-1]; const { data, error } = await sb.from("tour_booking_stops").insert({booking_id:id, stop_date:last?.stop_date||b.arrival_date, slot:"pm", kind:"wine", title:"New stop", pax:b.group_size, supplier_status:"n/a", sort:(last?.sort||0)+1}).select().single();
+    if(error){ flash("Add failed: "+error.message, true); return; } bstops.push(data); renderDetail(id);
+  };
+  $("s-all").onclick=()=>{ const pend=ss.filter(s=>s.producer_slug && s.supplier_status==="pending"); if(!pend.length){ flash("Nothing pending."); return; } showNotice(b, pend[0], pend); };
+  $("s-itin").onclick=async()=>{ const txt=itineraryText(b, ss); try{ await navigator.clipboard.writeText(txt); flash("Itinerary copied for "+b.agent+"."); }catch(e){ showText("Itinerary for "+b.agent, txt); } };
+  $("s-notes").onclick=async()=>{ const { error } = await sb.from("tour_bookings").update({notes:$("b-notes").value.trim()||null, updated_at:new Date().toISOString()}).eq("id",id); if(error){ flash("Save failed: "+error.message, true); return; } b.notes=$("b-notes").value.trim(); flash("Notes saved."); };
+}
+
+/* ---------- supplier notice ---------- */
+function noticeText(b, s, p){
+  const first=(p?.key_person||"team").split(",")[0].split("(")[0].trim();
+  const when = s.stop_date ? new Date(s.stop_date+"T00:00:00").toLocaleDateString("en-NZ",{weekday:"long",day:"numeric",month:"long",year:"numeric"}) : "date to be confirmed";
+  const slot = {am:"morning (arriving around 10:30am)",pm:"afternoon (arriving around 2:00pm)",eve:"early evening"}[s.slot] || s.slot;
+  const mins = s.duration_mins || p?.tour_duration_mins || 75;
+  return `Subject: MAP tour group ${b.ref}: ${s.pax||b.group_size} guests, ${when}\n\n`+
+`Kia ora ${first},\n\n`+
+`Market Access Partners has a group booked with ${p?.name||s.producer_name} and this is your visit notice.\n\n`+
+`Booking reference: ${b.ref}\n`+
+`Travel partner: ${b.agent}${b.lead_name?" (group: "+b.lead_name+")":""}\n`+
+`Date: ${when}, ${slot}\n`+
+`Guests: ${s.pax||b.group_size}, premium Indian travellers, hosted by an MAP guide\n`+
+`Experience: ${s.title}${p?.tour_experience?" ("+p.tour_experience+")":""}, about ${mins} minutes\n`+
+`Format: tour and guided tasting with your winemaker, distiller or beekeeper telling the provenance story. Tight and premium, not a long session. Vegetarian options at any food element please.\n\n`+
+`Could you reply to confirm the slot and let us know the per person charge and any group limit? We settle your invoice directly; the guests pay nothing on the day.\n\n`+
+`Ngā mihi,\n${me.split("@")[0]||"The MAP team"}\nMarket Access Partners · myaccesspartners.com/travel.html`;
+}
+function itineraryText(b, ss){
+  let out=`${b.agent} · MAP provenance tour ${b.ref}\n${b.lead_name||"Group"} · ${b.group_size} guests · ${fmtD(b.arrival_date)} to ${fmtD(b.departure_date)}\nAuckland hotel: ${b.hotel_auckland||"TBC"}\n\n`;
+  let last=null;
+  ss.forEach(s=>{ if(s.stop_date!==last){ out+=`\n${fmtD(s.stop_date)}\n`; last=s.stop_date; }
+    const p=producers.find(x=>x.slug===s.producer_slug);
+    out+=`  ${s.slot.toUpperCase().padEnd(8)} ${s.title}${p?" · "+p.name:""}${s.duration_mins?" · "+s.duration_mins+" min":""}${s.notes?" · "+s.notes:""}\n`; });
+  out+=`\nEvery producer on this itinerary is a Market Access Partner. Indicative price NZ$${(+b.price_pp_nzd||0).toLocaleString()} per person, land only, twin share.`;
+  return out;
+}
+function showText(title, txt){ $("mailbox").innerHTML=`<div class="mailbox"><b>${esc(title)}</b><textarea readonly>${esc(txt)}</textarea></div>`; }
+function showNotice(b, s, batch){
+  const p=producers.find(x=>x.slug===s.producer_slug);
+  const txt=noticeText(b,s,p); const to=p?.tour_contact_email||p?.email||"";
+  const subj=txt.split("\n")[0].replace(/^Subject: /,""); const body=txt.split("\n").slice(2).join("\n");
+  const mailto=`mailto:${encodeURIComponent(to.split(";")[0].split("(")[0].trim())}?subject=${encodeURIComponent(subj)}&body=${encodeURIComponent(body)}`;
+  $("mailbox").innerHTML=`<div class="mailbox">
+    <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:8px">
+      <b>Supplier notice · ${esc(p?.name||s.producer_name||"")}</b>
+      <span style="font-size:12px;color:var(--muted)">${to?"To: "+esc(to):"No email on file: add a tour contact on the partner card below."}</span>
+    </div>
+    <textarea id="n-txt">${esc(txt)}</textarea>
+    <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
+      <a class="pill" style="text-decoration:none;display:inline-block" href="${mailto}" id="n-mail">Open in email</a>
+      <button class="pill ghost" id="n-copy">Copy</button>
+      <button class="pill ghost" id="n-sent">Mark notified</button>
+      ${batch&&batch.length>1?`<span style="font-size:12px;color:var(--muted);align-self:center">${batch.length} pending: marking notified moves to the next one.</span>`:""}
+    </div></div>`;
+  $("mailbox").scrollIntoView({behavior:"smooth",block:"nearest"});
+  $("n-copy").onclick=async()=>{ try{ await navigator.clipboard.writeText($("n-txt").value); flash("Notice copied."); }catch(e){ flash("Select and copy manually.", true); } };
+  const mark=async()=>{ const { error } = await sb.from("tour_booking_stops").update({supplier_status:"notified",notified_at:new Date().toISOString()}).eq("id",s.id); if(error){ flash("Update failed: "+error.message, true); return false; } s.supplier_status="notified"; return true; };
+  $("n-mail").onclick=async()=>{ if(s.supplier_status==="pending"){ await mark(); renderBookings(); renderDetail(b.id); } };
+  $("n-sent").onclick=async()=>{ if(await mark()){ renderBookings(); renderDetail(b.id); const rest=(batch||[]).filter(x=>x.id!==s.id && x.supplier_status==="pending"); if(rest.length) showNotice(b, rest[0], rest); else flash("Marked notified."); } };
+}
+
+/* ---------- partners ---------- */
+function renderPartners(){
+  const rf=$("p-region"); if(rf.options.length===1){ [...new Set(producers.map(p=>p.region).filter(Boolean))].sort().forEach(r=>{ const o=document.createElement("option"); o.value=r; o.textContent=r; rf.appendChild(o); }); }
+  const cat=$("p-cat").value, rg=$("p-region").value, st=$("p-status").value, q=$("p-q").value.trim().toLowerCase();
+  const rows=producers.filter(p=>(!cat||p.category===cat)&&(!rg||p.region===rg)&&(!st||p.tour_status===st)&&(!q||(p.name+" "+(p.tour_experience||"")).toLowerCase().includes(q)));
+  $("partners").innerHTML=rows.map(p=>`<div class="pcard" data-pid="${p.id}">
+    <div class="row"><b>${esc(p.name)}</b><span class="chip ${esc(p.category)}">${esc(p.category)}</span><span style="color:var(--muted);font-size:11.5px">${esc(p.region||"")}</span>${p.segment==="corporate"?'<span class="chip no">corporate</span>':""}${p.crm_status==="signed"?'<span class="chip partner">signed export</span>':""}</div>
+    <div class="row"><select data-f="tour_status">${["not approached","approached","tour partner","declined"].map(x=>`<option${x===p.tour_status?" selected":""}>${x}</option>`).join("")}</select>
+      <input data-f="tour_contact_email" placeholder="tour contact email" value="${esc(p.tour_contact_email||"")}" style="flex:1;min-width:150px;padding:4px 10px;font-size:11.5px">
+      <input data-f="tour_price_pp_nzd" type="number" placeholder="NZ$ pp" value="${p.tour_price_pp_nzd??""}" style="width:80px;padding:4px 10px;font-size:11.5px"></div>
+    <input data-f="tour_experience" placeholder="experience note shown on itineraries" value="${esc(p.tour_experience||"")}" style="padding:4px 10px;font-size:11.5px">
+    <div class="exp">${esc([p.email,p.key_person].filter(Boolean).join(" · "))}</div>
+  </div>`).join("") || '<div style="color:var(--muted);font-size:13px">No producers match.</div>';
+  $("partners").querySelectorAll("[data-f]").forEach(el=>el.onchange=async()=>{
+    const id=+el.closest("[data-pid]").dataset.pid, p=producers.find(x=>x.id===id); const f=el.dataset.f;
+    const patch={}; patch[f]= f==="tour_price_pp_nzd"?(el.value===""?null:+el.value):(el.value||null); patch.updated_at=new Date().toISOString();
+    const { error } = await sb.from("producers").update(patch).eq("id",id);
+    if(error){ flash("Save failed: "+error.message, true); return; } Object.assign(p,patch); flash("Saved "+p.name+"."); renderBookings(); if(openId) renderDetail(openId);
+  });
+}
+["p-cat","p-region","p-status","p-q"].forEach(id=>$(id).addEventListener("input", renderPartners));
+boot();
+</script>
+</body>
+</html>
