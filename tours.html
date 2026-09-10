@@ -169,6 +169,20 @@ footer .wrap{display:flex;justify-content:space-between;align-items:center;gap:1
     <input id="p-q" type="search" placeholder="Search…" style="flex:1;min-width:180px">
   </div>
   <div class="partners" id="partners"></div>
+
+  <h2 class="sec">Hotels</h2>
+  <p class="secnote">High end stays for the travel partners, by region. Every hotel night is billed back to Market Access Partners Limited, so a hotel is only usable on a confirmed booking once its status is <b>bill-back agreed</b>. Record the agreed terms (group rate, commission, deposit, cancellation) on the card.</p>
+  <div style="display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap">
+    <select id="h-region"><option value="">All regions</option></select>
+    <select id="h-status"><option value="">Any status</option><option>bill-back agreed</option><option>approached</option><option>not approached</option><option>declined</option></select>
+    <input id="h-q" type="search" placeholder="Search hotels…" style="flex:1;min-width:180px">
+  </div>
+  <div class="partners" id="hotels"></div>
+  <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;align-items:center">
+    <input id="h-name" placeholder="Add a hotel: name" style="min-width:200px"><input id="h-town" placeholder="town" style="width:150px">
+    <select id="h-newregion"><option>Auckland</option><option>Waiheke</option><option>Hawke's Bay</option><option>Queenstown</option><option>Central Otago</option><option>Other</option></select>
+    <button class="pill" id="h-add">Add hotel</button>
+  </div>
 </div>
 
 <footer>
@@ -185,7 +199,8 @@ const SUPABASE_ANON = "sb_publishable_BRmzLQw94Lt49xLFmDHJVQ_yoo68o4c";
 const $ = id => document.getElementById(id);
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 let me = "";
-let tours=[], stops=[], bookings=[], bstops=[], producers=[], openId=null;
+let tours=[], stops=[], bookings=[], bstops=[], producers=[], hotels=[], openId=null;
+const isHotelPartner = h => h && h.partner_status==="bill-back agreed";
 const esc = s => String(s??"").replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const flash=(t,bad)=>{ const m=$("msg"); m.textContent=t; m.className=bad?"bad":""; clearTimeout(flash._t); flash._t=setTimeout(()=>{m.textContent="";},5000); };
 const fmtD = d => d ? new Date(d+"T00:00:00").toLocaleDateString("en-NZ",{weekday:"short",day:"numeric",month:"short"}) : "TBC";
@@ -207,18 +222,19 @@ $("pw").addEventListener("keydown", e=>{ if(e.key==="Enter") $("signin").click()
 
 /* ---------- load ---------- */
 async function load(){
-  const [t,s,b,bs,p] = await Promise.all([
+  const [t,s,b,bs,p,h] = await Promise.all([
     sb.from("tours").select("*").eq("active",true).order("sort"),
     sb.from("tour_stops").select("*").order("day_no").order("sort"),
     sb.from("tour_bookings").select("*").order("arrival_date",{ascending:true,nullsFirst:false}),
     sb.from("tour_booking_stops").select("*").order("stop_date").order("sort"),
     sb.from("producers").select("id,slug,name,region,category,segment,crm_status,tour_status,tour_experience,tour_duration_mins,tour_max_pax,tour_price_pp_nzd,tour_contact_email,email,key_person").order("name"),
+    sb.from("hotels").select("*").order("region").order("priority").order("name"),
   ]);
-  const err=[t,s,b,bs,p].find(x=>x.error); if(err){ flash("Load failed: "+err.error.message, true); return; }
-  tours=t.data||[]; stops=s.data||[]; bookings=b.data||[]; bstops=bs.data||[];
+  const err=[t,s,b,bs,p,h].find(x=>x.error); if(err){ flash("Load failed: "+err.error.message, true); return; }
+  tours=t.data||[]; stops=s.data||[]; bookings=b.data||[]; bstops=bs.data||[]; hotels=h.data||[];
   const TOUR_REGIONS=["Auckland","Hawke's Bay","Central Otago","Waikato","Marlborough","Martinborough","Wairarapa"];
   producers=(p.data||[]).filter(x=> x.tour_status!=="not approached" || x.tour_experience || x.crm_status==="signed" || ["whisky","honey"].includes(x.category) || TOUR_REGIONS.includes(x.region));
-  renderModules(); renderBookings(); renderPartners();
+  renderModules(); renderBookings(); renderPartners(); renderHotels();
   if(openId) renderDetail(openId);
 }
 function renderModules(){
@@ -250,10 +266,12 @@ $("b-create").onclick = async ()=>{
   let dayOffset=0; const rows=[];
   sel.forEach(t=>{
     stops.filter(s=>s.tour_id===t.id).forEach(s=>{
-      const p=producers.find(x=>x.slug===s.producer_slug);
+      const p=producers.find(x=>x.slug===s.producer_slug); const h=hotels.find(x=>x.id===s.hotel_id);
       rows.push({ booking_id:bk.id, stop_date: arr?addDays(arr,dayOffset+s.day_no-1):null, slot:s.slot, kind:s.kind, title:s.title,
         producer_slug:s.producer_slug||null, producer_name:p?p.name:null, pax:size, duration_mins:s.duration_mins,
-        supplier_status: s.producer_slug?"pending":"n/a", notes:s.notes, sort:(dayOffset+s.day_no)*100+(SLOT_ORDER[s.slot]??5)*10+(s.sort||0) });
+        hotel_id:s.hotel_id||null, hotel_name:h?h.name:null, nights: s.slot==="stay"?t.nights:null, rooms: s.slot==="stay"?Math.ceil(size/2):null,
+        rate_nzd: h?h.rate_from_nzd:null,
+        supplier_status: (s.producer_slug||s.hotel_id)?"pending":"n/a", notes:s.notes, sort:(dayOffset+s.day_no)*100+(SLOT_ORDER[s.slot]??5)*10+(s.sort||0) });
     });
     dayOffset+=t.nights;
   });
@@ -264,11 +282,17 @@ $("b-create").onclick = async ()=>{
 };
 
 /* ---------- bookings table ---------- */
+function stopOk(s){
+  if(s.producer_slug) return isPartner(producers.find(p=>p.slug===s.producer_slug));
+  if(s.hotel_id) return isHotelPartner(hotels.find(h=>h.id===s.hotel_id));
+  return true;
+}
 function supplierSummary(b){
-  const ss=bstops.filter(s=>s.booking_id===b.id && s.producer_slug);
+  const ss=bstops.filter(s=>s.booking_id===b.id && (s.producer_slug||s.hotel_id));
   const c=ss.filter(s=>s.supplier_status==="confirmed").length, n=ss.filter(s=>s.supplier_status==="notified").length;
-  const nonPartner=ss.filter(s=>!isPartner(producers.find(p=>p.slug===s.producer_slug))).length;
-  return {total:ss.length, confirmed:c, notified:n, nonPartner};
+  const nonPartner=ss.filter(s=>!stopOk(s)).length;
+  const hotelCost=bstops.filter(s=>s.booking_id===b.id && s.hotel_id).reduce((a,s)=>a+((+s.rate_nzd||0)*(+s.rooms||1)*(+s.nights||1)),0);
+  return {total:ss.length, confirmed:c, notified:n, nonPartner, hotelCost};
 }
 function renderBookings(){
   const tb=$("rows");
@@ -289,7 +313,7 @@ function renderBookings(){
   tb.querySelectorAll("tr.bk").forEach(tr=>tr.onclick=()=>{ const id=+tr.dataset.id; openId = openId===id?null:id; renderBookings(); renderDetail(openId); });
   tb.querySelectorAll("[data-st]").forEach(sel=>{ sel.onclick=e=>e.stopPropagation(); sel.onchange=async()=>{
     const id=+sel.dataset.st, b=bookings.find(x=>x.id===id);
-    if(sel.value==="confirmed" && supplierSummary(b).nonPartner){ flash("Cannot confirm: a producer on this booking is not a tour partner. Swap the stop or sign them first.", true); sel.value=b.status; return; }
+    if(sel.value==="confirmed" && supplierSummary(b).nonPartner){ flash("Cannot confirm: a producer or hotel on this booking is not a partner (producers need tour partner status, hotels need bill-back agreed). Swap the stop or sign them first.", true); sel.value=b.status; return; }
     const { error } = await sb.from("tour_bookings").update({status:sel.value, updated_at:new Date().toISOString()}).eq("id",id);
     if(error){ flash("Update failed: "+error.message, true); return; } b.status=sel.value; flash(b.ref+" → "+sel.value);
   }; });
@@ -302,24 +326,29 @@ function renderDetail(id){
   const ss=bstops.filter(s=>s.booking_id===id).sort((a,b)=>(a.sort||0)-(b.sort||0));
   const sum=supplierSummary(b);
   const prodOpts=(kind,cur)=>`<option value="">— no producer —</option>`+producers.filter(p=>p.category===kind || (!["wine","whisky","honey"].includes(kind))).map(p=>`<option value="${esc(p.slug)}"${p.slug===cur?" selected":""}>${esc(p.name)} (${esc(p.region||"")})${isPartner(p)?" ✓":""}</option>`).join("");
+  const hotelOpts=(cur)=>`<option value="">— no hotel —</option>`+hotels.map(h=>`<option value="${h.id}"${h.id===cur?" selected":""}>${esc(h.name)} (${esc(h.region)}, from NZ$${(+h.rate_from_nzd||0).toLocaleString()})${isHotelPartner(h)?" ✓":""}</option>`).join("");
   box.innerHTML=`<div class="detail">
     <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:baseline">
       <div><span class="eyebrow">${esc(b.ref)}</span> <b style="font-family:var(--serif);font-size:19px;font-weight:400;margin-left:8px">${esc(b.agent)} · ${esc(b.lead_name||"group")} · ${b.group_size} pax</b></div>
       <div style="font-size:12px;color:var(--muted)">${fmtD(b.arrival_date)} to ${fmtD(b.departure_date)} · ${esc(b.hotel_auckland||"")} · ${esc(b.agent_contact||"no partner email yet")}</div>
     </div>
-    ${sum.nonPartner?`<div class="warnbar">${sum.nonPartner} stop${sum.nonPartner>1?"s":""} on this booking use a producer who is <b>not a tour partner</b>. The booking cannot be confirmed until they sign or are swapped for a partner.</div>`:`<div class="okbar">Every producer on this booking is a tour partner. ${sum.confirmed}/${sum.total} have confirmed the visit.</div>`}
-    <div class="stoprow" style="border-bottom:1px solid var(--line);font:600 10.5px var(--sans);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)"><span>Date</span><span>Slot</span><span>Stop</span><span>Producer</span><span>Pax</span><span>Supplier</span><span></span></div>
-    ${ss.map(s=>{ const p=producers.find(x=>x.slug===s.producer_slug); const partner=isPartner(p);
+    ${sum.nonPartner?`<div class="warnbar">${sum.nonPartner} stop${sum.nonPartner>1?"s":""} on this booking use a producer or hotel that is <b>not a partner</b> (producers: tour partner; hotels: bill-back agreed). The booking cannot be confirmed until they sign or are swapped.</div>`:`<div class="okbar">Every producer and hotel on this booking is a partner. ${sum.confirmed}/${sum.total} have confirmed.</div>`}
+    <div style="font-size:12px;color:var(--muted);margin:4px 0 8px">Hotel nights bill back to Market Access Partners Limited. Indicative accommodation cost on this booking: <b style="color:var(--ink)">NZ$${Math.round(sum.hotelCost).toLocaleString()}</b> (rate × rooms × nights, from the hotel's from-rate unless overridden).</div>
+    <div class="stoprow" style="border-bottom:1px solid var(--line);font:600 10.5px var(--sans);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)"><span>Date</span><span>Slot</span><span>Stop</span><span>Producer / hotel</span><span>Pax</span><span>Supplier</span><span></span></div>
+    ${ss.map(s=>{ const isStay=s.slot==="stay"||s.kind==="hotel"; const p=producers.find(x=>x.slug===s.producer_slug); const h=hotels.find(x=>x.id===s.hotel_id); const partner=isStay?isHotelPartner(h):isPartner(p);
+      const chip = isStay ? (h?`<span class="chip ${partner?"partner":(h.partner_status==="declined"?"declined":"approached")}">${esc(h.partner_status)}</span>`:"") : (p?`<span class="chip ${partner?"partner":(p.tour_status==="declined"?"declined":"approached")}">${partner?"tour partner":esc(p.tour_status)}</span>`:"");
+      const picker = isStay ? `<div><select data-f="hotel_id">${hotelOpts(s.hotel_id)}</select><div style="display:flex;gap:4px;margin-top:3px"><input type="number" value="${s.rooms??""}" data-f="rooms" placeholder="rooms" title="Rooms" style="width:33%"><input type="number" value="${s.nights??""}" data-f="nights" placeholder="nights" title="Nights" style="width:33%"><input type="number" value="${s.rate_nzd??""}" data-f="rate_nzd" placeholder="NZ$/night" title="Rate per room per night" style="width:34%"></div></div>` : `<select data-f="producer_slug">${prodOpts(s.kind,s.producer_slug)}</select>`;
+      const hasSupplier = isStay ? !!s.hotel_id : !!s.producer_slug;
       return `<div class="stoprow" data-sid="${s.id}">
         <input type="date" value="${s.stop_date||""}" data-f="stop_date">
         <span class="kind">${esc(s.slot)}</span>
-        <div><input value="${esc(s.title)}" data-f="title" style="margin-bottom:3px"><span class="chip ${esc(s.kind)}">${esc(s.kind)}</span> ${p?`<span class="chip ${partner?"partner":(p.tour_status==="declined"?"declined":"approached")}">${partner?"tour partner":esc(p.tour_status)}</span>`:""}</div>
-        <select data-f="producer_slug">${prodOpts(s.kind,s.producer_slug)}</select>
+        <div><input value="${esc(s.title)}" data-f="title" style="margin-bottom:3px"><span class="chip ${esc(s.kind)}">${esc(s.kind)}</span> ${chip}</div>
+        ${picker}
         <input type="number" value="${s.pax??b.group_size}" data-f="pax" min="1">
         <span class="chip ${esc(s.supplier_status)}">${esc(s.supplier_status)}</span>
         <div class="acts">
-          ${s.producer_slug?`<button class="mini" data-notify="${s.id}">Notice</button>`:""}
-          ${s.producer_slug&&s.supplier_status!=="confirmed"?`<button class="mini" data-conf="${s.id}">Confirmed</button>`:""}
+          ${hasSupplier?`<button class="mini" data-notify="${s.id}">Notice</button>`:""}
+          ${hasSupplier&&s.supplier_status!=="confirmed"?`<button class="mini" data-conf="${s.id}">Confirmed</button>`:""}
           <button class="mini" data-del="${s.id}" title="Remove stop">×</button>
         </div></div>`; }).join("")}
     <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;align-items:center">
@@ -336,8 +365,9 @@ function renderDetail(id){
   box.querySelectorAll("[data-sid] [data-f]").forEach(el=>{
     el.onchange=async()=>{
       const sid=+el.closest("[data-sid]").dataset.sid, f=el.dataset.f; let v=el.value;
-      const patch={}; patch[f]= f==="pax"?(+v||null): (v||null);
+      const patch={}; patch[f]= ["pax","rooms","nights","rate_nzd","hotel_id"].includes(f)?(v===""?null:+v): (v||null);
       if(f==="producer_slug"){ const p=producers.find(x=>x.slug===v); patch.producer_name=p?p.name:null; patch.supplier_status=v?"pending":"n/a"; patch.notified_at=null; patch.confirmed_at=null; }
+      if(f==="hotel_id"){ const h=hotels.find(x=>x.id===+v); patch.hotel_name=h?h.name:null; patch.rate_nzd=h?h.rate_from_nzd:null; patch.supplier_status=v?"pending":"n/a"; patch.notified_at=null; patch.confirmed_at=null; if(h) patch.title="Check in, "+h.name; }
       const { error } = await sb.from("tour_booking_stops").update(patch).eq("id",sid);
       if(error){ flash("Save failed: "+error.message, true); return; }
       const s=bstops.find(x=>x.id===sid); Object.assign(s,patch); renderBookings(); renderDetail(id);
@@ -357,7 +387,7 @@ function renderDetail(id){
     const last=ss[ss.length-1]; const { data, error } = await sb.from("tour_booking_stops").insert({booking_id:id, stop_date:last?.stop_date||b.arrival_date, slot:"pm", kind:"wine", title:"New stop", pax:b.group_size, supplier_status:"n/a", sort:(last?.sort||0)+1}).select().single();
     if(error){ flash("Add failed: "+error.message, true); return; } bstops.push(data); renderDetail(id);
   };
-  $("s-all").onclick=()=>{ const pend=ss.filter(s=>s.producer_slug && s.supplier_status==="pending"); if(!pend.length){ flash("Nothing pending."); return; } showNotice(b, pend[0], pend); };
+  $("s-all").onclick=()=>{ const pend=ss.filter(s=>(s.producer_slug||s.hotel_id) && s.supplier_status==="pending"); if(!pend.length){ flash("Nothing pending."); return; } showNotice(b, pend[0], pend); };
   $("s-itin").onclick=async()=>{ const txt=itineraryText(b, ss); try{ await navigator.clipboard.writeText(txt); flash("Itinerary copied for "+b.agent+"."); }catch(e){ showText("Itinerary for "+b.agent, txt); } };
   $("s-notes").onclick=async()=>{ const { error } = await sb.from("tour_bookings").update({notes:$("b-notes").value.trim()||null, updated_at:new Date().toISOString()}).eq("id",id); if(error){ flash("Save failed: "+error.message, true); return; } b.notes=$("b-notes").value.trim(); flash("Notes saved."); };
 }
@@ -380,24 +410,42 @@ function noticeText(b, s, p){
 `Could you reply to confirm the slot and let us know the per person charge and any group limit? We settle your invoice directly; the guests pay nothing on the day.\n\n`+
 `Ngā mihi,\n${me.split("@")[0]||"The MAP team"}\nMarket Access Partners · myaccesspartners.com/travel.html`;
 }
+function hotelNoticeText(b, s, h){
+  const inD = s.stop_date ? new Date(s.stop_date+"T00:00:00").toLocaleDateString("en-NZ",{weekday:"long",day:"numeric",month:"long",year:"numeric"}) : "date to be confirmed";
+  const outD = s.stop_date && s.nights ? new Date(addDays(s.stop_date, s.nights)+"T00:00:00").toLocaleDateString("en-NZ",{weekday:"long",day:"numeric",month:"long",year:"numeric"}) : "to be confirmed";
+  const rooms = s.rooms || Math.ceil((s.pax||b.group_size)/2);
+  return `Subject: Group booking request ${b.ref}: ${rooms} rooms, ${inD}\n\n`+
+`Kia ora ${h?.name||s.hotel_name} reservations team,\n\n`+
+`Market Access Partners would like to book the following for a hosted group of premium Indian travellers.\n\n`+
+`Booking reference: ${b.ref}\n`+
+`Guests: ${s.pax||b.group_size} (${rooms} rooms, twin or king as available)\n`+
+`Check in: ${inD}\n`+
+`Check out: ${outD} (${s.nights||"TBC"} night${(s.nights||2)>1?"s":""})\n`+
+`Lead name: ${b.lead_name||"to follow"} · travel partner ${b.agent}\n`+
+`Requests: rooms together where possible, vegetarian breakfast options, late checkout on departure day if available.\n\n`+
+`Billing: please invoice all accommodation and agreed extras to Market Access Partners Limited, hello@myaccesspartners.com. Guests should not be charged for room, breakfast or any pre-agreed inclusions on the day; incidentals may be settled by the guests directly.${h?.billback_terms?" Agreed terms: "+h.billback_terms+".":""}\n\n`+
+`Could you confirm availability, the group rate and your deposit and cancellation terms by reply?\n\n`+
+`Ngā mihi,\n${me.split("@")[0]||"The MAP team"}\nMarket Access Partners Limited · myaccesspartners.com/travel.html`;
+}
 function itineraryText(b, ss){
   let out=`${b.agent} · MAP provenance tour ${b.ref}\n${b.lead_name||"Group"} · ${b.group_size} guests · ${fmtD(b.arrival_date)} to ${fmtD(b.departure_date)}\nAuckland hotel: ${b.hotel_auckland||"TBC"}\n\n`;
   let last=null;
   ss.forEach(s=>{ if(s.stop_date!==last){ out+=`\n${fmtD(s.stop_date)}\n`; last=s.stop_date; }
-    const p=producers.find(x=>x.slug===s.producer_slug);
-    out+=`  ${s.slot.toUpperCase().padEnd(8)} ${s.title}${p?" · "+p.name:""}${s.duration_mins?" · "+s.duration_mins+" min":""}${s.notes?" · "+s.notes:""}\n`; });
+    const p=producers.find(x=>x.slug===s.producer_slug); const h=hotels.find(x=>x.id===s.hotel_id);
+    out+=`  ${s.slot.toUpperCase().padEnd(8)} ${s.title}${p?" · "+p.name:""}${h&&!s.title.includes(h.name)?" · "+h.name:""}${h&&s.nights?" · "+s.nights+" night"+(s.nights>1?"s":""):""}${s.duration_mins&&!h?" · "+s.duration_mins+" min":""}${s.notes?" · "+s.notes:""}\n`; });
   out+=`\nEvery producer on this itinerary is a Market Access Partner. Indicative price NZ$${(+b.price_pp_nzd||0).toLocaleString()} per person, land only, twin share.`;
   return out;
 }
 function showText(title, txt){ $("mailbox").innerHTML=`<div class="mailbox"><b>${esc(title)}</b><textarea readonly>${esc(txt)}</textarea></div>`; }
 function showNotice(b, s, batch){
-  const p=producers.find(x=>x.slug===s.producer_slug);
-  const txt=noticeText(b,s,p); const to=p?.tour_contact_email||p?.email||"";
+  const isStay = !!s.hotel_id && !s.producer_slug;
+  const p=producers.find(x=>x.slug===s.producer_slug); const h=hotels.find(x=>x.id===s.hotel_id);
+  const txt= isStay ? hotelNoticeText(b,s,h) : noticeText(b,s,p); const to= isStay ? (h?.contact_email||"") : (p?.tour_contact_email||p?.email||"");
   const subj=txt.split("\n")[0].replace(/^Subject: /,""); const body=txt.split("\n").slice(2).join("\n");
   const mailto=`mailto:${encodeURIComponent(to.split(";")[0].split("(")[0].trim())}?subject=${encodeURIComponent(subj)}&body=${encodeURIComponent(body)}`;
   $("mailbox").innerHTML=`<div class="mailbox">
     <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:8px">
-      <b>Supplier notice · ${esc(p?.name||s.producer_name||"")}</b>
+      <b>${isStay?"Hotel booking request":"Supplier notice"} · ${esc(isStay?(h?.name||s.hotel_name||""):(p?.name||s.producer_name||""))}</b>
       <span style="font-size:12px;color:var(--muted)">${to?"To: "+esc(to):"No email on file: add a tour contact on the partner card below."}</span>
     </div>
     <textarea id="n-txt">${esc(txt)}</textarea>
@@ -435,6 +483,38 @@ function renderPartners(){
   });
 }
 ["p-cat","p-region","p-status","p-q"].forEach(id=>$(id).addEventListener("input", renderPartners));
+
+/* ---------- hotels ---------- */
+const HOTEL_STATUSES=["not approached","approached","bill-back agreed","declined"];
+function renderHotels(){
+  const rf=$("h-region"); if(rf.options.length===1){ [...new Set(hotels.map(h=>h.region).filter(Boolean))].forEach(r=>{ const o=document.createElement("option"); o.value=r; o.textContent=r; rf.appendChild(o); }); }
+  const rg=$("h-region").value, st=$("h-status").value, q=$("h-q").value.trim().toLowerCase();
+  const rows=hotels.filter(h=>(!rg||h.region===rg)&&(!st||h.partner_status===st)&&(!q||(h.name+" "+(h.town||"")+" "+(h.hook||"")+" "+(h.style||"")).toLowerCase().includes(q)));
+  $("hotels").innerHTML=rows.map(h=>`<div class="pcard" data-hid="${h.id}">
+    <div class="row"><b>${esc(h.name)}</b><span class="chip ${isHotelPartner(h)?"partner":(h.partner_status==="declined"?"declined":h.partner_status==="approached"?"approached":"")}">${esc(h.partner_status)}</span><span style="color:var(--muted);font-size:11.5px">${esc(h.region)}${h.town?" · "+esc(h.town):""}</span></div>
+    <div style="font-size:11.5px;color:var(--secondary)">${esc(h.style||"")}${h.rate_from_nzd?" · from NZ$"+(+h.rate_from_nzd).toLocaleString()+(h.rate_to_nzd?" to "+(+h.rate_to_nzd).toLocaleString():"")+"/night":""}${h.rooms?" · "+h.rooms+" rooms":""}${h.max_group?" · groups to "+h.max_group:""}${h.restaurant===false?" · no restaurant":""}${h.ownership?" · "+esc(h.ownership):""}</div>
+    <div class="exp">${esc(h.hook||"")}</div>
+    <div class="row"><select data-f="partner_status">${HOTEL_STATUSES.map(x=>`<option${x===h.partner_status?" selected":""}>${x}</option>`).join("")}</select>
+      <input data-f="contact_email" placeholder="reservations email" value="${esc(h.contact_email||"")}" style="flex:1;min-width:160px;padding:4px 10px;font-size:11.5px">
+      <input data-f="commission_pct" type="number" placeholder="comm %" value="${h.commission_pct??""}" style="width:80px;padding:4px 10px;font-size:11.5px"></div>
+    <input data-f="billback_terms" placeholder="bill-back terms: group rate, deposit, cancellation" value="${esc(h.billback_terms||"")}" style="padding:4px 10px;font-size:11.5px">
+    <div class="row" style="font-size:11.5px;color:var(--muted)">${h.phone?esc(h.phone)+" · ":""}${h.website?`<a href="${esc(h.website)}" target="_blank" rel="noopener" style="color:var(--saffron)">website</a>`:""}</div>
+  </div>`).join("") || '<div style="color:var(--muted);font-size:13px">No hotels match.</div>';
+  $("hotels").querySelectorAll("[data-f]").forEach(el=>el.onchange=async()=>{
+    const id=+el.closest("[data-hid]").dataset.hid, h=hotels.find(x=>x.id===id); const f=el.dataset.f;
+    const patch={}; patch[f]= f==="commission_pct"?(el.value===""?null:+el.value):(el.value||null); patch.updated_at=new Date().toISOString();
+    if(f==="partner_status" && el.value!=="not approached") patch.last_contacted=h.last_contacted||new Date().toISOString().slice(0,10);
+    const { error } = await sb.from("hotels").update(patch).eq("id",id);
+    if(error){ flash("Save failed: "+error.message, true); return; } Object.assign(h,patch); flash("Saved "+h.name+"."); renderHotels(); renderBookings(); if(openId) renderDetail(openId);
+  });
+}
+["h-region","h-status","h-q"].forEach(id=>$(id).addEventListener("input", renderHotels));
+$("h-add").onclick=async()=>{
+  const name=$("h-name").value.trim(); if(!name){ flash("Give the hotel a name.", true); return; }
+  const row={ name, town:$("h-town").value.trim()||null, region:$("h-newregion").value, slug:name.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,""), notes:"Added via Tours by "+me };
+  const { data, error } = await sb.from("hotels").insert(row).select().single();
+  if(error){ flash("Could not add: "+error.message, true); return; } hotels.push(data); $("h-name").value=""; $("h-town").value=""; renderHotels(); flash("Added "+name+".");
+};
 boot();
 </script>
 </body>
