@@ -84,9 +84,9 @@ tr.detail td{background:var(--ivory);padding:14px 16px}
 #savemsg{font-size:12px;min-height:16px;color:var(--good)}
 #msg{font-size:12.5px;color:var(--bad);min-height:16px;margin:8px 0}
 
-#addbox{background:#fff;border:1px solid var(--line);border-top:3px solid var(--saffron);padding:16px 18px;margin-bottom:40px}
-#addbox h3{font-family:var(--serif);font-weight:400;font-size:17px;margin-bottom:8px}
-#addbox .row{display:flex;gap:10px;flex-wrap:wrap}
+#addbox,.addbox{background:#fff;border:1px solid var(--line);border-top:3px solid var(--saffron);padding:16px 18px;margin-bottom:40px}
+#addbox h3,.addbox h3{font-family:var(--serif);font-weight:400;font-size:17px;margin-bottom:8px}
+#addbox .row,.addbox .row{display:flex;gap:10px;flex-wrap:wrap}
 #addbox input,#addbox select{padding:8px 14px;border:1px solid var(--line);border-radius:999px;font:400 13px var(--sans);background:#fff}
 #addbox input{flex:1;min-width:140px}
 
@@ -186,6 +186,31 @@ footer .wrap{display:flex;justify-content:space-between;align-items:center;gap:1
       <select id="a-cat"><option value="wine">Wine</option><option value="whisky">Whisky</option><option value="beer">Craft beer</option><option value="honey">Mānuka honey</option></select>
       <select id="a-seg"><option value="independent">Independent</option><option value="corporate">Corporate</option></select>
       <button class="pill" id="a-add">Add to CRM</button>
+    </div>
+  </div>
+
+  <h2 class="sec" id="hotels-sec">Hotels and stays</h2>
+  <p class="secnote">The high end stays our groups use. Every hotel night is billed back to Market Access Partners Limited, so a hotel only goes on a confirmed booking once its status is <b>bill-back agreed</b>. Work them here like producers: status, owner, notes, and a copy and paste approach email.</p>
+  <div class="toolbar">
+    <input id="hq" type="search" placeholder="Search hotels, towns, notes…" aria-label="Search hotels">
+    <select id="hf-region" aria-label="Region"><option value="">All regions</option></select>
+    <select id="hf-status" aria-label="Status"><option value="">Any status</option><option>not approached</option><option>approached</option><option>bill-back agreed</option><option>declined</option></select>
+  </div>
+  <div id="hcounts"></div>
+  <div class="tablewrap">
+    <table id="htbl">
+      <thead><tr><th>Hotel</th><th>Style · rate</th><th>Status</th><th>Commission</th><th>Assigned</th><th>Last contact</th><th></th></tr></thead>
+      <tbody id="hrows"></tbody>
+    </table>
+  </div>
+  <div class="addbox" style="margin-top:14px">
+    <h3>Add a hotel to approach</h3>
+    <div class="row">
+      <input id="ha-name" type="text" placeholder="Hotel name">
+      <input id="ha-town" type="text" placeholder="Town">
+      <select id="ha-region"><option>Auckland</option><option>Waiheke</option><option>Hawke's Bay</option><option>Queenstown</option><option>Central Otago</option><option>Other</option></select>
+      <input id="ha-email" type="text" placeholder="Reservations email">
+      <button class="pill" id="ha-add">Add to CRM</button>
     </div>
   </div>
 </div>
@@ -293,6 +318,7 @@ async function load(){
     .order("name");
   if(error){ $("msg").textContent="Could not load producers: "+error.message; return; }
   all = data||[];
+  loadHotels();
   fillProdDropdown();
   const regions=[...new Set(all.map(p=>p.region).filter(Boolean))].sort();
   const rf=$("f-region");
@@ -418,6 +444,88 @@ $("a-add").onclick=async ()=>{
   const { data, error } = await sb.from("producers").insert(row).select().single();
   if(error){ flash("Could not add: "+error.message, true); return; }
   all.push(data); $("a-name").value=""; $("a-region").value=""; render(); flash("Added "+name+" to the CRM.");
+};
+
+
+/* ---------- hotels ---------- */
+const HSTATUSES=["not approached","approached","bill-back agreed","declined"];
+let hotels=[];
+async function loadHotels(){
+  const { data, error } = await sb.from("hotels").select("*").order("region").order("priority").order("name");
+  if(error){ flash("Could not load hotels: "+error.message, true); return; }
+  hotels=data||[];
+  const rf=$("hf-region"); if(rf.options.length===1) [...new Set(hotels.map(h=>h.region).filter(Boolean))].forEach(r=>{ const o=document.createElement("option"); o.value=r; o.textContent=r; rf.appendChild(o); });
+  renderHotels();
+}
+function renderHotels(){
+  const q=$("hq").value.trim().toLowerCase(), rg=$("hf-region").value, st=$("hf-status").value;
+  const rows=hotels.filter(h=>(!rg||h.region===rg)&&(!st||h.partner_status===st)&&(!q||[h.name,h.town,h.region,h.style,h.hook,h.crm_notes,h.notes].join(" ").toLowerCase().includes(q)));
+  const agreed=hotels.filter(h=>h.partner_status==="bill-back agreed").length;
+  $("hcounts").innerHTML="<b>"+rows.length+"</b> shown · "+hotels.length+" hotels · <b>"+agreed+"</b> bill-back agreed";
+  const tb=$("hrows"); tb.replaceChildren();
+  rows.forEach(h=>{
+    const tr=document.createElement("tr");
+    const tdN=document.createElement("td"); const nm=document.createElement("div"); nm.className="nm"; nm.textContent=h.name; nm.onclick=()=>hotelDetail(h,tr);
+    const rgd=document.createElement("div"); rgd.className="rg"; rgd.textContent=[h.region,h.town].filter(Boolean).join(" · "); tdN.append(nm,rgd);
+    const tdY=document.createElement("td"); tdY.style.color="var(--secondary)"; tdY.textContent=[h.style, h.rate_from_nzd?"from NZ$"+(+h.rate_from_nzd).toLocaleString()+"/night":""].filter(Boolean).join(" · ");
+    const tdS=document.createElement("td"); const sel=document.createElement("select"); sel.className="status";
+    HSTATUSES.forEach(x=>{ const o=document.createElement("option"); o.value=x; o.textContent=x; sel.appendChild(o); }); sel.value=h.partner_status||"not approached"; styleHStatus(sel);
+    sel.onchange=async()=>{ h.partner_status=sel.value; styleHStatus(sel); await saveHotel(h,{partner_status:sel.value, last_contacted: sel.value==="not approached"?h.last_contacted:(h.last_contacted||today())}); renderHotels(); };
+    tdS.appendChild(sel);
+    const tdC=document.createElement("td"); tdC.style.color="var(--secondary)"; tdC.textContent=h.commission_pct!=null?h.commission_pct+"%":"";
+    const tdA=document.createElement("td"); tdA.textContent=h.assigned_to||""; tdA.style.color="var(--secondary)";
+    const tdL=document.createElement("td"); tdL.textContent=h.last_contacted||""; tdL.style.color="var(--secondary)";
+    const tdX=document.createElement("td"); const wk=document.createElement("button"); wk.className="mini"; wk.textContent="Work it"; wk.onclick=()=>hotelDetail(h,tr); tdX.appendChild(wk);
+    tr.append(tdN,tdY,tdS,tdC,tdA,tdL,tdX); tb.appendChild(tr);
+  });
+}
+function styleHStatus(sel){ sel.className="status"+(sel.value==="bill-back agreed"?" s-signed":sel.value==="declined"?" s-declined":sel.value==="approached"?" s-live":""); }
+function hotelDetail(h, tr){
+  const existing=document.querySelector("tr.detail"); if(existing){ const was=existing.dataset.pid; existing.remove(); if("h"+h.id===was) return; }
+  const dtr=document.createElement("tr"); dtr.className="detail"; dtr.dataset.pid="h"+h.id; const td=document.createElement("td"); td.colSpan=7; const box=document.createElement("div"); box.className="detail";
+  const mk=(lbl,el)=>{ const w=document.createElement("span"); const l=document.createElement("label"); l.textContent=lbl+" "; w.append(l,el); return w; };
+  const r1=document.createElement("div"); r1.className="drow";
+  const asg=document.createElement("input"); asg.type="text"; asg.value=h.assigned_to||""; asg.placeholder="who owns this?"; asg.size=14;
+  const meBtn=document.createElement("button"); meBtn.className="mini"; meBtn.textContent="me"; meBtn.onclick=()=>{ asg.value=me.split("@")[0]; };
+  const lc=document.createElement("input"); lc.type="date"; lc.value=h.last_contacted||""; const tdy=document.createElement("button"); tdy.className="mini"; tdy.textContent="today"; tdy.onclick=()=>{ lc.value=today(); };
+  r1.append(mk("Assigned",asg),meBtn,mk("Last contact",lc),tdy);
+  const r15=document.createElement("div"); r15.className="drow"; r15.style.marginTop="8px";
+  const cn=document.createElement("input"); cn.type="text"; cn.value=h.contact_name||""; cn.placeholder="contact name"; cn.size=16;
+  const ce=document.createElement("input"); ce.type="text"; ce.value=h.contact_email||""; ce.placeholder="reservations / groups email"; ce.size=26;
+  const cm=document.createElement("input"); cm.type="number"; cm.value=h.commission_pct??""; cm.placeholder="comm %"; cm.style.width="80px";
+  const bt=document.createElement("input"); bt.type="text"; bt.value=h.billback_terms||""; bt.placeholder="bill-back terms: group rate, deposit, cancellation"; bt.size=44;
+  r15.append(mk("Contact",cn),ce,mk("Commission",cm),mk("Terms",bt));
+  const notes=document.createElement("textarea"); notes.value=h.crm_notes||""; notes.placeholder="Call notes, who said what, next step…";
+  const r2=document.createElement("div"); r2.className="drow"; r2.style.marginTop="8px";
+  const saveB=document.createElement("button"); saveB.className="pill"; saveB.textContent="Save";
+  saveB.onclick=async()=>{ const patch={assigned_to:asg.value.trim()||null,last_contacted:lc.value||null,crm_notes:notes.value.trim()||null,contact_name:cn.value.trim()||null,contact_email:ce.value.trim()||null,commission_pct:cm.value===""?null:+cm.value,billback_terms:bt.value.trim()||null}; await saveHotel(h,patch); renderHotels(); };
+  const copyB=document.createElement("button"); copyB.className="pill ghost"; copyB.textContent="Copy approach email";
+  copyB.onclick=async()=>{
+    const first=(h.contact_name||"").split(" ")[0]||"there";
+    const txt="Subject: Premium Indian groups for "+h.name+": a bill-back partnership with Market Access Partners\n\n"+
+"Kia ora "+first+",\n\n"+
+"Market Access Partners hosts small groups of premium Indian travellers on wine, whisky and mānuka honey provenance journeys through New Zealand, with Club7 Holidays (Mumbai) selling the journeys in India. "+h.name+" is our preferred stay in "+(h.region||"your region")+" and we would like to set up a simple standing arrangement before the first groups arrive in the February to April 2027 window.\n\n"+
+"How it works: we book "+(h.max_group?"groups of up to "+h.max_group:"groups of 2 to 12 guests")+", twin share, usually two or three nights. Every room night and any pre agreed inclusions are invoiced to Market Access Partners Limited; guests are never charged for the room on the day. In return we are asking for a group rate, a commission or net rate, and clear deposit and cancellation terms.\n\n"+
+"Could we have 20 minutes this week to agree the terms? I can send our one page hotel agreement to make it easy.\n\n"+
+"Ngā mihi,\n"+(me.split("@")[0]||"The MAP team")+"\nMarket Access Partners Limited · myaccesspartners.com/travel.html · hello@myaccesspartners.com";
+    try{ await navigator.clipboard.writeText(txt); flash("Approach email for "+h.name+" copied."); }catch(e){ flash("Could not copy: "+e.message, true); }
+  };
+  const site=document.createElement("a"); site.className="mini"; site.style.cssText="text-decoration:none;padding:5px 12px;border:1px solid var(--line);border-radius:999px;font:500 11px var(--sans);color:var(--secondary)";
+  if(h.website){ site.textContent="Website"; site.href=h.website.startsWith("http")?h.website:"https://"+h.website; site.target="_blank"; site.rel="noopener"; }
+  const tours=document.createElement("a"); tours.className="mini"; tours.style.cssText=site.style.cssText; tours.textContent="Tours page"; tours.href="/tours.html";
+  r2.append(saveB,copyB); if(h.website) r2.append(site); r2.append(tours);
+  const meta=document.createElement("div"); meta.className="meta"; meta.textContent=[h.style,h.rooms?h.rooms+" rooms":"",h.rate_from_nzd?"NZ$"+(+h.rate_from_nzd).toLocaleString()+(h.rate_to_nzd?" to "+(+h.rate_to_nzd).toLocaleString():"")+" per night":"",h.ownership,h.phone].filter(Boolean).join(" · ");
+  const bg=document.createElement("div"); bg.className="meta"; bg.textContent=h.hook||h.notes||"";
+  box.append(r1,r15,notes,r2,meta,bg); td.appendChild(box); dtr.appendChild(td); tr.after(dtr);
+}
+async function saveHotel(h, patch){ patch.updated_at=new Date().toISOString(); const { error } = await sb.from("hotels").update(patch).eq("id",h.id); if(error){ flash("Save failed: "+error.message, true); return; } Object.assign(h,patch); flash("Saved "+h.name+"."); }
+["hq","hf-region","hf-status"].forEach(id=>$(id).addEventListener("input", renderHotels));
+$("ha-add").onclick=async()=>{
+  const name=$("ha-name").value.trim(); if(!name){ flash("Give the hotel a name first.", true); return; }
+  const row={ name, town:$("ha-town").value.trim()||null, region:$("ha-region").value, contact_email:$("ha-email").value.trim()||null, slug:name.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,""), priority:2, notes:"Added via CRM by "+me+" on "+today()+"." };
+  const { data, error } = await sb.from("hotels").insert(row).select().single();
+  if(error){ flash("Could not add: "+error.message, true); return; }
+  hotels.push(data); $("ha-name").value=""; $("ha-town").value=""; $("ha-email").value=""; renderHotels(); flash("Added "+name+" to the CRM.");
 };
 
 /* ---------- client collateral builder ---------- */
