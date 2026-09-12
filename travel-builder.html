@@ -91,6 +91,21 @@ td select,td input{padding:4px 9px;font-size:12px}
 .card .row{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
 .card .exp{color:var(--muted);font-size:11.5px}
 .card .tick{position:absolute;top:8px;right:10px;font-size:14px;color:var(--saffron)}
+.region{background:#fff;border:1px solid var(--line);margin-bottom:12px}
+.region summary{cursor:pointer;list-style:none;display:flex;gap:12px;align-items:center;padding:12px 16px;background:var(--ivory);border-bottom:1px solid var(--line)}
+.region summary::-webkit-details-marker{display:none}
+.region summary h3{font-family:var(--serif);font-weight:400;font-size:19px;margin:0;flex:1}
+.region summary .n{font-size:12px;color:var(--muted)}
+.rcols{display:grid;grid-template-columns:repeat(4,1fr);gap:0}
+.rcol{padding:12px;border-right:1px solid var(--grid);max-height:640px;overflow-y:auto}
+.rcol:last-child{border-right:none}
+.rcol h4{font:600 10.5px var(--sans);text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
+.rcol .card{margin-bottom:6px}
+.rcol .empty{font-size:12px;color:var(--muted);font-style:italic}
+.bespoke{border-top:1px dashed var(--line);margin-top:8px;padding-top:8px;display:grid;gap:4px}
+.bespoke input{padding:5px 9px;font-size:12px;width:100%}
+@media(max-width:1000px){.rcols{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.rcols{grid-template-columns:1fr}}
 .day{background:#fff;border:1px solid var(--line);padding:12px 14px;margin-bottom:10px}
 .day h4{font-family:var(--serif);font-weight:400;font-size:17px;margin-bottom:4px}
 .day .dm{font-size:11.5px;color:var(--muted);margin-bottom:8px}
@@ -222,23 +237,15 @@ footer .wrap{display:flex;justify-content:space-between;align-items:center;gap:1
   <!-- STEP 2: producers & hotels -->
   <section id="s2" hidden>
     <div class="box new">
-      <h2 class="sec" style="margin-top:0">2 · Producers and stays</h2>
-      <p class="secnote">Tick the wineries, distilleries, honey producers and hotels you want on this journey. Partners are marked ✓. You can leave this empty and let the AI planner choose from partners only.</p>
-      <div style="display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap">
-        <select id="p-cat"><option value="">All categories</option><option value="wine">Wine</option><option value="whisky">Whisky</option><option value="honey">Honey</option></select>
-        <select id="p-region"><option value="">All regions</option></select>
-        <select id="p-status"><option value="">Any tour status</option><option>tour partner</option><option>approached</option><option>not approached</option></select>
-        <input id="p-q" type="search" placeholder="Search producers…" style="flex:1;min-width:180px">
+      <h2 class="sec" style="margin-top:0">2 · Producers and stays, by region</h2>
+      <p class="secnote">Each region groups its wine, whisky and spirits, and honey producers with the accommodation for that region. Tick what you want on this journey; partners are marked ✓. Leave a region empty and the planner chooses from partners. Bespoke accommodation (a villa, a lodge, a private house) can be added straight into a region.</p>
+      <div style="display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap">
+        <input id="p-q" type="search" placeholder="Search producers and hotels…" style="flex:1;min-width:200px">
+        <select id="p-status"><option value="">Any status</option><option value="partner">Partners only</option><option value="approached">Approached</option><option value="not approached">Not approached</option></select>
+        <label class="toggle"><input type="checkbox" id="p-onlysel"> Show selected only</label>
         <span id="p-count" style="font-size:12px;color:var(--muted);align-self:center"></span>
       </div>
-      <div class="cards" id="p-cards"></div>
-      <h3 class="min">Hotels</h3>
-      <div style="display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap">
-        <select id="h-region"><option value="">All regions</option></select>
-        <input id="h-q" type="search" placeholder="Search hotels…" style="flex:1;min-width:180px">
-        <span id="h-count" style="font-size:12px;color:var(--muted);align-self:center"></span>
-      </div>
-      <div class="cards" id="h-cards"></div>
+      <div id="regions"></div>
       <div class="bar">
         <button class="pill back" data-go="1">← Back</button>
         <span class="spacer"></span>
@@ -369,7 +376,7 @@ async function load(){
   tours=t.data||[]; tstops=s.data||[]; bookings=b.data||[]; bstops=bs.data||[]; blegs=bl.data||[]; hotels=h.data||[]; flights=f.data||[]; ops=o.data||[];
   const TOUR_REGIONS=["Auckland","Waiheke","Hawke's Bay","Central Otago","Queenstown","Wānaka","Waikato","Marlborough","Martinborough","Wairarapa"];
   producers=(p.data||[]).filter(x=> x.segment!=="corporate" && (x.tour_status!=="not approached" || x.tour_experience || x.crm_status==="signed" || ["whisky","honey"].includes(x.category) || TOUR_REGIONS.includes(x.region)));
-  renderList(); renderArrivalFlights(); renderProducerPickers(); renderHotelPickers();
+  renderList(); renderArrivalFlights(); if(step===2) renderProducerPickers();
   const q=new URLSearchParams(location.search); const open=+q.get("booking"); if(open && !S){ const bk=bookings.find(x=>x.id===open); if(bk){ openJourney(bk); } }
 }
 
@@ -381,7 +388,7 @@ function go(n){
   step=n;
   for(let i=0;i<5;i++){ $("s"+i).hidden = i!==n; }
   document.querySelectorAll(".step").forEach(el=>{ const k=+el.dataset.step; el.classList.toggle("on",k===n); el.classList.toggle("done", S && k<n && k>0); });
-  if(n===1) fillBrief(); if(n===2){ renderProducerPickers(); renderHotelPickers(); } if(n===3) renderPlan(); if(n===4) renderDownloads();
+  if(n===1) fillBrief(); if(n===2){ renderProducerPickers(); } if(n===3) renderPlan(); if(n===4) renderDownloads();
   window.scrollTo({top:0,behavior:"smooth"});
 }
 document.querySelectorAll("[data-go]").forEach(b=>b.onclick=async()=>{ const n=+b.dataset.go; if(n>step && step>0){ captureStep(); const ok=await saveJourney(); if(!ok) return; } if(n===0){ S=null; await load(); } go(n); });
@@ -464,33 +471,51 @@ function renderArrivalFlights(){
   $("f-flights").querySelectorAll("[data-fid]").forEach(c=>c.onclick=()=>{ if(!S) S=blank(); const id=+c.dataset.fid; S.arrival_flight_id = S.arrival_flight_id===id?null:id; renderArrivalFlights(); });
 }
 
-/* ---------- step 2: pickers ---------- */
+/* ---------- step 2: pickers, grouped by region ---------- */
+const REGION_GROUPS=[["Auckland","Auckland and Waiheke"],["Hawke's Bay","Hawke's Bay"],["Central Otago","Central Otago and Queenstown"],["Other","Other regions"]];
+const CAT_COLS=[["wine","Wine"],["whisky","Whisky and spirits"],["honey","Mānuka honey"]];
+const groupOf = r => regionKey(r) || "Other";
 function renderProducerPickers(){
-  const rf=$("p-region"); if(rf.options.length===1){ [...new Set(producers.map(p=>p.region).filter(Boolean))].sort().forEach(r=>{ const o=document.createElement("option"); o.value=r; o.textContent=r; rf.appendChild(o); }); }
-  const cat=$("p-cat").value, rg=$("p-region").value, st=$("p-status").value, q=$("p-q").value.trim().toLowerCase();
-  const rows=producers.filter(p=>(!cat||p.category===cat)&&(!rg||p.region===rg)&&(!st||p.tour_status===st)&&(!q||(p.name+" "+(p.tour_experience||"")+" "+(p.region||"")).toLowerCase().includes(q)));
-  const sel=new Set(S?.producer_slugs||[]);
-  $("p-count").textContent=`${sel.size} selected · ${rows.length} shown`;
-  $("p-cards").innerHTML=rows.slice(0,240).map(p=>`<div class="card${sel.has(p.slug)?" sel":""}" data-ps="${esc(p.slug)}">${sel.has(p.slug)?'<span class="tick">✓</span>':""}
-    <div class="row"><b>${esc(p.name)}</b><span class="chip ${esc(p.category)}">${esc(p.category)}</span></div>
-    <div class="row"><span style="color:var(--muted);font-size:11.5px">${esc(p.region||"")}</span><span class="chip ${isPartner(p)?"partner":(p.tour_status==="declined"?"declined":p.tour_status==="approached"?"approached":"")}">${isPartner(p)?"partner ✓":esc(p.tour_status)}</span>${p.tour_price_pp_nzd?`<span style="font-size:11.5px;color:var(--muted)">${nz(p.tour_price_pp_nzd)} pp</span>`:""}</div>
-    <div class="exp">${esc(p.tour_experience||"")}</div></div>`).join("") || '<div style="color:var(--muted);font-size:13px">No producers match.</div>';
-  $("p-cards").querySelectorAll("[data-ps]").forEach(c=>c.onclick=()=>{ if(!S) S=blank(); const s=c.dataset.ps; const i=S.producer_slugs.indexOf(s); if(i>=0) S.producer_slugs.splice(i,1); else S.producer_slugs.push(s); renderProducerPickers(); });
+  if(!S) S=blank();
+  const q=$("p-q").value.trim().toLowerCase(), st=$("p-status").value, only=$("p-onlysel").checked;
+  const selP=new Set(S.producer_slugs), selH=new Set(S.hotel_ids);
+  const okP=p=>(!st||(st==="partner"?isPartner(p):p.tour_status===st))&&(!only||selP.has(p.slug))&&(!q||(p.name+" "+(p.tour_experience||"")+" "+(p.region||"")).toLowerCase().includes(q));
+  const okH=h=>(!st||(st==="partner"?isHotelPartner(h):h.partner_status===st))&&(!only||selH.has(h.id))&&(!q||(h.name+" "+(h.town||"")+" "+(h.hook||"")+" "+(h.style||"")).toLowerCase().includes(q));
+  $("p-count").textContent=`${selP.size} producers and ${selH.size} stays selected`;
+  $("regions").innerHTML=REGION_GROUPS.map(([key,label])=>{
+    const ps=producers.filter(p=>groupOf(p.region)===key), hs=hotels.filter(h=>groupOf(h.region)===key);
+    const nSel=ps.filter(p=>selP.has(p.slug)).length+hs.filter(h=>selH.has(h.id)).length;
+    const inJourney=key==="Other"||S.regions.includes(key);
+    const card=p=>`<div class="card${selP.has(p.slug)?" sel":""}" data-ps="${esc(p.slug)}">${selP.has(p.slug)?'<span class="tick">✓</span>':""}
+      <div class="row"><b>${esc(p.name)}</b></div>
+      <div class="row"><span style="color:var(--muted);font-size:11.5px">${esc(p.region||"")}</span><span class="chip ${isPartner(p)?"partner":(p.tour_status==="declined"?"declined":p.tour_status==="approached"?"approached":"")}">${isPartner(p)?"partner ✓":esc(p.tour_status)}</span>${p.tour_price_pp_nzd?`<span style="font-size:11.5px;color:var(--muted)">${nz(p.tour_price_pp_nzd)} pp</span>`:""}</div>
+      ${p.tour_experience?`<div class="exp">${esc(p.tour_experience)}</div>`:""}</div>`;
+    const hcard=h=>`<div class="card${selH.has(h.id)?" sel":""}" data-hs="${h.id}">${selH.has(h.id)?'<span class="tick">✓</span>':""}
+      <div class="row"><b>${esc(h.name)}</b></div>
+      <div class="row"><span class="chip ${isHotelPartner(h)?"partner":(h.partner_status==="approached"?"approached":"")}">${esc(h.partner_status)}</span><span style="font-size:11.5px;color:var(--muted)">${esc(h.town||h.region)}${h.rate_from_nzd?" · from "+nz(h.rate_from_nzd):""}</span></div>
+      ${h.hook?`<div class="exp">${esc(h.hook)}</div>`:""}</div>`;
+    const cols=CAT_COLS.map(([cat,cl])=>{ const rows=ps.filter(p=>p.category===cat&&okP(p)); const partners=ps.filter(p=>p.category===cat&&isPartner(p));
+      return `<div class="rcol"><h4><span>${cl} <span style="font-weight:400">${rows.length}</span></span>${partners.length?`<button class="mini" data-allp="${key}|${cat}" title="Select every partner">all partners</button>`:""}</h4>${rows.slice(0,80).map(card).join("")||'<div class="empty">None in the CRM yet.</div>'}${rows.length>80?`<div class="empty">${rows.length-80} more, use search.</div>`:""}</div>`; }).join("");
+    const hrows=hs.filter(okH);
+    const hcol=`<div class="rcol"><h4><span>Accommodation <span style="font-weight:400">${hrows.length}</span></span></h4>${hrows.map(hcard).join("")||'<div class="empty">No stays listed.</div>'}
+      <div class="bespoke"><span style="font:600 10.5px var(--sans);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">Bespoke accommodation</span>
+        <input data-bn="${key}" placeholder="Villa, lodge or private house name"><div style="display:flex;gap:4px"><input data-bt="${key}" placeholder="town" style="flex:1"><input data-br="${key}" type="number" placeholder="NZ$/night" style="width:100px"></div>
+        <button class="mini" data-badd="${key}">+ Add and select</button></div></div>`;
+    return `<details class="region"${inJourney?" open":""}><summary><h3>${label}</h3><span class="n">${ps.length} producers · ${hs.length} stays${nSel?` · <b style="color:var(--saffron)">${nSel} selected</b>`:""}${inJourney?"":" · not in this journey's regions"}</span></summary><div class="rcols">${cols}${hcol}</div></details>`;
+  }).join("");
+  const R=$("regions");
+  R.querySelectorAll("[data-ps]").forEach(c=>c.onclick=()=>{ const k=c.dataset.ps; const i=S.producer_slugs.indexOf(k); if(i>=0) S.producer_slugs.splice(i,1); else S.producer_slugs.push(k); renderProducerPickers(); });
+  R.querySelectorAll("[data-hs]").forEach(c=>c.onclick=()=>{ const id=+c.dataset.hs; const i=S.hotel_ids.indexOf(id); if(i>=0) S.hotel_ids.splice(i,1); else S.hotel_ids.push(id); renderProducerPickers(); });
+  R.querySelectorAll("[data-allp]").forEach(b=>b.onclick=(e)=>{ e.preventDefault(); const [key,cat]=b.dataset.allp.split("|"); producers.filter(p=>groupOf(p.region)===key&&p.category===cat&&isPartner(p)).forEach(p=>{ if(!S.producer_slugs.includes(p.slug)) S.producer_slugs.push(p.slug); }); renderProducerPickers(); });
+  R.querySelectorAll("[data-badd]").forEach(b=>b.onclick=async(e)=>{ e.preventDefault(); const key=b.dataset.badd; const name=R.querySelector(`[data-bn="${key}"]`).value.trim(); if(!name){ flash("Give the accommodation a name.", true); return; }
+    const town=R.querySelector(`[data-bt="${key}"]`).value.trim()||null, rate=R.querySelector(`[data-br="${key}"]`).value; const region=key==="Other"?"Other":key;
+    const row={ name, town, region, style:"Bespoke accommodation", rate_from_nzd:rate===""?null:+rate, slug:name.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")+"-"+Date.now().toString(36), priority:2, notes:"Bespoke, added from the Travel builder by "+me };
+    const { data, error } = await sb.from("hotels").insert(row).select().single(); if(error){ flash("Could not add: "+error.message, true); return; }
+    hotels.push(data); S.hotel_ids.push(data.id); renderProducerPickers(); flash("Added "+name+" and selected it."); });
+  R.querySelectorAll("details summary").forEach(sm=>sm.onclick=e=>{ if(e.target.closest("button")) e.preventDefault(); });
 }
-["p-cat","p-region","p-status","p-q"].forEach(id=>$(id).addEventListener("input", renderProducerPickers));
-function renderHotelPickers(){
-  const rf=$("h-region"); if(rf.options.length===1){ [...new Set(hotels.map(h=>h.region).filter(Boolean))].forEach(r=>{ const o=document.createElement("option"); o.value=r; o.textContent=r; rf.appendChild(o); }); }
-  const rg=$("h-region").value, q=$("h-q").value.trim().toLowerCase();
-  const rows=hotels.filter(h=>(!rg||h.region===rg)&&(!q||(h.name+" "+(h.town||"")+" "+(h.hook||"")).toLowerCase().includes(q)));
-  const sel=new Set(S?.hotel_ids||[]);
-  $("h-count").textContent=`${sel.size} selected`;
-  $("h-cards").innerHTML=rows.map(h=>`<div class="card${sel.has(h.id)?" sel":""}" data-hs="${h.id}">${sel.has(h.id)?'<span class="tick">✓</span>':""}
-    <div class="row"><b>${esc(h.name)}</b><span class="chip ${isHotelPartner(h)?"partner":(h.partner_status==="approached"?"approached":"")}">${esc(h.partner_status)}</span></div>
-    <div style="font-size:11.5px;color:var(--secondary)">${esc(h.region)}${h.town?" · "+esc(h.town):""}${h.rate_from_nzd?" · from "+nz(h.rate_from_nzd)+"/night":""}${h.rooms?" · "+h.rooms+" rooms":""}</div>
-    <div class="exp">${esc(h.hook||"")}</div></div>`).join("");
-  $("h-cards").querySelectorAll("[data-hs]").forEach(c=>c.onclick=()=>{ if(!S) S=blank(); const id=+c.dataset.hs; const i=S.hotel_ids.indexOf(id); if(i>=0) S.hotel_ids.splice(i,1); else S.hotel_ids.push(id); renderHotelPickers(); });
-}
-["h-region","h-q"].forEach(id=>$(id).addEventListener("input", renderHotelPickers));
+["p-q","p-status","p-onlysel"].forEach(id=>$(id).addEventListener("input", renderProducerPickers));
+function renderHotelPickers(){ /* merged into renderProducerPickers */ }
 function readPicks(){ /* picks are live in S */ }
 </script>
 <script>
@@ -550,7 +575,12 @@ function buildRules(){
       const isArrivalDay = ri===0 && d===0;
       const lateArrival = isArrivalDay && arrHour>=13;
       if(lateArrival){ day.stops.push({slot:"eve",kind:"dining",title:"Welcome dinner at the hotel, early night",notes:"Gentle arrival day"}); day.headline="Arrival and welcome dinner"; if(car) legs.push(opLeg(car,date,car.type==="private_coach"?"coach":"car",pax,hoursOf(car,2)||undefined,"Airport meet and greet to "+(hotel?.name||"the hotel"))); days.push(day); date=addDays(date,1); continue; }
-      tstopsDay.forEach(s=>{
+      // if the group flies into this region today, drop stops that clash with the arrival time
+      const arrToday=legs.filter(l=>l.date===date&&l.leg_type.includes("flight")).map(l=>l.arr_time||"").sort().pop()||"";
+      const regionArr = d===0 && (ri>0 || iata!=="AKL") ? arrToday : "";
+      const usable = regionArr ? tstopsDay.filter(s=>s.kind==="transfer" || (s.slot==="am"&&regionArr<"10:00") || (s.slot==="pm"&&regionArr<"14:30") || s.slot==="eve") : tstopsDay;
+      if(regionArr && usable.filter(s=>s.kind!=="transfer").length===0) day.stops.push({slot:"pm",kind:"leisure",title:"Arrive "+(CITY[iata]||region)+" about "+regionArr+", check in and settle"});
+      usable.forEach(s=>{
         if(s.kind==="transfer"){
           if(region==="Auckland" && /waiheke/i.test(s.title)){
             const heli=opsIn("Auckland","helicopter").sort((a,b)=>(a.priority||2)-(b.priority||2))[0], ferry=ops.find(o=>o.type==="ferry"&&/waiheke/i.test(o.route_desc||""));
@@ -816,7 +846,7 @@ function pdfFooter(doc, note){
 function wrapDoc(doc){ const t=doc.text.bind(doc), sp=doc.splitTextToSize.bind(doc); doc.text=(x,...r)=>t(Array.isArray(x)?x.map(T):T(x),...r); doc.splitTextToSize=(x,...r)=>sp(T(x),...r); const at=doc.autoTable.bind(doc); doc.autoTable=(o)=>{ const fix=rows=>(rows||[]).map(r=>r.map(c=>typeof c==="string"?T(c):c)); return at({...o, head:fix(o.head), body:fix(o.body)}); }; return doc; }
 async function itineraryPDF(){
   const P=S.plan, pax=S.group_size; const { jsPDF } = window.jspdf; const doc=new jsPDF({unit:"mm",format:"a4"}); await pdfFonts(doc); wrapDoc(doc); const W=doc.internal.pageSize.getWidth();
-  let y=pdfHeader(doc, P.title||"MAP provenance journey", `${S.agent}${S.lead_name?" · "+S.lead_name:""} · ${pax} guests from ${S.origin_city} · ${fmtD(S.arrival_date)} to ${fmtD(addDays(S.arrival_date,S.nights))} · ${refOr()}`);
+  let y=pdfHeader(doc, P.title||"MAP provenance journey", `Prepared for ${S.agent}${S.lead_name?" · "+S.lead_name:""} · ${pax} guests from ${S.origin_city} · ${fmtD(S.arrival_date)} to ${fmtD(addDays(S.arrival_date,S.nights))} · ${refOr()} · hosted by Market Access Partners`);
   doc.setFontSize(10.5); doc.setTextColor(...BRAND.ink); const sum=doc.splitTextToSize(P.summary||"",W-28); doc.text(sum,14,y); y+=sum.length*5+4;
   const arr=P.legs.find(l=>l.leg_type==="arrival_flight");
   if(arr){ doc.setFillColor(...BRAND.ivory); doc.rect(14,y,W-28,12,"F"); doc.setFont(FONT,"bold"); doc.setFontSize(9.5); doc.text("ARRIVAL",18,y+5); doc.setFont(FONT,"normal"); doc.text(`${arr.airline||""} ${arr.flight_no||""} from ${CITY[arr.origin]||arr.origin}, arrives Auckland ${arr.arr_time||"time TBC"} on ${fmtDL(arr.date)}`,38,y+5); doc.setTextColor(...BRAND.muted); doc.setFontSize(8.5); doc.text(arr.notes||"",38,y+9.5,{maxWidth:W-60}); doc.setTextColor(...BRAND.ink); y+=16; }
@@ -838,7 +868,7 @@ async function itineraryPDF(){
 }
 async function indiaPDF(){
   const P=S.plan, pax=S.group_size; const { jsPDF } = window.jspdf; const doc=new jsPDF({unit:"mm",format:"a4"}); await pdfFonts(doc); wrapDoc(doc); const W=doc.internal.pageSize.getWidth(), H=doc.internal.pageSize.getHeight();
-  let y=pdfHeader(doc, P.title||"New Zealand provenance journey", `${S.nights} nights · ${P.days.map(d=>d.region).filter((v,i,a)=>v&&a.indexOf(v)===i).join(", ")} · hosted by Market Access Partners`)-4;
+  let y=pdfHeader(doc, P.title||"New Zealand provenance journey", `${S.nights} nights · ${P.days.map(d=>d.region).filter((v,i,a)=>v&&a.indexOf(v)===i).join(", ")} · sold in India by ${S.agent} · hosted in New Zealand by Market Access Partners`)-4;
   doc.setFontSize(9.5); doc.setTextColor(...BRAND.ink); const sum=doc.splitTextToSize(P.summary||"",W-28); doc.text(sum,14,y); y+=sum.length*5+5;
   doc.setFont(FONT,"bold"); doc.setFontSize(12); doc.text("The journey",14,y); y+=6; doc.setFont(FONT,"normal"); doc.setFontSize(9.5);
   P.days.forEach((d,i)=>{ const line=doc.splitTextToSize(`Day ${i+1}, ${fmtD(d.date)}: ${d.headline||d.stops.map(s=>s.title).slice(0,2).join(", ")}${P.legs.some(l=>l.date===d.date&&l.leg_type==="helicopter")?" (helicopter)":""}`,W-28); doc.text(line,14,y); y+=line.length*4.0; });
@@ -849,10 +879,10 @@ async function indiaPDF(){
   const pr=P.pricing||{}; const pp=pr.per_person_land_only_nzd||0;
   if(y>H-56){ doc.addPage(); y=20; }
   doc.setFillColor(...BRAND.ink); doc.rect(14,y,W-28,28,"F"); doc.setTextColor(...BRAND.saffron); doc.setFont(FONT,"bold"); doc.setFontSize(9); doc.text("INDICATIVE PRICE PER PERSON, LAND ONLY, TWIN SHARE",18,y+7);
-  doc.setTextColor(...BRAND.ivory); doc.setFontSize(18); doc.text(`${inr(pp)}  ·  ${nz(pp)}`,18,y+17); doc.setFontSize(8); doc.setFont(FONT,"normal"); doc.text(`Group of ${pax}. Net rate to the travel company; international airfare extra. NZ$1 = ₹${INR}.`,18,y+24); y+=36;
-  doc.setTextColor(...BRAND.ink); doc.setFontSize(9.5); const why=doc.splitTextToSize("Every stop is an independent producer represented in India by Market Access Partners. Guests taste at the source; your distributor lists the same bottles. Journeys are built to order for 2 to 12 guests, with helicopter transfers to Waiheke Island and Central Otago wine country on request. Vegetarian dining throughout.",W-28); doc.text(why,14,y); y+=why.length*4.6+5;
+  doc.setTextColor(...BRAND.ivory); doc.setFontSize(18); doc.text(`${inr(pp)}  ·  ${nz(pp)}`,18,y+17); doc.setFontSize(8); doc.setFont(FONT,"normal"); doc.text(`Group of ${pax}. Net rate to ${S.agent}, who sets the retail price in India; international airfare extra. NZ$1 = ₹${INR}.`,18,y+24); y+=36;
+  doc.setTextColor(...BRAND.ink); doc.setFontSize(9.5); const why=doc.splitTextToSize(`Every stop is an independent producer represented in India by Market Access Partners. Guests taste at the source; your distributor lists the same bottles. Journeys are sold in India by ${S.agent} and built to order for 2 to 12 guests, with helicopter transfers to Waiheke Island and Central Otago wine country on request. Vegetarian dining throughout.`,W-28); doc.text(why,14,y); y+=why.length*4.6+5;
   if(y>H-24){ doc.addPage(); y=20; }
-  doc.setFontSize(9); doc.setFont(FONT,"bold"); doc.text("India enquiries: Shiva, Market Access Partners India · hello@myaccesspartners.com",14,y); doc.setFont(FONT,"normal"); doc.text("New Zealand hosting: Paul Newton and Rohaan Mohanty, directors · myaccesspartners.com/travel.html",14,y+6);
+  doc.setFontSize(9); doc.setFont(FONT,"bold"); doc.text(`Bookings in India: ${S.agent}${S.agent_contact?" · "+S.agent_contact:""} · Trade enquiries: Shiva, Market Access Partners India · hello@myaccesspartners.com`,14,y); doc.setFont(FONT,"normal"); doc.text("New Zealand hosting: Paul Newton and Rohaan Mohanty, directors · myaccesspartners.com/travel.html",14,y+6);
   pdfFooter(doc,"Market Access Partners Limited · For Indian travel agents and distributors · Prices indicative until confirmed."); return doc.output("blob");
 }
 
