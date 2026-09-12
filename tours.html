@@ -37,6 +37,10 @@ h2.sec{font-family:var(--serif);font-weight:400;font-size:22px;margin:26px 0 4px
 button.pill{background:var(--saffron);border:none;color:var(--ink);font:600 12.5px var(--sans);padding:9px 18px;border-radius:999px;cursor:pointer}
 button.pill.ghost{background:#fff;border:1px solid var(--line);color:var(--secondary);font-weight:500}
 button.pill:disabled{opacity:.45;cursor:not-allowed}
+button.pill.danger{background:#fff;border:1px solid #E5CFCB;color:var(--bad);font-weight:500}
+button.pill.back{background:var(--ivory);border:1px solid var(--line);color:var(--ink);font-weight:500}
+#totop{position:fixed;right:18px;bottom:18px;z-index:20;box-shadow:0 2px 8px rgba(22,27,36,.2)}
+.legrow{display:grid;grid-template-columns:110px 110px 2fr 1.4fr 90px 150px auto;gap:8px;align-items:center;padding:6px 0;border-bottom:1px dashed var(--line);font-size:12.5px}
 button.mini{background:#fff;border:1px solid var(--line);border-radius:999px;font:500 11px var(--sans);color:var(--secondary);padding:3px 11px;cursor:pointer;white-space:nowrap}
 button.mini:hover{border-color:var(--saffron);color:var(--ink)}
 button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--saffron);outline-offset:1px}
@@ -98,7 +102,7 @@ footer .wrap{display:flex;justify-content:space-between;align-items:center;gap:1
 #gate .alt{font-size:11.5px;color:#8A8F9C;text-align:center;margin:14px 0 10px;letter-spacing:.04em;text-transform:uppercase}
 #gate .err{color:var(--bad);font-size:12.5px;min-height:18px;margin-top:8px}
 [hidden]{display:none!important}
-@media(max-width:860px){.g4,.g3{grid-template-columns:1fr 1fr}.stoprow{grid-template-columns:1fr 1fr}}
+@media(max-width:860px){.g4,.g3{grid-template-columns:1fr 1fr}.stoprow,.legrow{grid-template-columns:1fr 1fr}}
 </style>
 </head>
 <body>
@@ -121,7 +125,7 @@ footer .wrap{display:flex;justify-content:space-between;align-items:center;gap:1
 <header>
   <div class="wrap">
     <span class="mark"><a href="/">Market <b>Access</b> Partners · Internal</a></span>
-    <nav class="tools"><a href="/dashboard.html">Dashboard</a><a href="/crm.html">CRM</a><a href="/distributors.html">Distributors</a><a href="/tours.html" style="color:var(--ivory)">Tours</a><a href="/landed-price.html">Calculator</a><a href="/containers.html">Containers</a><a href="/finance.html">Finance</a></nav>
+    <nav class="tools"><a href="/dashboard.html">Dashboard</a><a href="/crm.html">CRM</a><a href="/distributors.html">Distributors</a><a href="/tours.html" style="color:var(--ivory)">Tours</a><a href="/travel-builder.html">Travel builder</a><a href="/landed-price.html">Calculator</a><a href="/containers.html">Containers</a><a href="/finance.html">Finance</a></nav>
     <span id="who"></span>
   </div>
 </header>
@@ -146,6 +150,7 @@ footer .wrap{display:flex;justify-content:space-between;align-items:center;gap:1
     </div>
     <div style="display:flex;gap:10px;align-items:center;margin-top:12px;flex-wrap:wrap">
       <button class="pill" id="b-create">Create booking</button>
+      <a class="pill ghost" href="/travel-builder.html" style="text-decoration:none;display:inline-block">Or build a full journey with flights and transfers →</a>
       <span id="b-note" style="font-size:12px;color:var(--muted)"></span>
     </div>
   </div>
@@ -185,6 +190,7 @@ footer .wrap{display:flex;justify-content:space-between;align-items:center;gap:1
   </div>
 </div>
 
+<button class="pill back" id="totop" hidden>↑ Back to top</button>
 <footer>
   <div class="wrap">
     <span>Market Access Partners Limited · A venture of Agile Strategy</span>
@@ -199,7 +205,7 @@ const SUPABASE_ANON = "sb_publishable_BRmzLQw94Lt49xLFmDHJVQ_yoo68o4c";
 const $ = id => document.getElementById(id);
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 let me = "";
-let tours=[], stops=[], bookings=[], bstops=[], producers=[], hotels=[], openId=null;
+let tours=[], stops=[], bookings=[], bstops=[], blegs=[], producers=[], hotels=[], ops=[], openId=null;
 const isHotelPartner = h => h && h.partner_status==="bill-back agreed";
 const esc = s => String(s??"").replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const flash=(t,bad)=>{ const m=$("msg"); m.textContent=t; m.className=bad?"bad":""; clearTimeout(flash._t); flash._t=setTimeout(()=>{m.textContent="";},5000); };
@@ -222,16 +228,19 @@ $("pw").addEventListener("keydown", e=>{ if(e.key==="Enter") $("signin").click()
 
 /* ---------- load ---------- */
 async function load(){
-  const [t,s,b,bs,p,h] = await Promise.all([
+  const [t,s,b,bs,p,h,bl,o] = await Promise.all([
     sb.from("tours").select("*").eq("active",true).order("sort"),
     sb.from("tour_stops").select("*").order("day_no").order("sort"),
     sb.from("tour_bookings").select("*").order("arrival_date",{ascending:true,nullsFirst:false}),
     sb.from("tour_booking_stops").select("*").order("stop_date").order("sort"),
     sb.from("producers").select("id,slug,name,region,category,segment,crm_status,tour_status,tour_experience,tour_duration_mins,tour_max_pax,tour_price_pp_nzd,tour_contact_email,email,key_person").order("name"),
     sb.from("hotels").select("*").order("region").order("priority").order("name"),
+    sb.from("tour_booking_legs").select("*").order("leg_date").order("sort"),
+    sb.from("transfer_operators").select("id,name,type,region,email,phone").order("name"),
   ]);
   const err=[t,s,b,bs,p,h].find(x=>x.error); if(err){ flash("Load failed: "+err.error.message, true); return; }
-  tours=t.data||[]; stops=s.data||[]; bookings=b.data||[]; bstops=bs.data||[]; hotels=h.data||[];
+  tours=t.data||[]; stops=s.data||[]; bookings=b.data||[]; bstops=bs.data||[]; hotels=h.data||[]; blegs=bl.data||[]; ops=o.data||[];
+  const qb=+new URLSearchParams(location.search).get("booking"); if(qb && !openId && bookings.some(x=>x.id===qb)) openId=qb;
   const TOUR_REGIONS=["Auckland","Hawke's Bay","Central Otago","Waikato","Marlborough","Martinborough","Wairarapa"];
   producers=(p.data||[]).filter(x=> x.tour_status!=="not approached" || x.tour_experience || x.crm_status==="signed" || ["whisky","honey"].includes(x.category) || TOUR_REGIONS.includes(x.region));
   renderModules(); renderBookings(); renderPartners(); renderHotels();
@@ -351,6 +360,7 @@ function renderDetail(id){
           ${hasSupplier&&s.supplier_status!=="confirmed"?`<button class="mini" data-conf="${s.id}">Confirmed</button>`:""}
           <button class="mini" data-del="${s.id}" title="Remove stop">×</button>
         </div></div>`; }).join("")}
+    ${legsHtml(b)}
     <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;align-items:center">
       <button class="pill ghost" id="s-add">+ Add stop</button>
       <button class="pill ghost" id="s-all">Notify all pending suppliers</button>
@@ -359,7 +369,17 @@ function renderDetail(id){
     </div>
     <div style="margin-top:12px"><label class="f">Booking notes</label><textarea id="b-notes">${esc(b.notes||"")}</textarea><button class="pill ghost" id="s-notes" style="margin-top:6px">Save notes</button></div>
     <div id="mailbox"></div>
+    <div style="display:flex;gap:8px;margin-top:14px;padding-top:12px;border-top:1px solid var(--line);flex-wrap:wrap;align-items:center">
+      <button class="pill back" id="s-close">← Back to bookings</button>
+      <a class="pill ghost" href="/travel-builder.html?booking=${b.id}" style="text-decoration:none;display:inline-block">Open in Travel builder</a>
+      <span style="flex:1"></span>
+      <button class="pill danger" id="s-delete">Delete booking</button>
+    </div>
   </div>`;
+  $("s-close").onclick=()=>{ openId=null; renderBookings(); renderDetail(null); $("rows").scrollIntoView({behavior:"smooth",block:"start"}); };
+  $("s-delete").onclick=async()=>{ if(!confirm(`Delete ${b.ref}? This removes the booking, its stops and its flights and transfers. It cannot be undone.`)) return; const { error } = await sb.from("tour_bookings").delete().eq("id",id); if(error){ flash("Delete failed: "+error.message, true); return; } openId=null; await load(); flash(b.ref+" deleted."); };
+  box.querySelectorAll("[data-lconf]").forEach(x=>x.onclick=async()=>{ const lid=+x.dataset.lconf; const { error } = await sb.from("tour_booking_legs").update({supplier_status:"confirmed",confirmed_at:new Date().toISOString()}).eq("id",lid); if(error){ flash("Update failed: "+error.message, true); return; } const l=blegs.find(z=>z.id===lid); l.supplier_status="confirmed"; renderDetail(id); flash("Marked confirmed."); });
+  box.querySelectorAll("[data-lnote]").forEach(x=>x.onclick=async()=>{ const lid=+x.dataset.lnote; const { error } = await sb.from("tour_booking_legs").update({supplier_status:"notified",notified_at:new Date().toISOString()}).eq("id",lid); if(error){ flash("Update failed: "+error.message, true); return; } const l=blegs.find(z=>z.id===lid); l.supplier_status="notified"; renderDetail(id); flash("Marked notified."); });
 
   // field saves
   box.querySelectorAll("[data-sid] [data-f]").forEach(el=>{
@@ -390,6 +410,23 @@ function renderDetail(id){
   $("s-all").onclick=()=>{ const pend=ss.filter(s=>(s.producer_slug||s.hotel_id) && s.supplier_status==="pending"); if(!pend.length){ flash("Nothing pending."); return; } showNotice(b, pend[0], pend); };
   $("s-itin").onclick=async()=>{ const txt=itineraryText(b, ss); try{ await navigator.clipboard.writeText(txt); flash("Itinerary copied for "+b.agent+"."); }catch(e){ showText("Itinerary for "+b.agent, txt); } };
   $("s-notes").onclick=async()=>{ const { error } = await sb.from("tour_bookings").update({notes:$("b-notes").value.trim()||null, updated_at:new Date().toISOString()}).eq("id",id); if(error){ flash("Save failed: "+error.message, true); return; } b.notes=$("b-notes").value.trim(); flash("Notes saved."); };
+}
+
+/* ---------- flights and transfers (from the Travel builder) ---------- */
+const LEG_LABEL={arrival_flight:"Arrival flight",domestic_flight:"Domestic flight",departure_flight:"Departure flight",helicopter:"Helicopter",ferry:"Ferry",coach:"Coach",car:"Private car",other:"Other"};
+function legsHtml(b){
+  const ll=blegs.filter(l=>l.booking_id===b.id); if(!ll.length) return "";
+  const tot=ll.reduce((a,l)=>a+(+l.total_nzd||0),0);
+  return `<div style="margin-top:14px"><span class="eyebrow">Flights and transfers</span> <span style="font-size:12px;color:var(--muted)">from the Travel builder · indicative NZ$${Math.round(tot).toLocaleString()}</span></div>
+    <div class="legrow" style="border-bottom:1px solid var(--line);font:600 10.5px var(--sans);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)"><span>Date</span><span>Type</span><span>Flight / operator</span><span>Route</span><span>NZ$</span><span>Supplier</span><span></span></div>
+    ${ll.map(l=>{ const o=ops.find(x=>x.id===l.operator_id); return `<div class="legrow">
+      <span>${fmtD(l.leg_date)}</span><span class="kind">${esc(LEG_LABEL[l.leg_type]||l.leg_type)}</span>
+      <span>${esc([l.airline,l.flight_no].filter(Boolean).join(" ")||l.operator_name||"")}${o?.email?`<div style="font-size:11px;color:var(--muted)">${esc(o.email)}</div>`:""}</span>
+      <span>${esc(l.origin||"")} → ${esc(l.dest||"")}${l.dep_time?" · "+esc(l.dep_time):""}${l.arr_time?" to "+esc(l.arr_time):""}</span>
+      <span>${Math.round(+l.total_nzd||0).toLocaleString()}</span>
+      <span class="chip ${esc(l.supplier_status)}">${esc(l.supplier_status)}</span>
+      <div class="acts">${l.operator_id&&l.supplier_status==="pending"?`<button class="mini" data-lnote="${l.id}">Notified</button>`:""}${l.operator_id&&l.supplier_status!=="confirmed"&&l.supplier_status!=="n/a"?`<button class="mini" data-lconf="${l.id}">Confirmed</button>`:""}</div>
+    </div>`; }).join("")}`;
 }
 
 /* ---------- supplier notice ---------- */
@@ -515,6 +552,8 @@ $("h-add").onclick=async()=>{
   const { data, error } = await sb.from("hotels").insert(row).select().single();
   if(error){ flash("Could not add: "+error.message, true); return; } hotels.push(data); $("h-name").value=""; $("h-town").value=""; renderHotels(); flash("Added "+name+".");
 };
+window.addEventListener("scroll",()=>{ $("totop").hidden = window.scrollY<400; });
+$("totop").onclick=()=>window.scrollTo({top:0,behavior:"smooth"});
 boot();
 </script>
 </body>
