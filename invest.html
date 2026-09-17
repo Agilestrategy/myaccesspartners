@@ -1,0 +1,550 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Investor Residence Pathway · MAP crew reference</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fjalla+One&family=Libre+Franklin:ital,wght@0,300..800;1,400&display=swap">
+<style>
+:root{
+  --ink:#161B24; --ink2:#1F2633; --ivory:#F5F1E6; --paper:#FBF9F2; --saffron:#D98324; --saffron-deep:#B26A15;
+  --vine:#3D5C4A; --mist:#9AA1AD; --body:#4A5160; --line:rgba(22,27,36,.14); --warn:#A33B2E;
+  --serif:"Fjalla One","Arial Narrow",Arial,sans-serif; --sans:"Libre Franklin","Helvetica Neue",Arial,sans-serif;
+}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);font:400 15px/1.6 var(--sans)}
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+header{background:var(--ink);color:var(--ivory);padding:18px 0;position:sticky;top:0;z-index:20}
+header .wrap{display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap}
+.mark{font:700 14px var(--sans);letter-spacing:.06em;text-transform:uppercase}
+.mark b{color:var(--saffron)}
+nav.tools{display:flex;gap:18px;font-size:12.5px;flex-wrap:wrap}
+nav.tools a{color:var(--mist);text-decoration:none}
+nav.tools a:hover{color:var(--ivory)}
+#who{font-size:12.5px;color:var(--mist)}
+h1{font-family:var(--serif);font-weight:400;font-size:clamp(28px,3.8vw,42px);margin:10px 0 8px;line-height:1.1}
+h2{font-family:var(--serif);font-weight:400;font-size:clamp(22px,2.6vw,30px);margin:0 0 14px;color:var(--ink)}
+h2 span{color:var(--saffron);margin-right:10px}
+h3{font:700 14px var(--sans);letter-spacing:.06em;text-transform:uppercase;color:var(--vine);margin:22px 0 8px}
+p{margin-bottom:12px;color:var(--body);max-width:78ch}
+strong{color:var(--ink)}
+a{color:var(--saffron-deep)}
+.eyebrow{font:600 11px var(--sans);letter-spacing:.18em;text-transform:uppercase;color:var(--saffron)}
+.sub{color:var(--body);max-width:78ch;font-size:16px}
+section{padding:38px 0 8px;border-top:1px solid var(--line)}
+section:first-of-type{border-top:none}
+.hero{padding:40px 0 26px}
+.alert{background:var(--ink);color:var(--ivory);padding:18px 22px;border-left:5px solid var(--saffron);margin:22px 0;border-radius:4px}
+.alert strong{color:var(--saffron)}
+.alert p{color:var(--ivory);margin:0;max-width:none}
+.note{background:var(--ivory);border-left:4px solid var(--saffron);padding:14px 18px;margin:16px 0;border-radius:3px}
+.note p{margin:0;max-width:none}
+.note .lead{font:700 13px var(--sans);color:var(--saffron-deep);letter-spacing:.04em;margin-bottom:4px}
+.warn{background:#FBEDEA;border-left:4px solid var(--warn)}
+.warn .lead{color:var(--warn)}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;margin:18px 0 22px}
+.tile{background:#fff;border:1px solid var(--line);padding:20px;border-radius:4px}
+.tile.dark{background:var(--ink);color:var(--ivory);border-color:var(--ink)}
+.tile .tag{font:600 11px var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--saffron)}
+.tile .big{font-family:var(--serif);font-size:34px;margin:8px 0 2px;line-height:1;font-variant-numeric:tabular-nums}
+.tile .small{font-size:12.5px;color:var(--body)}
+.tile.dark .small{color:var(--mist)}
+.tile ul{margin:8px 0 0 18px;font-size:13px;color:var(--body)}
+.tile.dark ul{color:var(--ivory)}
+table{width:100%;border-collapse:collapse;margin:14px 0 22px;background:#fff;border:1px solid var(--line);font-size:13.5px}
+caption{text-align:left;font:600 12px var(--sans);letter-spacing:.12em;text-transform:uppercase;padding:10px 14px;background:var(--ivory);border:1px solid var(--line);border-bottom:none;color:var(--vine)}
+th,td{padding:9px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+thead th{font:600 12px var(--sans);background:var(--ivory);color:var(--vine);letter-spacing:.04em}
+td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
+tr.hl td{background:#FFF7E8}
+.steps{counter-reset:s;list-style:none;padding:0;margin:14px 0 22px}
+.steps li{position:relative;padding:14px 0 14px 64px;border-bottom:1px solid var(--line)}
+.steps li:before{counter-increment:s;content:counter(s);position:absolute;left:0;top:12px;width:44px;height:44px;border-radius:50%;background:var(--saffron);color:var(--ink);font:700 18px var(--serif);display:flex;align-items:center;justify-content:center}
+.steps li b{display:block;font:700 15px var(--sans);color:var(--ink);margin-bottom:3px}
+.steps li .when{display:inline-block;font:600 11px var(--sans);letter-spacing:.1em;text-transform:uppercase;color:var(--saffron-deep);background:var(--ivory);padding:2px 8px;border-radius:999px;margin-left:8px;vertical-align:middle}
+.steps li p{margin:4px 0 0;max-width:none}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:26px}
+.cols>div{min-width:0}
+ul.plain{margin:6px 0 14px 20px;color:var(--body)}
+ul.plain li{margin-bottom:6px}
+.toc{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0 6px}
+.toc a{font:600 12px var(--sans);text-decoration:none;color:var(--ink);background:#fff;border:1px solid var(--line);padding:6px 12px;border-radius:999px}
+.toc a:hover{border-color:var(--saffron);color:var(--saffron-deep)}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:10px 0}
+.toolbar input,.toolbar select{padding:8px 12px;border:1px solid var(--line);background:#fff;font:500 13.5px var(--sans);color:var(--ink);border-radius:999px}
+.toolbar input{min-width:260px}
+.count{font-size:12.5px;color:var(--body)}
+.pill{display:inline-block;font:600 10.5px var(--sans);letter-spacing:.08em;text-transform:uppercase;padding:2px 8px;border-radius:999px;background:var(--ivory);color:var(--vine);white-space:nowrap}
+.pill.close{background:#FBEDEA;color:var(--warn)}
+.pill.closed{background:#E9E9E9;color:#555}
+.src{font-size:12px;color:#6A6F7A;margin-top:-6px;margin-bottom:14px}
+.sources li{font-size:12.5px;margin-bottom:4px;word-break:break-word}
+.script{background:#fff;border:1px dashed var(--saffron);padding:14px 18px;margin:10px 0 18px;border-radius:4px;font-size:14px;color:var(--ink)}
+.script em{color:var(--saffron-deep);font-style:normal;font-weight:700}
+.foot{margin:30px 0 60px;font-size:12px;color:#6A6F7A;max-width:100ch}
+@media(max-width:860px){.cols{grid-template-columns:1fr}.steps li{padding-left:56px}table{display:block;overflow-x:auto}}
+@media print{header{position:static}.toc,.toolbar{display:none}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <span class="mark">Market <b>Access</b> Partners · Internal</span>
+    <nav class="tools"><a href="/dashboard.html">Dashboard</a><a href="/crm.html">CRM</a><a href="/distributors.html">Distributors</a><a href="/tours.html">Tours</a><a href="/travel-builder.html">Travel builder</a><a href="/landed-price.html">Calculator</a><a href="/containers.html">Containers</a><a href="/finance.html">Finance</a><a href="/invest.html" style="color:var(--ivory)">Investor residence</a></nav>
+    <span id="who">Crew reference · verified 17 Sep 2026</span>
+  </div>
+</header>
+
+<div class="wrap">
+
+<section class="hero">
+  <p class="eyebrow">India to New Zealand · investor residence</p>
+  <h1>Investor Residence Pathway</h1>
+  <p class="sub">Everything the crew needs on how a wealthy Indian family obtains New Zealand residence by investment, keeps it, and (if they choose) becomes a New Zealand citizen. Every number on this page was checked against Immigration New Zealand, Invest New Zealand, the Department of Internal Affairs, Inland Revenue, LINZ, the Immigration Advisers Authority and the Reserve Bank of India on 17 September 2026. Sources are listed at the foot of the page.</p>
+
+  <div class="alert">
+    <p><strong>Timing that matters right now.</strong> Invest New Zealand is changing the investment settings on <strong>28 September 2026</strong> and is not accepting new applications from funds or companies wanting "acceptable investment" status between 16 and 28 September. Guidance notes, application forms and the fund list will be reissued on 28 September. Verify this page again against the sources on or after that date before anything goes to a client.</p>
+  </div>
+
+  <div class="note warn">
+    <p class="lead">There is no such thing as a New Zealand "golden passport"</p>
+    <p>New Zealand sells <strong>residence</strong> by investment. A passport requires <strong>citizenship</strong>, which comes only after 5 years of residence with real physical presence (1,350 days over 5 years, at least 240 days in every 12 months) and an English conversation test. India does not permit dual citizenship, so an Indian who takes a New Zealand passport surrenders the Indian one and moves to an OCI card. Never use the phrase "golden passport" in anything client facing.</p>
+  </div>
+
+  <div class="toc">
+    <a href="#tiers">1 Categories and amounts</a><a href="#investments">2 What counts</a><a href="#process">3 Step by step</a><a href="#funds">4 Fund list and status</a><a href="#qualify">5 How a fund qualifies</a><a href="#citizenship">6 Residence to passport</a><a href="#home">7 Buying a home</a><a href="#tax">8 Tax</a><a href="#india">9 India side</a><a href="#dubai">10 Dubai comparison</a><a href="#compliance">11 What we may say</a><a href="#assist">12 How we assist</a><a href="#recheck">13 Check again routine</a><a href="#sources">Sources</a>
+  </div>
+</section>
+
+<section id="tiers">
+  <h2><span>1</span>Categories, amounts and time in New Zealand</h2>
+  <p>The visa is the <strong>Active Investor Plus (AIP) Resident Visa</strong>. It was reset on 1 April 2025 into two categories. The old Investor 1 (NZ$10M) and Investor 2 (NZ$3M) categories closed to new applicants on 28 July 2022, so any "NZ$3M" figure is obsolete. There is no weighting system, no points, no ballot, no English test, no age limit, no business experience requirement and no cap on the number of visas granted per year.</p>
+
+  <div class="tiles">
+    <div class="tile dark">
+      <div class="tag">Growth category</div>
+      <div class="big">NZ$5M+</div>
+      <div class="small">Invested for at least 36 months · at least 21 days in NZ as a resident during the 36 months</div>
+      <ul><li>Direct investments and managed funds approved by Invest NZ</li><li>Philanthropy up to 20% (from 1 June 2026)</li><li>Higher risk, shortest presence. Over 80% of applicants choose this.</li></ul>
+    </div>
+    <div class="tile">
+      <div class="tag">Balanced category</div>
+      <div class="big">NZ$10M+</div>
+      <div class="small">Invested for at least 60 months · at least 105 days in NZ as a resident during the 60 months</div>
+      <ul><li>Everything in Growth plus listed equities, bonds and property development</li><li>Each extra NZ$1M into Growth type assets cuts 14 days off the 105, to a floor of 63 days (NZ$13M)</li><li>Lower risk, longer hold</li></ul>
+    </div>
+    <div class="tile">
+      <div class="tag">Fee and speed</div>
+      <div class="big">NZ$27,470</div>
+      <div class="small">Total government fee (NZ$12,070 application + NZ$15,400 immigration levy). Approval in principle: 80% decided within 4 months. Priority processing.</div>
+    </div>
+    <div class="tile">
+      <div class="tag">Programme scale</div>
+      <div class="big">904</div>
+      <div class="small">Applications received 1 Apr 2025 to 2 Sep 2026; 467 approved; NZ$4.94 billion committed or in the pipeline. The old scheme drew 116 applications in two and a half years.</div>
+    </div>
+  </div>
+
+  <table>
+    <caption>Side by side</caption>
+    <thead><tr><th>Setting</th><th>Growth</th><th>Balanced</th></tr></thead>
+    <tbody>
+      <tr><td>Minimum investment</td><td class="num">NZ$5,000,000</td><td class="num">NZ$10,000,000</td></tr>
+      <tr><td>Investment period</td><td>36 months</td><td>60 months</td></tr>
+      <tr><td>Minimum days in NZ (as a resident, across the period)</td><td>21 days</td><td>105 days (91 at NZ$11M, 77 at NZ$12M, 63 at NZ$13M+)</td></tr>
+      <tr><td>Acceptable investments</td><td>Invest NZ approved direct investments and managed funds; philanthropy up to 20%</td><td>Growth assets plus listed equities, bonds, property development, philanthropy</td></tr>
+      <tr><td>Travel conditions on the resident visa</td><td>4 years from first arrival</td><td>6 years from first arrival</td></tr>
+      <tr><td>Permanent Resident Visa available</td><td>After 36 months once section 49 conditions are removed</td><td>After 60 months once section 49 conditions are removed</td></tr>
+      <tr><td>English, age, business experience, settlement funds, job creation</td><td colspan="2">No requirement for any of these. Applicant must be "fit and proper", of good health and good character (police certificates for everyone 17+, less than 6 months old).</td></tr>
+      <tr><td>Family</td><td colspan="2">Partner and dependent children aged 24 and under are included. Family must arrive within 12 months of the visa being granted.</td></tr>
+      <tr><td>Switching category</td><td colspan="2">Allowed while the application is under assessment or within the first 6 months after approval in principle, once only. Extra funds for Balanced day reductions must be nominated before approval in principle.</td></tr>
+    </tbody>
+  </table>
+  <p class="src">Sources: INZ Active Investor Plus visa page; Immigration Instructions BN2, BN3, BN7, BN9; INZ fee table from 1 Oct 2024; INZ investor category statistics to 2 Sep 2026.</p>
+</section>
+
+<section id="investments">
+  <h2><span>2</span>What counts as an acceptable investment</h2>
+  <p>Three tests apply to every dollar: it is <strong>not for personal use</strong>, it is <strong>invested in New Zealand in New Zealand dollars</strong>, and it is on the list for the chosen category. Value is measured when the investment is made, inclusive of management, brokerage and transaction fees (legal and advisory costs outside the investment do not count).</p>
+  <div class="cols">
+    <div>
+      <h3>Growth category (NZ$5M)</h3>
+      <ul class="plain">
+        <li><strong>Managed funds</strong> on the Invest NZ Acceptable Managed Funds List (section 4). A legally binding agreement to acquire units in a listed fund counts as "invested" from the date of commitment, even if the fund calls the capital later.</li>
+        <li><strong>Direct investments</strong> into a privately held New Zealand business, confirmed in writing by Invest NZ <em>before</em> the money goes in. Since 25 October 2025 the business must show genuine investor interest: prior or committed capital from an approved fund, an unrelated wholesale investor, or the applicant. Approval letters last 12 months.</li>
+        <li><strong>Philanthropy</strong> up to 20% (NZ$1M of NZ$5M) from 1 June 2026, into a charity with 5 years of compliant returns, Charities Services tier 1 to 3 and IRD donee status, or approved Department of Conservation projects.</li>
+        <li><strong>Not acceptable in Growth:</strong> pure property (residential, commercial or industrial real estate), listed shares bought on market, bonds, cash, and Discretionary Investment Management Services (DIMS) for applications on or after 4 December 2025. Build to Rent becomes acceptable through approved managed funds only from December 2026.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Balanced category (NZ$10M)</h3>
+      <ul class="plain">
+        <li>All Growth assets, plus:</li>
+        <li><strong>Listed equities</strong> of NZ resident entities on an FMA licensed exchange, FMA licensed crowdfunding, or NZ registered bank equity; ETFs and FMA licensed funds holding them (only the NZ portion of a mixed fund counts).</li>
+        <li><strong>Bonds</strong>: NZ government and local authority; NZDX traded; NZ firms rated BBB minus or better; NZ registered bank bonds; qualifying finance company bonds. Perpetual preference shares and convertible notes are treated as bonds.</li>
+        <li><strong>Property development</strong>: new residential developments of multiple dwellings for commercial return, new commercial or industrial developments, or existing commercial and industrial property being improved. House and land packages and off the plan purchases do not count. Neither the applicant nor relatives may live in it. Can be done through the applicant's own NZ company for applications on or after 9 June 2025 (no Invest NZ approval needed; INZ assesses at evidence stage).</li>
+      </ul>
+    </div>
+  </div>
+  <div class="note">
+    <p class="lead">Money waiting to be called ("on call" funds)</p>
+    <p>Where a fund has accepted a commitment but has not yet called the money, the uncalled amount must sit in NZ listed equities, bonds, NZ bank accounts or NZ term deposits, in NZ dollars. At most <strong>25% of the committed amount</strong> (NZ$1.25M of NZ$5M) may be in a bank account or term deposit at any point. Withdrawals are only for capital calls, tax, fees, or moving between on call assets, and must complete within 30 days.</p>
+  </div>
+  <p class="src">Sources: INZ "Acceptable investments for an Active Investor Plus" page; Immigration Instructions BN7.5, BN7.10, Appendix 15 (effective 4 Dec 2025); INZ news 25 May 2026 (philanthropy) and 9 Sep 2026 (Build to Rent).</p>
+</section>
+
+<section id="process">
+  <h2><span>3</span>Step by step, decision to permanent residence</h2>
+  <ol class="steps">
+    <li><b>Engage a licensed adviser or NZ lawyer<span class="when">Week 0</span></b><p>Only an Immigration Advisers Authority licensed adviser or a New Zealand lawyer with a current practising certificate may advise on which category fits, how to structure the nominated funds and how to answer the form. MAP introduces; it does not advise (section 11).</p></li>
+    <li><b>Nominate funds and prove they are lawful and owned<span class="when">Weeks 0 to 6</span></b><p>Nominate at least NZ$5M (Growth) or NZ$10M (Balanced) of funds or assets. Show ownership and lawful acquisition with a paper trail. Gifts are acceptable only if unconditional and lawful where made; funds already in New Zealand cannot be gifted. Borrowed funds only from a bank or commercial lender, secured against the nominated assets, in the same jurisdiction as those assets. Police certificates for everyone 17 and over, medicals, passports.</p></li>
+    <li><b>Lodge the online residence application and pay NZ$27,470<span class="when">Week 6</span></b><p>Direct online application. There is no expression of interest stage and no ballot. Applications are given priority processing. Invest NZ's "Express your interest" form is an optional, non statutory way to get an Investor Migrant Manager assigned.</p></li>
+    <li><b>Approval in principle<span class="when">80% within 4 months</span></b><p>INZ issues an approval in principle letter. The clock now starts: the applicant has <strong>6 months</strong> to transfer and invest. A work visa with multiple entry travel conditions for 12 months is available to come and arrange the investment; partner gets a visitor visa and children student visas for the same period.</p></li>
+    <li><b>Choose and sign the investments<span class="when">Inside the 6 months</span></b><p>For a managed fund: sign a legally binding subscription agreement under New Zealand law that states the amount committed. For a direct investment: get Invest NZ's written confirmation first, then a legally binding, non revocable contract under New Zealand law. Category can be switched from Growth to Balanced (or extra funds nominated for currency loss) within this window.</p></li>
+    <li><b>Transfer the money through the banking system<span class="when">Inside the 6 months (up to 12 with an extension)</span></b><p>Funds must arrive by SWIFT or telegraphic transfer directly to New Zealand from the applicant's own account, a joint account, a solicitor's trust account, a pension scheme or an investment portfolio account. Documented, traceable, no physical cash. Since 12 August 2026, services that convert offshore and pay in as a domestic NZ transfer are expressly not accepted. One extension of up to 6 months is possible on evidence of reasonable attempts; 12 months from approval in principle is the absolute maximum, after which the application must be declined.</p></li>
+    <li><b>Send the evidence of investment<span class="when">Within 3 months after the transfer window ends</span></b><p>Fund name, amount in NZD, date, type, and a letter from a solicitor, chartered accountant, bank or broker, emailed to INZ's investor funds team. INZ checks the fund was on the Invest NZ list on the day of the transaction.</p></li>
+    <li><b>Resident visa granted with section 49 conditions<span class="when">Investment period starts when all investments complete</span></b><p>Conditions: keep the investments for 36 or 60 months; spend the minimum days in NZ as a resident; keep INZ informed of contact details. Family must arrive within 12 months. Travel conditions run 4 years (Growth) or 6 years (Balanced) from first arrival.</p></li>
+    <li><b>24 month checkpoint<span class="when">Within 3 months after month 24</span></b><p>Evidence the investments are still held, plus the 24 month investment questionnaire. Capital returned early must be reinvested within 30 days (listed equities, bonds, property, philanthropy) or 90 days (funds and direct investments).</p></li>
+    <li><b>End of period checkpoint<span class="when">Within 3 months after month 36 or 60</span></b><p>Evidence for the final 12 months plus the final questionnaire. Failure to comply can make the holder liable for deportation.</p></li>
+    <li><b>Section 49 conditions removed<span class="when">No fee</span></b><p>Cover letter, passports, a letter from an independent accountant or solicitor confirming the conditions were met, proof of NZ residential address. INZ confirms in writing.</p></li>
+    <li><b>Permanent Resident Visa<span class="when">After 36 months Growth or 60 months Balanced · NZ$315 · 80% within 2 weeks</span></b><p>Indefinite right to live in New Zealand with no travel conditions. This is the "keep it forever" point. Citizenship is a separate DIA process (section 6).</p></li>
+  </ol>
+  <p class="src">Sources: Immigration Instructions BN3, BN8.5, BN8.10 (12 Aug 2026), BN8.15, BN8.20, BN8.25, BN8.30, BN9.1, BN9.5, BN10.1, BN10.25; INZ AIP and Permanent Resident Visa pages.</p>
+</section>
+
+<section id="funds">
+  <h2><span>4</span>The approved funds and their status</h2>
+  <p>This is the Invest New Zealand <strong>Acceptable Managed Funds List</strong> as published on 24 August 2026 (71 funds). Every fund on it is acceptable for the Growth category; Balanced applicants may use them too. Invest NZ publishes only the name, the date added, the fund type and the manager's own description. It does <strong>not</strong> publish a status column: a fund that is revoked or suspended is simply removed, so the only way to confirm status is to check the live list on the day (section 13). Close dates and "invite only" notes below come from the managers' own descriptions. Minimums are not published; most funds are wholesale offers, which in practice means NZ$750,000 or more per investor or an eligible investor certificate.</p>
+  <div class="note">
+    <p class="lead">What the list means legally</p>
+    <p>Invest NZ's words: "At the time of assessing an application for an Active Investor Plus visa, Immigration New Zealand will assess the relevant investment transaction and determine if the Managed Investment Scheme was on the list at the time the transaction occurred." Invest NZ is a conduit only; it does not endorse any fund, and a fund may not describe itself as "government approved". Permitted wording is: "The Fund has been assessed by Invest NZ as meeting the eligibility criteria for the Growth category of the Active Investor Plus visa."</p>
+  </div>
+  <div class="toolbar">
+    <input id="fq" type="search" placeholder="Search fund, manager or sector">
+    <select id="ft"><option value="">All types</option></select>
+    <span class="count" id="fc"></span>
+  </div>
+  <table id="ftbl">
+    <caption>Invest NZ Acceptable Managed Funds List · last updated 24 August 2026 · 71 funds</caption>
+    <thead><tr><th>#</th><th>Fund</th><th>Manager</th><th>Type</th><th>Added</th><th>Notes from the manager's listing</th><th>Status</th></tr></thead>
+    <tbody></tbody>
+  </table>
+  <p>Separately, Invest NZ lists <strong>94 acceptable direct investments</strong> (17 September 2026), split into Part 1 (genuine investor interest evidenced at application) and Part 2 (approved before the 25 October 2025 rule change). Each carries a 12 month validity date. Examples in Part 1: BioOra NZ$45M, Atlas Finance NZ$30M, Tiger Fintech NZ$20M, Leaft Foods NZ$16M convertible note, Pegasus Bloodstock NZ$10M, Wolfe Heritage Hotel NZ$6.5M. Property managed funds for the Balanced category are not on any Invest NZ list; INZ assesses them at visa stage using its July 2025 self assessment guide.</p>
+  <p class="src">Sources: nzte.govt.nz/page/managed-funds (24 Aug 2026); nzte.govt.nz/page/direct-investments (17 Sep 2026); INZ Self assessment Guide for Property Managed Funds (INZ 12020, July 2025).</p>
+</section>
+
+<section id="qualify">
+  <h2><span>5</span>How a fund qualifies, and where a Dubai fund or an Indian lawyer can sit</h2>
+  <p>This is the section that matters for Tusshar Pawar. A fund manager does not need to be New Zealand owned, but the fund must be run and controlled from New Zealand and invested in New Zealand. There is <strong>no fee</strong> to apply and Invest NZ suggests <strong>4 to 6 weeks</strong> from application to listing, once the 28 September 2026 freeze lifts.</p>
+  <div class="cols">
+    <div>
+      <h3>The four legal criteria (Appendix 15, para 2)</h3>
+      <ul class="plain">
+        <li><strong>2.1</strong> Managed by a fund manager and/or general partner that is appropriately registered and is a <strong>New Zealand Resident Entity</strong>: incorporated in NZ, head office in NZ, centre of management in NZ, and control by the company directors exercised in NZ.</li>
+        <li><strong>2.2</strong> Holds the applicant's funds in New Zealand, in New Zealand dollars.</li>
+        <li><strong>2.3</strong> Invests wholly or substantially in <strong>New Zealand Entities</strong> (at least 70% of initial net committed capital not allocated to other funds), and/or in other qualifying funds, none quoted on any exchange. Up to 30% may go to overseas managed funds.</li>
+        <li><strong>2.4</strong> Meets the Objectives and Principles: contributes to the Government's economic strategy (technology, manufacturing, food and beverage, renewable energy, aged care, horticulture, forestry, agriculture, aquaculture, infrastructure including tourism, transport, digital, health, education and public infrastructure); invests into legitimate entities with proper verification; and does not prejudice New Zealand's reputation. Pure property is excluded from Growth.</li>
+      </ul>
+      <h3>What "New Zealand Entity" means for the investee</h3>
+      <p>Majority of full time staff and contractors in NZ (or main operations in NZ), plus one of: voting control held by NZ tax residents, a majority NZ tax resident senior leadership team, or headquarters in NZ.</p>
+    </div>
+    <div>
+      <h3>Invest NZ's application process for a fund</h3>
+      <ul class="plain">
+        <li>Apply through the Business Connect portal (RealMe login). No fee. No pre approval or informal guidance is given.</li>
+        <li>Gate questions: Financial Service Providers Register (FSPR) registration (mandatory), NZBN, and confirmation of the 70% New Zealand Entities test.</li>
+        <li>Pre application pack: NZBNs for all related entities, FSP registration, general partner registered, signed trust deed or partnership agreement, conflicts of interest policy, <strong>ESG policy</strong> (mandatory), information memorandum, investment committee profiles, financial summary template for single asset funds.</li>
+        <li>Licensing: a <strong>wholesale only</strong> manager needs FSPR registration; a <strong>retail</strong> manager also needs an FMA managed investment scheme manager licence (fee NZ$3,565 plus NZ$178.25 per hour beyond 25 hours) and a licensed supervisor.</li>
+        <li>Character: every director, senior manager and major shareholder (over 25%) is declared; all litigation, insolvency and regulatory history must be disclosed with no time limit; nobody banned under the Companies Act, FMC Act, Takeovers Act or CCCFA.</li>
+        <li>Allow 4 to 6 weeks; requests unanswered for 60 days are treated as withdrawn; approved funds appear on the list within 3 business days; declined funds have no reconsideration but may reapply on material change.</li>
+        <li>Ongoing: quarterly re certification; mandatory disclosure of material changes within 10 business days; a fund that receives no AIP capital within 12 months may be reviewed; Invest NZ may suspend or revoke (effective immediately, earlier investors unaffected).</li>
+        <li>Deployment: closed funds must show a deployment plan; open ended private credit funds are watched for cash sitting undeployed. The 28 September 2026 changes are expected to tighten this further and add a stand down before a declined fund can reapply.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="note">
+    <p class="lead">Where an offshore partner can sit</p>
+    <p>Nothing in Appendix 15, the FMC Act or the FSP Act prohibits foreign ownership of the manager. The constraints are: (1) the manager or general partner must be a NZ Resident Entity and a NZ entity must hold control and full discretion over deal sourcing, due diligence, investment decisions, portfolio management and compliance (analyst, administrative and back office work may sit offshore under a signed investment management agreement); (2) at least one director must live in New Zealand (or in Australia and be a director of an Australian company); (3) directors, senior managers and owners over 25% pass criminal history, banning and fit and proper checks; (4) the manager is an AML/CFT reporting entity; (5) the Overseas Investment Act is only engaged if the fund buys sensitive land or a business worth over NZ$100M. So a Dubai fund or a Mumbai law firm can be a shareholder, an introducer, a distribution partner and a back office, but not the decision maker. That is the structure to put in front of NZ counsel.</p>
+  </div>
+  <h3>Wholesale investor status (why the NZ$750,000 figure keeps appearing)</h3>
+  <p>Most approved funds are wholesale only, so they avoid the retail disclosure regime. An investor is "wholesale" under Schedule 1 of the Financial Markets Conduct Act 2013 if, among other routes, the minimum amount payable on acceptance is at least NZ$750,000 (with a prescribed warning and written acknowledgement), or they hold an eligible investor certificate confirmed by a lawyer, chartered accountant or financial adviser, or they held NZ$1M or more of financial products in the last two years, or have net assets or turnover over NZ$5M. An AIP investor committing NZ$5M will qualify. The FMA is consulting on tightening the NZ$750,000 route.</p>
+  <p class="src">Sources: Immigration Instructions Appendix 15 (opsmanual 78377, effective 4 Dec 2025) and BN7.10.20; Invest NZ Managed Funds Application Guidance Notes (13 Aug 2026) and Mandatory Disclosure Requirements (Feb 2026); FMA MIS manager licensing pages; Companies Office director residency rule; LINZ "who needs consent".</p>
+</section>
+
+<section id="citizenship">
+  <h2><span>6</span>From residence to a New Zealand passport</h2>
+  <div class="tiles">
+    <div class="tile"><div class="tag">Permanent residence</div><div class="big">3 or 5 yrs</div><div class="small">After section 49 conditions are removed. NZ$315. No further presence test for AIP holders who met their days.</div></div>
+    <div class="tile"><div class="tag">Citizenship presence</div><div class="big">1,350 days</div><div class="small">In NZ across the 5 years before applying, and at least 240 days in each of those 12 month periods. Counted backwards from the application date.</div></div>
+    <div class="tile"><div class="tag">Citizenship fee and time</div><div class="big">NZ$641</div><div class="small">Adult by grant (child NZ$320). 91% get an outcome within 4 months; ceremony 2 to 5 months later. No urgent service.</div></div>
+    <div class="tile dark"><div class="tag">Passport</div><div class="big">NZ$247</div><div class="small">Adult, 10 years (child NZ$144, 5 years). Issued only after the citizenship ceremony oath.</div></div>
+  </div>
+  <p><strong>Requirements for citizenship by grant:</strong> at least 5 years living in NZ as a resident with the resident visa conditions met or cancelled; the presence test above; an intention to keep living in NZ; a basic English conversation; good character (charges pending, a conviction in the last 3 years, prison in the last 7 years, any sentence over 5 years or an undischarged protection order will normally block it). From <strong>late 2027</strong> most applicants must pass a 20 question multiple choice test in English with a pass mark of 15; applications lodged before then are exempt.</p>
+  <div class="note warn">
+    <p class="lead">The arithmetic a Growth investor must hear</p>
+    <p>A Growth investor who spends only the 21 day minimum in New Zealand will hold a resident visa and then a permanent resident visa, but will <strong>never qualify for citizenship</strong>. Citizenship needs roughly 3.7 years of physical presence in a 5 year window. The realistic passport timeline for a family that actually moves is 5 years of residence plus 6 to 12 months of processing and ceremony: about 6 years from the resident visa.</p>
+  </div>
+  <p><strong>India does not permit dual citizenship.</strong> Under section 9(1) of the Citizenship Act 1955 an Indian who voluntarily acquires another citizenship ceases to be an Indian citizen automatically. The Indian passport must be surrendered for a Surrender Certificate (using or holding it afterwards is an offence under the Passports Act 1967). The family can then apply for <strong>Overseas Citizen of India (OCI)</strong> cards: lifelong multiple entry visa, no FRRO registration, parity with NRIs in economic, financial and educational matters, but no voting, no public office, and no purchase of agricultural or plantation land. New Zealand itself allows dual citizenship.</p>
+  <p class="src">Sources: govt.nz citizenship requirements, fees (updated 28 Aug 2026), timeframes, ceremonies and citizenship test pages; govt.nz passport fees; INZ Permanent Resident Visa page; Citizenship Act 1955 (India) s9; MHA OCI brochure via Indian missions.</p>
+</section>
+
+<section id="home">
+  <h2><span>7</span>Buying a home in New Zealand</h2>
+  <p>Since <strong>6 March 2026</strong> (Overseas Investment (National Interest Test and Other Matters) Amendment Act, announced 1 September 2025), holders of an AIP, Investor 1 or Investor 2 visa, and those who moved to permanent residence from one, may buy or build <strong>one home worth more than NZ$5 million</strong>. Consent under the Overseas Investment Act is still required before purchase (the agreement must be conditional on consent; usually granted within 5 working days, statutory 15), the land must be residential or lifestyle and not otherwise sensitive, a build must complete within 3 years, and the property can be lived in, used as a holiday home or used to run a business. It does <strong>not</strong> count toward the visa investment. Each visa holding partner may rely on their own visa for one property. Fee NZ$2,040 for an existing house over NZ$5M, NZ$3,500 otherwise.</p>
+  <p class="src">Sources: LINZ guidance for investor visa holders (26 Mar 2026); Beehive release 1 Sep 2025.</p>
+</section>
+
+<section id="tax">
+  <h2><span>8</span>New Zealand tax, in one paragraph each</h2>
+  <ul class="plain">
+    <li><strong>Tax residency</strong> starts at more than 183 days in any 12 months (backdated to day one) or on having a permanent place of abode. A "non resident visitor" carve out allows up to 275 days in 18 months for people still taxed elsewhere and not working for NZ persons.</li>
+    <li><strong>Transitional resident exemption:</strong> new residents who were not NZ tax resident in the previous 10 years pay no NZ tax on most foreign sourced income (interest, dividends, rents, foreign investment fund income) for about <strong>4 years</strong>, once only. Foreign employment and personal services income is not exempt. Claiming Working for Families ends it.</li>
+    <li><strong>No general capital gains tax.</strong> Residential land sold within 2 years is taxed under the bright line test; land dealing, financial arrangements and the FIF rules can tax specific gains.</li>
+    <li><strong>Foreign Investment Fund (FIF) rules</strong> tax offshore shares on a deemed 5% return. A revenue account method for migrants who arrived after 1 April 2024 was enacted on 30 March 2026 (70% of realised gains plus dividends). A Bill introduced on 10 September 2026 would widen it and lift the de minimis from NZ$50,000 to NZ$100,000 from the 2026/27 year; not yet law.</li>
+    <li><strong>India side:</strong> the India New Zealand double tax agreement (signed 17 October 1986, protocols 1997, 1999 and 2017) has a standard tie breaker: permanent home, centre of vital interests, habitual abode, nationality. An Indian citizen who is taxed in NZ escapes India's "deemed resident" rule for citizens earning over ₹15 lakh who are not taxed anywhere.</li>
+  </ul>
+  <p class="src">Sources: IRD tax residency, temporary tax exemption (17 Jun 2026), bright line and FIF pages; taxpolicy.ird.govt.nz Bill of 10 Sep 2026; incometaxindia.gov.in DTAA text.</p>
+</section>
+
+<section id="india">
+  <h2><span>9</span>The India side: getting NZ$5M out lawfully</h2>
+  <p>This is the hard part and the reason a Mumbai lawyer is worth more to this pathway than any NZ contact. While the investor is a "person resident in India" under FEMA, the Reserve Bank's <strong>Liberalised Remittance Scheme</strong> caps outward remittance at <strong>USD 250,000 per individual per Indian financial year</strong> (unchanged for 2025/26 and 2026/27), and the emigration rule expressly says forex above the limit may only be for incidental expenses and "not for earning points or credits to become eligible for immigration by way of overseas investments in government bonds; land; commercial enterprise; etc." Overseas direct and portfolio investment by an individual sits inside the same USD 250,000 cap; there is no separate quota.</p>
+  <div class="tiles">
+    <div class="tile"><div class="tag">LRS cap</div><div class="big">US$250k</div><div class="small">Per resident individual per financial year, all purposes combined. Minors count. Family members can each remit but only as co owners of the same NZ investment or account.</div></div>
+    <div class="tile"><div class="tag">Tax collected at source</div><div class="big">20%</div><div class="small">On LRS remittances for investment above ₹10 lakh per year (from 1 Apr 2025). Creditable against Indian income tax in the return; a cash flow cost, not a final tax.</div></div>
+    <div class="tile"><div class="tag">After emigrating</div><div class="big">US$1M</div><div class="small">Per person per financial year from NRO balances and sale proceeds of Indian assets, under RBI Master Direction 13 (Remittance of Assets), with Form 15CA/15CB. Above that needs RBI approval.</div></div>
+    <div class="tile dark"><div class="tag">Arithmetic</div><div class="big">12 to 24</div><div class="small">Individual years of LRS to fund NZ$5M to NZ$10M at about US$0.60. LRS alone does not work at this ticket size for a family that stays Indian resident.</div></div>
+  </div>
+  <h3>The sequence Indian counsel will test</h3>
+  <ol class="steps">
+    <li><b>While resident: LRS from every family member who will be a co owner</b><p>Up to USD 250,000 each, paying 20% TCS above ₹10 lakh and recovering it in the return. Unused funds abroad must be repatriated within 180 days unless reinvested.</p></li>
+    <li><b>Obtain NZ approval in principle, then leave India with the intention to settle</b><p>Under FEMA section 2(v) a person who leaves India for an uncertain period with intent to stay outside becomes a "person resident outside India" from departure, regardless of day counts. Banks will test that intent against the NZ resident visa, home and family location.</p></li>
+    <li><b>Redesignate accounts to NRO, liquidate Indian assets, pay Indian capital gains tax</b><p>Resident accounts become NRO; demat holdings become non resident holdings; LRS is no longer available to a non resident.</p></li>
+    <li><b>Repatriate USD 1M per person per financial year under the Remittance of Assets direction</b><p>Straddle March and April to use two financial years within weeks. Spouse and adult children each have their own USD 1M if the assets are genuinely theirs.</p></li>
+    <li><b>Keep the NZ paper trail identical to the nomination</b><p>INZ requires the invested money to be the nominated funds or the proceeds of the nominated assets, arriving by SWIFT from the applicant's own accounts. A change of source mid course must be re nominated inside the 6 month window.</p></li>
+  </ol>
+  <div class="note">
+    <p class="lead">Timing tension to flag</p>
+    <p>INZ allows 6 months (12 with an extension) from approval in principle to land the money. The Indian route above needs the family to have left India and cleared two financial year ends for USD 2M per person. Counsel needs to sequence the NZ application date against the Indian financial year so the transfer window and the repatriation windows line up. This is precisely the work a Mumbai lawyer does and MAP does not.</p>
+  </div>
+  <p class="src">Sources: RBI Master Direction 7 (LRS) and LRS FAQs; FEM (Current Account Transactions) Rules 2000 Schedule III as amended 26 May 2015; FEM (Overseas Investment) Rules 2022 Schedule III; Income tax Act s206C(1G) as amended by Finance Acts 2025 and 2026; RBI Master Direction 13 (Remittance of Assets, updated 29 Jun 2026); FEMA 1999 s2(v). Items flagged for counsel: verbatim Schedule III wording via gazette; the section number replacing 206C(1G) in the Income tax Act 2025.</p>
+</section>
+
+<section id="dubai">
+  <h2><span>10</span>New Zealand against Dubai, for the lawyer who sells Dubai</h2>
+  <table>
+    <caption>Same client, two products</caption>
+    <thead><tr><th>Point</th><th>UAE Golden Visa</th><th>NZ Active Investor Plus</th></tr></thead>
+    <tbody>
+      <tr><td>What is granted</td><td>10 year renewable residence; no sponsor</td><td>Residence with conditions, then permanent residence with no expiry</td></tr>
+      <tr><td>Entry ticket</td><td>AED 2M (about US$545k) in property or approved investment</td><td>NZ$5M (about US$3M) Growth or NZ$10M Balanced</td></tr>
+      <tr><td>Fits inside one couple's LRS in one year</td><td>Yes (about 2.2 individual LRS years)</td><td>No (12 to 24 individual LRS years); needs the emigrate first route</td></tr>
+      <tr><td>Presence required</td><td>Effectively none (residence survives long absences)</td><td>21 days in 3 years (Growth) or 105 days in 5 years (Balanced)</td></tr>
+      <tr><td>Path to citizenship and passport</td><td>None in the normal course (Cabinet nomination only, discretionary)</td><td>Yes: 5 years of real presence, then a passport ranked among the world's strongest; NZ permits dual citizenship (India does not)</td></tr>
+      <tr><td>Income tax</td><td>None on individuals; 9% corporate tax</td><td>Progressive income tax, but a 4 year exemption on most foreign income for new migrants and no general capital gains tax</td></tr>
+      <tr><td>Property</td><td>The property is the investment</td><td>Property is not the investment (Growth); one home over NZ$5M can be bought since March 2026</td></tr>
+      <tr><td>Family</td><td>Spouse and children of any age</td><td>Partner and children aged 24 and under</td></tr>
+      <tr><td>Who may advise</td><td>Anyone the client trusts</td><td>Only an IAA licensed adviser or an NZ lawyer; unlicensed advice from India carries up to NZ$100,000 fine and 7 years' imprisonment</td></tr>
+    </tbody>
+  </table>
+  <p>Note for the record: the July 2025 reports of an "AED 100,000 nomination based golden visa for Indians" were publicly denied by the UAE's ICP on 8 July 2025 as inaccurate and without legal basis. The two products are not competitors; Dubai is the first step and New Zealand is where a family goes when they want a second passport and a place to actually live.</p>
+  <p class="src">Sources: u.ae Golden Visa page; Dubai GDRFA investor service page; Afridi & Angell on UAE nationality law; Prasar Bharati 10 Jul 2025; IAA operating without a licence page.</p>
+</section>
+
+<section id="compliance">
+  <h2><span>11</span>What MAP may and may not say</h2>
+  <p>Under the <strong>Immigration Advisers Licensing Act 2007</strong> anyone, anywhere in the world, who uses knowledge of immigration to advise, direct, assist or represent a person on a New Zealand immigration matter must hold an IAA licence unless exempt. The exemptions that matter are New Zealand lawyers with a current practising certificate (and their employees). An Indian lawyer is <strong>not</strong> exempt. The penalty is a fine up to NZ$100,000 and/or up to 7 years' imprisonment, whether or not a fee is charged.</p>
+  <div class="cols">
+    <div>
+      <h3>Crew may</h3>
+      <ul class="plain">
+        <li>Repeat information that is publicly available or published by MBIE/INZ, exactly as published (this page is built for that).</li>
+        <li>Direct a person to INZ, Invest NZ, or a list of licensed advisers, and introduce them to our licensed adviser and NZ law firm partners.</li>
+        <li>Talk about MAP's own business: the export book, the tours, the producers a fund might invest in, hosting a visit to New Zealand.</li>
+        <li>Do clerical work, translation and settlement services, and record information the client provides onto a form if the "person assisting" declaration is signed.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Crew may not</h3>
+      <ul class="plain">
+        <li>Tell a person which category or visa they qualify for, or tailor any of this page to their circumstances. The IAA's own example of unlicensed advice is "using publicly available information to advise a person on an immigration matter".</li>
+        <li>Recommend a fund, promise an outcome, quote a timeframe as if it were ours, or describe any fund as "government approved" or "endorsed by Invest NZ" (FMC Act fair dealing).</li>
+        <li>Give Indian foreign exchange or tax advice. That is Tusshar's lane.</li>
+        <li>Charge for anything that looks like immigration advice, even bundled.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="script">
+    <em>The one sentence crew script:</em> "We are not immigration advisers. Everything we can tell you is on Immigration New Zealand's website, and we will introduce you to a licensed New Zealand adviser and a New Zealand law firm who will advise you. What we do is host you here, show you the businesses and the country, and, if you are a fund or a law firm, help you build the New Zealand relationships you need."
+  </div>
+  <p class="src">Sources: IAA "Who needs a licence", "Operating without a licence", "Information for recruiters"; Invest NZ Managed Funds Guidance Notes s6 (marketing).</p>
+</section>
+
+<section id="assist">
+  <h2><span>12</span>How MAP assists, and how a lead moves through the website</h2>
+  <p>MAP's role is <strong>introducer, host and relationship builder</strong>, never adviser. The commercial logic: a family that invests NZ$5M into a New Zealand fund that in turn backs the wineries, distilleries, honey producers and tourism operators in our CRM is the same family that buys our producers' products in India and takes our tours. The three lanes to build with Tusshar:</p>
+  <ol class="steps">
+    <li><b>Investor introductions</b><p>Tusshar's Dubai clients who want a second passport are referred to MAP; MAP hosts the New Zealand visit (Travel builder), introduces the licensed adviser and NZ law firm, and introduces approved fund managers whose sectors match our producers. Referral fees, if any, must be agreed with the adviser and fund in writing and disclosed; never charged to the investor by MAP for advice.</p></li>
+    <li><b>A New Zealand acceptable managed fund with an Indian and Gulf distribution channel</b><p>An NZ resident manager (existing, or new with NZ control) applies to Invest NZ after 28 September 2026 under the new guidance; Tusshar's firm and Dubai fund act as distribution and back office partner under an investment management agreement; MAP's producer and tourism pipeline provides investee deal flow in food and beverage, agriculture, horticulture and tourism infrastructure, all named priority sectors. This is the "exclusive fund" analogue to what he has in Dubai.</p></li>
+    <li><b>India side structuring</b><p>Tusshar's firm advises on LRS, the emigrate first sequence, TCS recovery, NRO repatriation and Indian tax residency, which no New Zealand party can do. That is the reason he is essential and the reason to give him this material in full.</p></li>
+  </ol>
+  <h3>Enquiry handling on the site (crew)</h3>
+  <ul class="plain">
+    <li>Investor enquiries arrive at hello@myaccesspartners.com. Log them in the CRM as a new record type "Investor lead" with source, family size, indicative category, and whether they are Indian resident or already non resident (the single biggest fork in the process).</li>
+    <li>Reply with the standard script above, this page's public facts only, and a same week introduction to the licensed adviser partner and the NZ law firm partner. Do not answer eligibility questions by email.</li>
+    <li>Offer the hosted visit: Travel builder journey with fund manager meetings, producer visits and the Invest NZ "Express your interest" form (nzte.govt.nz/form/investor-migrant-eoi).</li>
+    <li>Partner roster to fill in: licensed immigration adviser (options with an India office include P&amp;H Partners, Gurugram), NZ law firm (Lane Neave, Duncan Cotterill, Queen City Law, IC Legal are all active in AIP), NZ chartered accountant for the evidence letters, and a fund manager shortlist by sector (see the list in section 4). Confirm each partner's licence on the IAA register or the NZ Law Society register before the first introduction.</li>
+    <li>A public version of this page can be published once the licensed adviser partner has reviewed the wording. Until then it stays crew only.</li>
+  </ul>
+</section>
+
+<section id="recheck">
+  <h2><span>13</span>Check again routine (do this on 28 September 2026 and then monthly)</h2>
+  <table>
+    <caption>What to open, what to look for</caption>
+    <thead><tr><th>Item</th><th>Where</th><th>Check</th></tr></thead>
+    <tbody>
+      <tr><td>Fund list and status</td><td>nzte.govt.nz/page/managed-funds</td><td>"Last updated" date; count of funds; any fund on our shortlist missing (missing means revoked, suspended or withdrawn); new close dates.</td></tr>
+      <tr><td>Direct investments</td><td>nzte.govt.nz/page/direct-investments</td><td>Count; validity dates on any deal we are tracking.</td></tr>
+      <tr><td>Fund application rules</td><td>nzte.govt.nz/page/apply-to-be-an-aip-acceptable-investment</td><td>New guidance notes dated 28 Sep 2026 or later; deployment plan requirements; stand down periods.</td></tr>
+      <tr><td>Visa settings, fee, processing time</td><td>immigration.govt.nz/visas/active-investor-plus-visa</td><td>NZ$5M/NZ$10M, 21/105 days, NZ$27,470, "80% within 4 months".</td></tr>
+      <tr><td>Immigration Instructions</td><td>immigration.govt.nz/opsmanual (BN7, BN8, BN9, BN10, Appendix 15)</td><td>"Effective" date at the top of each page; anything later than 12 Aug 2026 (BN) or 4 Dec 2025 (Appendix 15) means read the page again.</td></tr>
+      <tr><td>Programme statistics</td><td>immigration.govt.nz/about-us/news-centre/investor-category</td><td>Applications, approvals, dollars.</td></tr>
+      <tr><td>Citizenship rules and fees</td><td>govt.nz citizenship pages</td><td>Presence test, NZ$641 fee, test start date (late 2027).</td></tr>
+      <tr><td>Home purchase</td><td>linz.govt.nz investor visa holders guidance</td><td>NZ$5M threshold, one property rule, fees.</td></tr>
+      <tr><td>Tax</td><td>ird.govt.nz exemption page; taxpolicy.ird.govt.nz</td><td>Transitional resident exemption; FIF Bill progress.</td></tr>
+      <tr><td>India</td><td>rbi.org.in Master Directions 7 and 13; Finance Act</td><td>LRS limit, TCS rates and threshold, USD 1M scheme.</td></tr>
+      <tr><td>Advice licensing</td><td>iaa.govt.nz; register search</td><td>Partner adviser licence current.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section id="sources">
+  <h2>Sources (all opened 17 September 2026)</h2>
+  <ul class="plain sources">
+    <li>INZ Active Investor Plus Resident Visa: immigration.govt.nz/visas/active-investor-plus-visa/</li>
+    <li>INZ acceptable investments for AIP; transferring investment funds; Self assessment Guide for Property Managed Funds (INZ 12020)</li>
+    <li>INZ Operational Manual: BN2, BN3, BN6, BN7.5 (26 Nov 2025), BN7.10 (12 Aug 2026), BN8.5 to BN8.35, BN9.1, BN9.5, BN10.1 to BN10.25, Appendix 15 (4 Dec 2025)</li>
+    <li>INZ fee and levy table from 1 Oct 2024; INZ news: philanthropy in Growth (25 May 2026), Build to Rent (9 Sep 2026), investor category statistics (to 2 Sep 2026)</li>
+    <li>Beehive: 1 Sep 2025 (home purchase), 24 Nov 2025 (Business Investor Work Visa), 13 Feb 2026 (NZ$3 billion), 8 Sep 2026 (Build to Rent)</li>
+    <li>Invest New Zealand: investor migrants page; Acceptable Managed Funds List (24 Aug 2026); Direct Investments list (17 Sep 2026); Become an acceptable AIP investment; Managed Funds Application Guidance Notes (13 Aug 2026); Direct Investment Guidance Notes (13 Aug 2026); Mandatory Disclosure Requirements (Feb 2026)</li>
+    <li>Investor 1 and Investor 2 closure pages (closed 28 Jul 2022)</li>
+    <li>govt.nz: citizenship presence, language, character, fees (28 Aug 2026), timeframes, ceremonies, citizenship test, dual citizenship; passport fees</li>
+    <li>INZ Permanent Resident Visa page</li>
+    <li>LINZ: reform of the Overseas Investment Act; guidance for investor visa holders (26 Mar 2026); who needs consent</li>
+    <li>IRD: tax residency; temporary tax exemption (17 Jun 2026); bright line test; FIF information sheet (28 May 2026); Taxation (Annual Rates for 2026/27, FBT Simplification, Foreign Investment Funds, and Remedial Measures) Bill (10 Sep 2026)</li>
+    <li>IAA: who needs a licence; operating without a licence; who can give advice; information for recruiters</li>
+    <li>FMA: MIS manager licensing; Schedule 1 exclusions summary; wholesale investor exclusion consultation. Companies Office: director residency; FSPR registration and criminal history checks</li>
+    <li>RBI: Master Direction 7 (LRS) and FAQs; Master Direction 13 (Remittance of Assets, updated 29 Jun 2026); FEM (Overseas Investment) Rules 2022; FEMA 1999 s2(v)</li>
+    <li>Income tax: s206C(1G) TCS rates per Finance Acts 2025 and 2026 (bank notices, Standard Chartered and HDFC); Income tax Act s6 residency; India New Zealand DTAA (incometaxindia.gov.in)</li>
+    <li>Indian missions: renunciation and surrender certificate; MHA OCI brochure. Citizenship Act 1955 s9</li>
+    <li>UAE: u.ae Golden Visa; Dubai GDRFA investor service; Prasar Bharati 10 Jul 2025 (ICP denial); Afridi & Angell on nationality law</li>
+    <li>MFAT: New Zealand India FTA (signed 27 Apr 2026, not yet in force)</li>
+  </ul>
+  <div class="foot">
+    <p>Prepared for Market Access Partners crew as a reference to published rules. It is not immigration, legal, tax or financial advice, and it must not be given to a client as a tailored recommendation. Figures are as published on 17 September 2026 and change; the Invest NZ settings change on 28 September 2026. Confirm with a licensed immigration adviser or New Zealand lawyer, and with Indian counsel, before any client acts.</p>
+  </div>
+</section>
+
+</div>
+
+<script>
+// Invest NZ Acceptable Managed Funds List, as published 24 August 2026 (71 funds).
+// Status is NOT published by Invest NZ. "Listed" = on the list on 24 Aug 2026. Close dates and invite notes are from the managers' own blurbs.
+const FUNDS = [
+["2026 Koru Education and Childcare Fund LP","Koru","Private Equity and Private Credit","2026-07-15","Wholesale MIS; NZ education infrastructure","Listed","https://koruchildcarefund.co.nz/"],
+["2040 Ventures: Punakaiki Fund (PFL)","2040 Ventures","Venture Capital","2023-05-18","$145m evergreen; one payment, no calls; quarterly liquidity via Catalist","Listed","https://punakaikifund.co.nz/active-investor-plus-visa-new-zealand/"],
+["2040 Ventures: Climate Venture Capital Fund 2","2040 Ventures","Venture Capital","2023-12-14","Targets 25% IRR","Listed","https://climatevcfund.com/about/"],
+["AAM Infrastructure Loan Fund","Aotea Asset Management","Infrastructure","2026-03-04","Senior secured infrastructure loans","Listed","https://www.aotea-am.co.nz/"],
+["AANZ (Aviation Aerospace NZ)","Bancorp Wealth Management Group","Private Capital","2025-08-27","Helicopter leasing; liquidity to investors after 3 years","Listed","http://www.aanzfund.co.nz/"],
+["ACIF NZ Investment Fund","ACIF","Private Credit","2025-09-04","Wholesale MIS; SME debt and equity","Listed","https://www.acif.co.nz/"],
+["Active Long Term Growth Fund","ForthCo Limited","Private Equity","2025-08-27","Evergreen LP; companies with EV $10m to $100m","Listed","https://www.forthco.nz/"],
+["Amber & Partners Infrastructure NZ Fund (AIP APINZ LP)","Amber Infrastructure","Infrastructure","2025-12-15","Evergreen; scheduled redemption windows","Listed","https://www.amberinfrastructure.com/"],
+["ARC Capital","ARC Capital","Private Equity","2025-08-27","Aged care and healthcare","Listed","https://arccapital.co.nz/"],
+["Altered Capital Venture Fund II","Altered Capital","Venture Capital / Private Equity","2025-01-23","","Listed","https://www.alteredcapital.com/"],
+["BeGroup Investments II LP","BeGroup","Infrastructure","2025-11-10","Retirement villages","Listed","https://www.thebegroup.co.nz"],
+["Blairlogie Pine Investment","Forest Enterprises (licensed MIS manager)","Private Equity","2025-12-17","888ha forest; 9.8% projected IRR","Listed","https://www.forestenterprises.co.nz/blairlogie-pine/"],
+["Blossum AIP Fund","Blossum","Private Credit","2026-03-10","Wholesale; SME secured lending, LVR under 75%","Listed","https://blossum.nz/international-investor/"],
+["Blue Ocean Capital Group Plus LP","PCG Global / Dreamhome Group","Infrastructure","2025-11-19","Solar; target NZ$200m; gross IRR 12.5 to 14.5%","Listed",""],
+["Boston ME Economic Growth Fund","Eccuity","Private Capital","2025-12-22","Wholesale only","Listed","https://www.eccuity.com/boston"],
+["Bridgewest Venture Fund 1 LP","Bridgewest","Venture Capital","2025-08-05","Deep tech; zero carry","Listed","https://bridgewest.ventures/fund"],
+["Capital Connect No.1 LP","Capital Connect","Private Credit","2025-12-17","Target net 5 to 7% p.a.","Listed","https://capitalconnect.co.nz/"],
+["Castlerock Partners","Bancorp group","Private Equity","2024-12-02","Open ended; quarterly redemptions; targets 8% p.a.","Listed","https://www.castlerockpartners.co.nz/"],
+["Craigmore Farming NZ LP","Craigmore","Private Equity","2026-07-28","Agribusiness","Listed","https://www.craigmore.com/"],
+["Cultivate Ventures LP","Cultivate Ventures","Venture Capital","2023-11-02","Agri tech; 15% IRR target","Listed","https://www.cultivateventures.co.nz/"],
+["Ecliptic Venture Capital LP","Ecliptic","Venture Capital","2024-04-04","Seed and Series A","Listed","https://www.eclipticvc.com/"],
+["Emerald Timberland Impact Fund","Roger Dickie NZ","Private Equity","2025-11-10","Forestry","Listed","https://rogerdickie.co.nz/"],
+["Fidelity Capital Sustainable Energy Fund","Fidelity Capital Partners","Private Credit","2023-09-13","Each investment matures in 3 years","Listed","http://www.fc-energy.nz/"],
+["GD1 Fund 4","GD1","Venture Capital","2025-07-03","Target $150m","Listed","https://www.gd1.vc/"],
+["GD1 Select Fund","GD1","Venture Capital","2026-05-25","7 to 10 GD1 portfolio companies","Listed","https://www.gd1.vc/"],
+["Goldenstone Partners LP","Goldenstone Partners Capital","Private Credit","2026-06-15","Debt to Apex Group projects; hurdle 6% p.a.","Listed","http://www.goldenstonecapital.co.nz/"],
+["Goldsmith Tourism NZ LP","Goldsmith","Private Credit","2025-12-23","Target net 3 to 6%","Listed",""],
+["GreenMount Capital Private Equity Fund II","GreenMount Capital","Private Equity","2026-07-15","Close date 31 December 2026","Closing 31 Dec 2026","https://greenmount.com/capital/active-investor-plus/"],
+["Greener Pastures Diversified Fund","Greener Pastures NZ (Origin Capital Partners)","Fund of Funds","2025-01-13","In house licensed immigration adviser; invested from date of commitment","Listed","https://www.greenerpastures.nz/investment-solutions"],
+["Greener Pastures Kiwifruit Fund","Greener Pastures NZ","Private Equity","2025-07-03","50% liquidity in year 4","Listed","https://www.greenerpastures.nz/investment-solutions"],
+["Henton Fund 2","Henton Capital","Private Credit","2025-05-01","Not currently seeking investors outside its network","Not seeking","https://hentoncapital.com/"],
+["Hunter Diversified Private Credit Fund","Hunter Investments","Private Credit","2025-06-12","Monthly subscriptions and redemptions","Listed","https://hunterinvestments.co.nz/"],
+["Icehouse Ventures Growth Fund III","Icehouse Ventures","Venture Capital","2026-05-25","Series A to D+","Listed","https://www.icehouseventures.co.nz/growth-fund-3"],
+["IV Sustainable Technology Fund","Icehouse Ventures","Venture Capital","2024-04-11","Seed impact","Listed","https://www.icehouseventures.co.nz/"],
+["Kākāpō Responsible Investment Fund","Bancorp group","Private Equity","2023-05-31","Quarterly distributions; exit liquidity after 3 years","Listed","https://kakapofund.co.nz/"],
+["Mana Tupu Capital NZ Venture Fund I","Mana Tupu Capital","Venture Capital","2026-08-24","Wholesale MIS; Series A and B","Listed","https://manatupu.co.nz/"],
+["MA NZ Growth Fund","Elevation Capital with MA Financial Group (ASX)","Multi Strategy","2025-09-04","Private credit and operating real estate","Listed","https://mafinancial.com/"],
+["Matū Karihi Fund","Matū","Venture Capital","2023-03-10","Deep science spinouts","Listed","https://matu.co.nz/"],
+["Maūi Toa Fund 1","Maui Toa","Venture Capital","2025-03-20","Māori owned and led","Listed","https://www.mauitoa.vc/"],
+["Motion Capital I LP","Motion Capital","Venture Capital","2023-08-25","Raised $27.2m and is now closed","Closed","https://www.motioncapital.co.nz/"],
+["Motion Capital Fund II LP","Motion Capital","Venture Capital","2026-06-02","Climate tech, Seed to Series A","Listed","https://www.motioncapital.co.nz/"],
+["Movac Growth 7","Movac","Venture Capital","2025-12-01","Close date 1 October 2026; $150 to 200m","Closing 1 Oct 2026","https://www.movac.co.nz/"],
+["MTM Capital One","MTM","Private Equity","2025-05-13","Invites only; first close Q4 2025, final close Q3 2026","Invite only",""],
+["MyFarm Kiwifruit Fund LP","MyFarm Investments","Private Equity","2025-09-16","Target 10% p.a.","Listed","https://www.myfarm.co.nz/"],
+["MyFarm Solar Fund LP","MyFarm Investments","Private Equity","2025-07-07","10 to 12% p.a. projected","Listed","https://www.myfarm.co.nz/"],
+["NetCredit Unit Trust","NetFunds group","Private Credit","2025-09-26","PIE; OCR + 7% target","Listed","https://www.netfunds.co.nz/NetCredit"],
+["NetEquity Opportunities Fund LP","NetFunds","Private Equity","2025-11-10","Fund of funds plus direct SME","Listed","https://netfunds.co.nz/NetEquity"],
+["Newland Credit Fund","Newland","Private Credit","2025-09-17","Direct lending","Listed","https://www.ncf.co.nz/about-the-fund"],
+["Nexus Fund I LP","Nexus Capital Management","Fund of Funds","2025-11-10","PE fund of funds","Listed","https://ncmfund.co.nz/"],
+["Northland Capital Partners Fund","Northland Capital Partners","Private Equity","2026-07-29","Horticulture and water","Listed","https://northlandcapitalpartners.com/"],
+["NZVC (Fund 2)","NZVC","Venture Capital","2025-03-27","Close date 31 December 2026","Closing 31 Dec 2026","https://www.nzvc.co.nz/welcome"],
+["Outset Momentum Fund I","Outset Ventures","Venture Capital","2025-12-23","Deep tech Series A and B","Listed","https://outset.ventures/momentum"],
+["Pacific Channel Fund V","Pacific Channel","Private Credit","2025-08-22","Renewable energy debt; 8% interest plus success fee","Listed","https://www.pacificchannel.com/fund-v"],
+["Pacific Channel Fund III","Pacific Channel","Venture Capital","2023-03-24","Deep tech","Listed","https://www.pacificchannel.com/"],
+["PCG Diversified New Zealand Private Debt Fund","Private Capital Group","Private Credit","2023-05-01","Open ended PIE; weekly liquidity; no capital calls","Listed","https://www.privatecapitalgroup.co.nz/"],
+["PCG New Zealand Economic Resilience Fund","Private Capital Group","Private Credit","2026-02-03","Infrastructure and real asset loans; PIE","Listed","https://www.privatecapitalgroup.co.nz/"],
+["Peninsula Credit Fund II LP","Peninsula Credit","Private Credit","2025-07-14","Open ended LP; quarterly cash","Listed","https://www.peninsulacredit.co.nz/"],
+["Perennial Roots LP","Perennial","Private Equity","2025-10-20","Regenerative organic farming","Listed","https://www.perennialfarming.co.nz/"],
+["Pioneer Capital Diversified Fund","Pioneer Capital","Multi Strategy","2025-12-24","$1.3 billion of wholesale capital raised to date","Listed","https://pioneercapital.co.nz/"],
+["Pioneer Capital Private Equity V","Pioneer Capital","Private Equity","2025-07-03","","Listed","https://pioneercapital.co.nz/"],
+["Quidnet Ventures Fund II","Quidnet Ventures","Venture Capital","2025-04-16","Deep tech","Listed","https://www.quidnetventures.com/"],
+["RAM NZ Credit Fund","RAM Group","Private Credit","2025-12-17","SME credit; investment immigration solutions for 13 years","Listed","https://ramgroup.co.nz/"],
+["Rānui Sunshine Fund","Rānui / SC Capital Partners affiliate","Infrastructure","2026-01-20","Close date 31 December 2027; target 13 to 15% p.a.","Closing 31 Dec 2027","https://www.ranuigen.co.nz/"],
+["Runway Private Credit Fund (No.1) LP","Runway Limited (incl. Lock Finance)","Private Credit","2026-08-17","SME secured lending","Listed","https://www.runway.co.nz/fund/"],
+["Ryft Fund Zero","Ryft","Venture Capital","2025-05-13","Close date 31 December 2026","Closing 31 Dec 2026","https://ryft.vc/fund"],
+["SCW Investment Fund LP","SCW","Private Credit","2025-11-10","Aged care debt; target net 4 to 8%","Listed",""],
+["Seedling Next Gen Agri LP","Seedling Investments","Private Equity","2025-06-12","Dairy; 9% pre tax IRR target","Listed","https://www.seedling-investments.com/"],
+["Southern Alps Retirement Living Sunrise Fund","Southern Alps","Private Equity","2025-07-24","Wholesale MIS LP; retirement villages","Listed","https://www.southern-alps.co.nz/english"],
+["Tōtara Forestry LP","Craigmore","Private Equity","2026-08-17","Forestry","Listed","https://www.craigmore.com/"],
+["WNT Ventures Fund 4","WNT Ventures","Venture Capital","2023-08-08","$35m Seed to Series A fund","Listed","https://www.wntventures.co.nz"],
+["Yes Capital LP","Yes Capital","Private Equity","2026-04-14","Debt based; tourism, agri, manufacturing","Listed","https://yescapital.co.nz/"]
+];
+const $=id=>document.getElementById(id);
+const types=[...new Set(FUNDS.map(f=>f[2]))].sort();
+types.forEach(t=>{const o=document.createElement("option");o.value=t;o.textContent=t;$("ft").appendChild(o);});
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const fmtD=d=>{const [y,m,dd]=d.split("-");return `${+dd} ${["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][+m-1]} ${y}`;};
+function render(){
+  const q=$("fq").value.trim().toLowerCase(), t=$("ft").value;
+  const rows=FUNDS.map((f,i)=>[i+1,...f]).filter(r=>(!t||r[3]===t)&&(!q||r.slice(1,6).join(" ").toLowerCase().includes(q)));
+  $("ftbl").querySelector("tbody").innerHTML=rows.map(r=>{
+    const st=r[6], cls=st==="Listed"?"":(st==="Closed"||st==="Not seeking"?"closed":"close");
+    const name=r[7]?`<a href="${esc(r[7])}" target="_blank" rel="noopener">${esc(r[1])}</a>`:esc(r[1]);
+    return `<tr><td class="num">${r[0]}</td><td>${name}</td><td>${esc(r[2])}</td><td>${esc(r[3])}</td><td class="num">${fmtD(r[4])}</td><td>${esc(r[5])}</td><td><span class="pill ${cls}">${esc(st)}</span></td></tr>`;
+  }).join("");
+  $("fc").textContent=`${rows.length} of ${FUNDS.length} funds`;
+}
+$("fq").addEventListener("input",render);$("ft").addEventListener("change",render);
+render();
+</script>
+</body>
+</html>
