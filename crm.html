@@ -153,7 +153,7 @@ nav.tools a.help{background:var(--saffron);color:var(--ink);padding:5px 14px;bor
   <div id="msg"></div>
 
   <h2 class="sec">Category packs</h2>
-  <p class="secnote">The pitch deck and one pager for each portfolio. Press Preview to read it here, or download straight to your machine, ready to attach.</p>
+  <p class="secnote">Six portfolios, each with a six slide deck and an A4 one pager in the site fonts and colours (Fjalla One and Libre Franklin, ink, saffron, ivory). Press Preview to read it here; the PDFs look the same on every machine, the PowerPoint is there to edit. All in <a class="plain" href="https://drive.google.com/drive/folders/1ET8OJrD-UDo8TSOTkwpI9e0317GyYbX2" target="_blank" rel="noopener">Drive · Category packs Sep 2026</a>.</p>
   <div class="docgrid" id="packs"></div>
 
   <h2 class="sec">Client collateral builder</h2>
@@ -265,7 +265,6 @@ $("signin-google").onclick = async ()=>{
 /* ---------- template cards ---------- */
 const DOCS = [
   {t:"Producer pitch deck", tag:"deck", d:"The 8-slide first meeting: why now, the prize, the deal, two containers before Christmas.", id:"1YmomEapIACp0Fsyc2U6-y_2AxUBj8T1I"},
-  {t:"One pager", tag:"onepager", d:"Leave-behind for a first call or email: the FTA window and what MAP does, on one page.", id:"1KDT4yH7ZzUPOHgQJJVpehRLcTTp5uFA_"},
   {t:"Producer heads of terms", tag:"contract", d:"The deal on paper: exclusive 3 years, 15% FOB + 5% India, no retainers, renewal in their favour.", id:"1rLgTOMXX7UlA6edBx2TkMYF7FsEKSyf8"},
   {t:"Export stock list template", tag:"contract", d:"What a producer fills in to join a container: SKUs, volumes, pricing, stories.", id:"1UwDANpZEnU-D3D4YDdRTzoF5CpcMvzsX"},
   {t:"Brand positioning", tag:"brief", d:"How MAP talks: accessible premium, exclusive and limited, the voice and the palette.", id:"1D5wXdZJpuuppKp-z0VDyO7zdVqbYwTcH"},
@@ -277,14 +276,18 @@ const DOCS = [
 ];
 const TAGNAMES = {deck:"Slide deck", onepager:"One pager", contract:"Contract / form", brief:"Brief", directory:"Directory"};
 const PACKS = [
-  {t:"Wine", tag:"onepager", d:"66-83% tariff cut, US$985m market by 2034, boutique family wineries first onto the premium shelf.",
-   deck:"1f-YpVtV8n-OpMpQNA7UUTpkCttlxHI-s", op:"1eFUMlGyHpzZm-n3aRiRI-zsrJ0qI6Xss"},
-  {t:"Mānuka honey", tag:"onepager", d:"The first honey concession India has ever granted: 75% off, for NZ alone. Wellness and gifting channels.",
-   deck:"1HzlbEK11JVilVvSpPN9V-IrtVwAME9O9", op:"1aLEagtuMAiM8JG2TlKpCU4DA8rlRc3Co"},
-  {t:"Whisky &amp; bespoke spirits", tag:"onepager", d:"The world's largest whisky market meets the next 100 years' flex: manuka smoke, totara casks, tiny allocations.",
-   deck:"1tK4whcensH42kYGSvzgMM7xm5OE96THe", op:"1kHzco3DhijqNtPfHNKGoxCJ55GNjTybb"},
-  {t:"Travel: Club7 provenance tours", tag:"onepager", d:"Waiheke, Hawke's Bay and Central Otago journeys for India's premium traveller. No partner, no visit. Bookings run from /tours.html.",
-   deck:"1XDFQ2H9aEl-3YSD-dd52PP2rHBQPGfpp", op:"1Qf8G0lEqlcTvT_TnEeLE4Rx6Rnajbt13"},
+  {t:"Wine", d:"66 to 83% tariff cut, US$985m market by 2034, boutique family wineries first onto the premium shelf.",
+   pptx:"1EYRQXgI8F8ePRAd-LatXJzZdixSZFMac", deck:"1469DulzunuhVZtTcVrYMq2sfpvQs29tw", op:"1VFOnHPYwL8ufNMiZQN7UbooWaY5DQqhr"},
+  {t:"Mānuka honey", d:"The first honey concession India has ever granted: 75% off, for NZ alone. Wellness and gifting channels.",
+   pptx:"1v4qbZtXavQizRBRrzAXCxnRWOlrkJazf", deck:"1q06_aWA3excubTJL2sPNJ9FH4nhmqtr9", op:"1C63jJXdXd3e749uufIeuNJFF-vtyOpVK"},
+  {t:"Whisky &amp; bespoke spirits", d:"The world's largest whisky market meets the next 100 years' flex: mānuka smoke, tōtara casks, tiny allocations.",
+   pptx:"14zEP1ENv-V7tV3ql_phCMsvhg0dvwobB", deck:"1Dzvg8uzgPZHo2PZODFL9cz1W1UDHi7mX", op:"16HurTDjWUhE3Uagob9Bqwc0dRbxpCFaO"},
+  {t:"Travel: provenance tours", d:"For India's premium travel companies: Waiheke, Hawke's Bay and Central Otago journeys, hosted by us. No partner, no visit.",
+   pptx:"1ekEYePqJy1GNCBuVFW-kJE_oTlyyMEEV", deck:"1Qeuw4x5VPKmXxxMj417zZ8r1jjvrBUgd", op:"15uN72Ktx1p8UvMnvbRpd6oTlhqXALJC0"},
+  {t:"Polo", d:"For Indian patrons, teams and the services: New Zealand ponies for the Indian season with Ainsley Polo, and the 5% duty route.",
+   pptx:"156fmkRKFrz7NlFUDJ0Evlb6mhL_7ez2P", deck:"1Qe2XVV38xpP2AlbadnA-Qd4zPcmdmYDY", op:"1hiTag-8MyASNI0IY8OlA3hs55j0ojs0o"},
+  {t:"Investor residence", d:"For Indian families and their advisers: Active Investor Plus in plain words, and how MAP introduces, collects and hosts. We do not advise.",
+   pptx:"1iNNdPyOIyQzfdwbJvffo44ZCtlBcg24s", deck:"1_jrvvo6G0bRprWkX3Nsu5m0KPCVGU2eh", op:"14TOE5R674Bw9fjwkc3NkYloBknfTrfLf"},
 ];
 const thumbUrl=id=>"https://drive.google.com/thumbnail?id="+id+"&sz=w600";
 const viewUrl=x=>x.url||("https://drive.google.com/file/d/"+x.id+"/view");
@@ -308,10 +311,12 @@ const mkBtn=(label,fn)=>{ const a=document.createElement("a"); a.textContent=lab
     row.append(
       mkBtn("Preview deck",()=>openPreview(title+" · deck",previewUrl({id:x.deck}),viewUrl({id:x.deck}))),
       mkBtn("Preview one pager",()=>openPreview(title+" · one pager",previewUrl({id:x.op}),viewUrl({id:x.op}))),
-      mk("⭳ Deck","https://drive.google.com/uc?export=download&id="+x.deck),
-      mk("⭳ One pager","https://drive.google.com/uc?export=download&id="+x.op),
+      mk("⭳ PowerPoint","https://drive.google.com/uc?export=download&id="+x.pptx),
+      mk("⭳ Deck PDF","https://drive.google.com/uc?export=download&id="+x.deck),
+      mk("⭳ One pager PDF","https://drive.google.com/uc?export=download&id="+x.op),
     );
-    card.append(tag,thumb(x.deck,title),h,p,row); g.appendChild(card);
+    const th=thumb(x.deck,title); th.style.cursor="pointer"; th.onclick=()=>openPreview(title+" · deck",previewUrl({id:x.deck}),viewUrl({id:x.deck}));
+    card.append(tag,th,h,p,row); g.appendChild(card);
   });
 })();
 (function renderDocs(){
@@ -433,7 +438,7 @@ function toggleDetail(p, tr){
 "There is a second door too. We build provenance tours of New Zealand for India's premium traveller, sold through major Indian tour operators, and only producers signed with us host the groups. Partners get the tour parties as well as the orders.\n\n"+
 "I have attached a one pager and our producer deck. Worth a 20 minute call this week about getting your "+prod+" on the water?\n\n"+
 "Ngā mihi,\n"+(me.split("@")[0]||"The MAP team")+"\nMarket Access Partners · myaccesspartners.com\n\n"+
-"Attach from Drive: MAP_One_Pager.docx + MAP_Producer_Pitch_Deck.pptx"+(p.category==="whisky"?" + MAP_NZ_Whisky_Story_Brief.docx":"");
+"Attach from Drive (Category packs Sep 2026): the "+(p.category==="whisky"?"Whisky":"Wine")+" one pager PDF and pitch deck PDF"+(p.category==="whisky"?" + MAP_NZ_Whisky_Story_Brief.docx":"");
     try{ await navigator.clipboard.writeText(txt); flash("Intro email for "+p.name+" copied. Paste into Gmail and attach the pack."); }
     catch(e){ flash("Could not copy: "+e.message, true); }
   };
