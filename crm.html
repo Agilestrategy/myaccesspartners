@@ -296,7 +296,7 @@ function openPreview(title,pu,vu){ $("pv-title").textContent=title; $("pv-open")
 $("pv-close").onclick=()=>{ $("pv").hidden=true; $("pv-frame").src="about:blank"; };
 $("pv").addEventListener("click",e=>{ if(e.target.id==="pv") $("pv-close").click(); });
 document.addEventListener("keydown",e=>{ if(e.key==="Escape"&&!$("pv").hidden) $("pv-close").click(); });
-const thumb=(id,alt)=>{ const im=document.createElement("img"); im.className="thumb"; im.loading="lazy"; im.alt=alt; im.src=thumbUrl(id); im.onerror=()=>im.remove(); return im; };
+const thumb=(id,alt)=>{ const im=document.createElement("img"); im.className="thumb"; im.loading="lazy"; im.alt=alt; im.src=thumbUrl(id)+"&t="+Math.floor(Date.now()/3600000); im.onerror=()=>{ const d=document.createElement("div"); d.className="thumb"; d.style.cssText="display:flex;align-items:center;justify-content:center;font:400 15px var(--serif);color:var(--saffron-deep);background:var(--ink)"; d.textContent=alt; im.replaceWith(d); }; return im; };
 const mkBtn=(label,fn)=>{ const a=document.createElement("a"); a.textContent=label; a.href="#"; a.onclick=e=>{ e.preventDefault(); fn(); }; return a; };
 (function renderPacks(){
   const g = document.getElementById("packs");
@@ -311,9 +311,9 @@ const mkBtn=(label,fn)=>{ const a=document.createElement("a"); a.textContent=lab
     row.append(
       mkBtn("Preview deck",()=>openPreview(title+" · deck",previewUrl({id:x.deck}),viewUrl({id:x.deck}))),
       mkBtn("Preview one pager",()=>openPreview(title+" · one pager",previewUrl({id:x.op}),viewUrl({id:x.op}))),
-      mk("⭳ PowerPoint","https://drive.google.com/uc?export=download&id="+x.pptx),
-      mk("⭳ Deck PDF","https://drive.google.com/uc?export=download&id="+x.deck),
-      mk("⭳ One pager PDF","https://drive.google.com/uc?export=download&id="+x.op),
+      mk("Download PowerPoint","https://drive.google.com/uc?export=download&id="+x.pptx),
+      mk("Download deck PDF","https://drive.google.com/uc?export=download&id="+x.deck),
+      mk("Download one pager PDF","https://drive.google.com/uc?export=download&id="+x.op),
     );
     const th=thumb(x.deck,title); th.style.cursor="pointer"; th.onclick=()=>openPreview(title+" · deck",previewUrl({id:x.deck}),viewUrl({id:x.deck}));
     card.append(tag,th,h,p,row); g.appendChild(card);
