@@ -113,7 +113,7 @@ nav.tools a.prop{background:var(--vine);color:#fff;padding:6px 16px;border-radiu
   </div>
   <p class="next" style="margin:12px 0 40px">Standard packs live in Drive under Category packs Sep 2026 and are the same files the <a href="/crm.html">CRM</a> shows. Custom builds download to your machine and are not stored; build again any time.</p>
 </div>
-<div id="pv" hidden><div class="box"><div class="bar"><span id="pv-title"></span><span><a id="pv-open" href="#" target="_blank" rel="noopener">Open in Drive</a> <button id="pv-close">Close</button></span></div><iframe id="pv-frame" allow="autoplay"></iframe></div></div>
+<div id="pv" hidden><div class="box"><div class="bar"><span id="pv-title"></span><span><span id="pv-note" style="font-weight:500;color:#6A6F7A;margin-right:12px">Loading…</span><button id="pv-reload">Reload</button> <a id="pv-open" href="#" target="_blank" rel="noopener">Open in Drive</a> <button id="pv-close">Close</button></span></div><div id="pv-host" style="flex:1;display:flex"></div></div></div>
 </div>
 
 <script>
@@ -160,8 +160,11 @@ function client(){ const n=$("name").value.trim(); if(!n){ $("bMsg").className="
 
 /* standard pack */
 const previewUrl=id=>"https://drive.google.com/file/d/"+id+"/preview", viewUrl=id=>"https://drive.google.com/file/d/"+id+"/view", dl=id=>"https://drive.google.com/uc?export=download&id="+id, thumbUrl=id=>"https://drive.google.com/thumbnail?id="+id+"&sz=w600";
-function openPreview(title,id){ $("pv-title").textContent=title; $("pv-open").href=viewUrl(id); $("pv-frame").src=previewUrl(id); $("pv").hidden=false; }
-$("pv-close").onclick=()=>{ $("pv").hidden=true; $("pv-frame").src="about:blank"; };
+let pvUrl="";
+function pvLoad(){ const host=$("pv-host"); host.innerHTML=""; const f=document.createElement("iframe"); f.allow="autoplay"; f.style.cssText="flex:1;border:0;width:100%"; $("pv-note").textContent="Loading…"; f.onload=()=>{ $("pv-note").textContent=""; }; f.src=pvUrl+"?r="+Date.now(); host.appendChild(f); setTimeout(()=>{ if($("pv-note").textContent==="Loading…") $("pv-note").textContent="Slow to load? Press Reload or Open in Drive."; },7000); }
+function openPreview(title,id){ $("pv-title").textContent=title; $("pv-open").href=viewUrl(id); pvUrl=previewUrl(id); $("pv").hidden=false; pvLoad(); }
+$("pv-reload").onclick=pvLoad;
+$("pv-close").onclick=()=>{ $("pv").hidden=true; $("pv-host").innerHTML=""; };
 $("pv").addEventListener("click",e=>{ if(e.target.id==="pv") $("pv-close").click(); });
 document.addEventListener("keydown",e=>{ if(e.key==="Escape"&&!$("pv").hidden) $("pv-close").click(); });
 function paintPack(){

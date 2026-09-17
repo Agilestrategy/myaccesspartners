@@ -171,7 +171,7 @@ nav.tools a.prop{background:var(--vine);color:#fff;padding:6px 16px;border-radiu
   <h2 class="sec">The templates</h2>
   <p class="secnote">All in MAP colours and letterhead, filed in the shared Drive folder. Press Preview to read one without leaving this page. <a class="plain" href="https://drive.google.com/drive/folders/14FcLH-9mgiQNljWfSFspM5Z2mR2ePOA4" target="_blank" rel="noopener">Open the Drive folder</a></p>
   <div class="docgrid" id="docs"></div>
-  <div id="pv" hidden><div class="box"><div class="bar"><span id="pv-title"></span><span><a id="pv-open" href="#" target="_blank" rel="noopener">Open in Drive</a> <button id="pv-close">Close</button></span></div><iframe id="pv-frame" allow="autoplay"></iframe></div></div>
+  <div id="pv" hidden><div class="box"><div class="bar"><span id="pv-title"></span><span><span id="pv-note" style="font-weight:500;color:#6A6F7A;margin-right:12px">Loading…</span><button id="pv-reload">Reload</button> <a id="pv-open" href="#" target="_blank" rel="noopener">Open in Drive</a> <button id="pv-close">Close</button></span></div><div id="pv-host" style="flex:1;display:flex"></div></div></div>
 
   <h2 class="sec">Outreach targets</h2>
   <p class="secnote">533 wineries plus the first 13 whisky distilleries, independent and corporate separated. Click a name to work it.</p>
@@ -268,8 +268,8 @@ $("signin-google").onclick = async ()=>{
 const DOCS = [
   {t:"Producer pitch deck", tag:"deck", d:"The 8-slide first meeting: why now, the prize, the deal, two containers before Christmas.", id:"1YmomEapIACp0Fsyc2U6-y_2AxUBj8T1I"},
   {t:"Producer heads of terms", tag:"contract", d:"The deal on paper: exclusive 3 years, 15% FOB + 5% India, no retainers, renewal in their favour.", id:"1rLgTOMXX7UlA6edBx2TkMYF7FsEKSyf8"},
-  {t:"Export stock list template", tag:"contract", d:"What a producer fills in to join a container: SKUs, volumes, pricing, stories.", id:"1UwDANpZEnU-D3D4YDdRTzoF5CpcMvzsX"},
-  {t:"Brand positioning", tag:"brief", d:"How MAP talks: accessible premium, exclusive and limited, the voice and the palette.", id:"1D5wXdZJpuuppKp-z0VDyO7zdVqbYwTcH"},
+  {t:"Export stock list template", tag:"contract", d:"What a producer fills in to join a container: products, cases, FOB and floor price, story, Indian cuisine match. Rebuilt 18 Sep 2026.", id:"1UwDANpZEnU-D3D4YDdRTzoF5CpcMvzsX"},
+  {t:"Brand positioning", tag:"brief", d:"How MAP talks, looks and behaves: accessible premium, exclusive and limited, the six category lines, voice, palette and type. Rebuilt 18 Sep 2026.", id:"1jp2g_6TjvC0W0B1oPyjou7IQjydJhsls"},
   {t:"India brands &amp; imagery brief", tag:"brief", d:"India's most trusted brands and the imagery that sells NZ to Indian travellers.", id:"1lMybyZJZt1yEqgBR-XSttLnqxtBezPmd"},
   {t:"Trusted brand codes (logo thinking)", tag:"brief", d:"Macallan, Titan and the travel agents decoded: borrow the feeling, never the shape. Three logo directions.", id:"17s4IaYXbjE21fau7O-AlXdCMy97ByZFk"},
   {t:"NZ whisky story brief (JC)", tag:"brief", d:"Scotland and Japan are the past hundred years. NZ is the next hundred. JC's story frame per distillery.", id:"1944mml2e24_83PzDKMuHW0rI8PrLuLeD"},
@@ -294,8 +294,11 @@ const PACKS = [
 const thumbUrl=id=>"https://drive.google.com/thumbnail?id="+id+"&sz=w600";
 const viewUrl=x=>x.url||("https://drive.google.com/file/d/"+x.id+"/view");
 const previewUrl=x=>x.url?x.url.replace(/\/edit.*$/,"/preview"):("https://drive.google.com/file/d/"+x.id+"/preview");
-function openPreview(title,pu,vu){ $("pv-title").textContent=title; $("pv-open").href=vu; $("pv-frame").src=pu; $("pv").hidden=false; }
-$("pv-close").onclick=()=>{ $("pv").hidden=true; $("pv-frame").src="about:blank"; };
+let pvUrl="";
+function pvLoad(){ const host=$("pv-host"); host.innerHTML=""; const f=document.createElement("iframe"); f.id="pv-frame"; f.allow="autoplay"; f.style.cssText="flex:1;border:0;width:100%"; $("pv-note").textContent="Loading…"; f.onload=()=>{ $("pv-note").textContent=""; }; f.src=pvUrl+(pvUrl.includes("?")?"&":"?")+"r="+Date.now(); host.appendChild(f); setTimeout(()=>{ if($("pv-note").textContent==="Loading…") $("pv-note").textContent="Slow to load? Press Reload or Open in Drive."; },7000); }
+function openPreview(title,pu,vu){ $("pv-title").textContent=title; $("pv-open").href=vu; pvUrl=pu; $("pv").hidden=false; pvLoad(); }
+$("pv-reload").onclick=pvLoad;
+$("pv-close").onclick=()=>{ $("pv").hidden=true; $("pv-host").innerHTML=""; };
 $("pv").addEventListener("click",e=>{ if(e.target.id==="pv") $("pv-close").click(); });
 document.addEventListener("keydown",e=>{ if(e.key==="Escape"&&!$("pv").hidden) $("pv-close").click(); });
 const thumb=(id,alt)=>{ const im=document.createElement("img"); im.className="thumb"; im.loading="lazy"; im.alt=alt; im.src=thumbUrl(id)+"&t="+Math.floor(Date.now()/3600000); im.onerror=()=>{ const d=document.createElement("div"); d.className="thumb"; d.style.cssText="display:flex;align-items:center;justify-content:center;font:400 15px var(--serif);color:var(--saffron-deep);background:var(--ink)"; d.textContent=alt; im.replaceWith(d); }; return im; };
