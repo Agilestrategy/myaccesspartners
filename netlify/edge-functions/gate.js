@@ -57,4 +57,5 @@ export default async (request, context) => {
   return new Response(page(false), { status: 401, headers: { "Content-Type": "text/html; charset=utf-8" } });
 };
 
-export const config = { path: "/*" };
+// The client investor portal is opened by a per client token link, so it sits outside the preview gate.
+export const config = { path: "/*", excludedPath: ["/investor-portal.html"] };
