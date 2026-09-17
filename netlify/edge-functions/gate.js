@@ -87,7 +87,9 @@ export default async (request, context) => {
     if (!r.ok) return Response.json({ error: "Sign in could not be verified." }, { status: 401 });
     const user = await r.json();
     const email = String(user.email || "").toLowerCase();
-    if (!email.endsWith(CREW_DOMAIN)) return Response.json({ error: `Sign in is limited to ${CREW_DOMAIN.slice(1)} accounts.` }, { status: 403 });
+    // Paul's founder account predates the domain and is already an authorised crew login; it is the only named exception.
+    const OWNER = "paul.newton@agilestrategy.co.nz";
+    if (!email.endsWith(CREW_DOMAIN) && email !== OWNER) return Response.json({ error: `Sign in is limited to ${CREW_DOMAIN.slice(1)} accounts.` }, { status: 403 });
     return new Response(JSON.stringify({ ok: true, email }), { status: 200, headers: { "Content-Type": "application/json", "Set-Cookie": admitCookie(key) } });
   }
 
