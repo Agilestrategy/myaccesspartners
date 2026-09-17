@@ -92,13 +92,22 @@ ul.plain li{margin-bottom:6px}
 @media(max-width:860px){.cols{grid-template-columns:1fr}.steps li{padding-left:56px}table{display:block;overflow-x:auto}}
 @media print{header{position:static}.toc,.toolbar{display:none}}
 </style>
+<style id="crew-nav">
+header .wrap{align-items:center}
+nav.tools{display:flex;gap:10px 22px;font-size:14px;flex-wrap:wrap;align-items:center}
+nav.tools a{color:var(--mist);text-decoration:none;padding:4px 0;border-bottom:2px solid transparent}
+nav.tools a:hover{color:var(--ivory)}nav.tools a.on{color:var(--ivory);border-bottom-color:var(--saffron)}
+nav.tools .grp{display:inline-flex;gap:12px;align-items:center}
+nav.tools .grp b{font:700 10.5px var(--sans);letter-spacing:.14em;text-transform:uppercase;color:rgba(245,241,230,.45);margin-right:2px}
+nav.tools a.help{background:var(--saffron);color:var(--ink);padding:5px 14px;border-radius:999px;font-weight:600;border:none}
+</style>
 </head>
 <body>
 
 <header>
   <div class="wrap">
     <span class="mark">Market <b>Access</b> Partners · Internal</span>
-    <nav class="tools"><a href="/dashboard.html">Dashboard</a><a href="/crm.html">CRM</a><a href="/distributors.html">Distributors</a><a href="/tours.html">Tours</a><a href="/travel-builder.html">Travel builder</a><a href="/landed-price.html">Calculator</a><a href="/containers.html">Containers</a><a href="/finance.html">Finance</a><a href="/invest.html" style="color:var(--ivory)">Investor residence</a><a href="/investors.html">Investors</a></nav>
+    <nav class="tools"><a href="/dashboard.html">Home</a><span class="grp"><b>Investors</b><a href="/investors.html">Files</a><a href="/invest.html" class="on">Rules</a></span><span class="grp"><b>Producers</b><a href="/crm.html">CRM</a><a href="/distributors.html">Distributors</a></span><span class="grp"><b>Travel</b><a href="/tours.html">Tours</a><a href="/travel-builder.html">Builder</a></span><span class="grp"><b>Trade</b><a href="/landed-price.html">Calculator</a><a href="/containers.html">Containers</a></span><a href="/finance.html">Finance</a><a href="/manual.html" class="help">Manual</a></nav>
     <span id="who">Crew reference · verified 17 Sep 2026</span>
   </div>
 </header>
@@ -109,6 +118,17 @@ ul.plain li{margin-bottom:6px}
   <p class="eyebrow">India to New Zealand · investor residence</p>
   <h1>Investor Residence Pathway</h1>
   <p class="sub">Everything the crew needs on how a wealthy Indian family obtains New Zealand residence by investment, keeps it, and (if they choose) becomes a New Zealand citizen. Every number on this page was checked against Immigration New Zealand, Invest New Zealand, the Department of Internal Affairs, Inland Revenue, LINZ, the Immigration Advisers Authority and the Reserve Bank of India on 17 September 2026. Sources are listed at the foot of the page.</p>
+
+  <div class="panel-glance" style="background:#fff;border:1px solid var(--line);border-radius:8px;padding:20px 24px;margin:22px 0">
+    <p class="eyebrow" style="margin-bottom:8px">The sixty second version</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px 22px;font-size:15px">
+      <div><b style="font-family:var(--serif);font-size:24px;font-weight:400;display:block">NZ$5,000,000</b>Growth category. Held 36 months. Only 21 days in NZ. What most Indian families choose.</div>
+      <div><b style="font-family:var(--serif);font-size:24px;font-weight:400;display:block">NZ$10,000,000</b>Balanced category. Held 60 months. 105 days in NZ (less with more money).</div>
+      <div><b style="font-family:var(--serif);font-size:24px;font-weight:400;display:block">4 months</b>Most decisions in principle come back inside this. Then 6 months to invest.</div>
+      <div><b style="font-family:var(--serif);font-size:24px;font-weight:400;display:block">5 years</b>Residence first. Citizenship only after 5 years actually living here. India does not allow dual citizenship.</div>
+    </div>
+    <p style="margin:14px 0 0;font-size:14.5px;color:var(--body)">Three things we never say: "golden passport", "government approved fund", and any opinion on whether a family qualifies. Only a licensed immigration adviser or NZ lawyer advises. We introduce, collect documents and host. Full detail below; the <a href="/manual.html">Manual</a> covers how to use the site.</p>
+  </div>
 
   <div class="alert">
     <p><strong>Timing that matters right now.</strong> Invest New Zealand is changing the investment settings on <strong>28 September 2026</strong> and is not accepting new applications from funds or companies wanting "acceptable investment" status between 16 and 28 September. Guidance notes, application forms and the fund list will be reissued on 28 September. Verify this page again against the sources on or after that date before anything goes to a client.</p>

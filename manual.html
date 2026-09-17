@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Manual · MAP crew</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fjalla+One&family=Libre+Franklin:ital,wght@0,300..800;1,400&display=swap">
+<style>
+:root{--ink:#161B24;--ink2:#1F2633;--ivory:#F5F1E6;--paper:#FBF9F2;--saffron:#D98324;--saffron-deep:#B26A15;--vine:#3D5C4A;--mist:#9AA1AD;--body:#3F4653;--line:rgba(22,27,36,.14);--ok:#2E7D51;--warn:#A33B2E;
+--serif:"Fjalla One","Arial Narrow",Arial,sans-serif;--sans:"Libre Franklin","Helvetica Neue",Arial,sans-serif}
+*{box-sizing:border-box;margin:0}
+body{background:var(--paper);color:var(--ink);font:400 17px/1.6 var(--sans)}
+.wrap{max-width:960px;margin:0 auto;padding:0 24px}
+header{background:var(--ink);color:var(--ivory);padding:16px 0}
+header .wrap{max-width:1180px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.mark{font:700 14px var(--sans);letter-spacing:.06em;text-transform:uppercase}
+.mark b{color:var(--saffron)}
+#who{font-size:12.5px;color:var(--mist)}
+h1{font-family:var(--serif);font-weight:400;font-size:clamp(34px,4.5vw,48px);margin:34px 0 8px;line-height:1.1}
+h2{font-family:var(--serif);font-weight:400;font-size:30px;margin:0 0 14px;display:flex;align-items:center;gap:14px}
+h2 span{display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:50%;background:var(--saffron);color:var(--ink);font-size:20px;flex:none}
+h3{font:700 13px var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--vine);margin:22px 0 10px}
+p{color:var(--body);max-width:70ch;margin:0 0 14px}
+b,strong{color:var(--ink)}
+a{color:var(--saffron-deep)}
+.eyebrow{font:600 11px var(--sans);letter-spacing:.18px;letter-spacing:.18em;text-transform:uppercase;color:var(--saffron)}
+section{padding:36px 0;border-top:1px solid var(--line)}
+section:first-of-type{border-top:none}
+.lead{font-size:20px;color:var(--ink);max-width:62ch}
+.toc{display:flex;flex-wrap:wrap;gap:8px;margin:22px 0 10px}
+.toc a{font:600 14px var(--sans);text-decoration:none;color:var(--ink);background:#fff;border:1px solid var(--line);padding:9px 16px;border-radius:999px}
+.toc a:hover{border-color:var(--saffron)}
+figure{margin:18px 0 22px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:18px}
+figure svg{width:100%;height:auto;display:block}
+figcaption{font-size:14px;color:#6A6F7A;margin-top:10px}
+ol.steps{counter-reset:s;list-style:none;padding:0;margin:14px 0 8px}
+ol.steps li{position:relative;padding:14px 0 14px 66px;border-bottom:1px solid var(--line);min-height:62px}
+ol.steps li:before{counter-increment:s;content:counter(s);position:absolute;left:0;top:14px;width:46px;height:46px;border-radius:50%;background:var(--saffron);color:var(--ink);font:400 22px var(--serif);display:flex;align-items:center;justify-content:center}
+ol.steps li b{display:block;font-size:18px;margin-bottom:2px}
+ol.steps li p{margin:0;max-width:none}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0}
+.card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:18px 20px}
+.card h4{font-family:var(--serif);font-weight:400;font-size:21px;margin-bottom:6px}
+.card p{margin:0;font-size:16px}
+.card.dark{background:var(--ink);border-color:var(--ink)}.card.dark h4{color:var(--saffron)}.card.dark p{color:var(--ivory)}
+.card.ok{border-left:5px solid var(--ok)}.card.no{border-left:5px solid var(--warn)}
+.tip{background:var(--ivory);border-left:5px solid var(--saffron);padding:14px 18px;border-radius:6px;margin:16px 0;font-size:16px}
+.tip b{display:block;font:700 12px var(--sans);letter-spacing:.1em;text-transform:uppercase;color:var(--saffron-deep);margin-bottom:4px}
+table{width:100%;border-collapse:collapse;font-size:15.5px;margin:12px 0 6px;background:#fff}
+th,td{padding:11px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+thead th{font:600 11.5px var(--sans);letter-spacing:.06em;text-transform:uppercase;color:var(--vine);background:var(--ivory)}
+ul{padding-left:22px;color:var(--body)}ul li{margin-bottom:6px}
+kbd{font:600 14px var(--sans);background:var(--ivory);border:1px solid var(--line);border-radius:5px;padding:1px 8px;color:var(--ink);white-space:nowrap}
+footer{padding:30px 0 50px;font-size:13.5px;color:#6A6F7A;border-top:1px solid var(--line)}
+@media(max-width:720px){.cards{grid-template-columns:1fr}table{display:block;overflow-x:auto}}
+@media print{header,.toc{display:none}section{page-break-inside:avoid}body{font-size:13px}}
+</style>
+<style id="crew-nav">
+header .wrap{align-items:center}
+nav.tools{display:flex;gap:10px 22px;font-size:14px;flex-wrap:wrap;align-items:center}
+nav.tools a{color:var(--mist);text-decoration:none;padding:4px 0;border-bottom:2px solid transparent}
+nav.tools a:hover{color:var(--ivory)}nav.tools a.on{color:var(--ivory);border-bottom-color:var(--saffron)}
+nav.tools .grp{display:inline-flex;gap:12px;align-items:center}
+nav.tools .grp b{font:700 10.5px var(--sans);letter-spacing:.14em;text-transform:uppercase;color:rgba(245,241,230,.45);margin-right:2px}
+nav.tools a.help{background:var(--saffron);color:var(--ink);padding:5px 14px;border-radius:999px;font-weight:600;border:none}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <span class="mark">Market <b>Access</b> Partners · Internal</span>
+  <nav class="tools"><a href="/dashboard.html">Home</a><span class="grp"><b>Investors</b><a href="/investors.html">Files</a><a href="/invest.html">Rules</a></span><span class="grp"><b>Producers</b><a href="/crm.html">CRM</a><a href="/distributors.html">Distributors</a></span><span class="grp"><b>Travel</b><a href="/tours.html">Tours</a><a href="/travel-builder.html">Builder</a></span><span class="grp"><b>Trade</b><a href="/landed-price.html">Calculator</a><a href="/containers.html">Containers</a></span><a href="/finance.html">Finance</a><a href="/manual.html" class="help on">Manual</a></nav>
+  <span id="who">Crew manual · 18 Sep 2026</span>
+</div></header>
+
+<div class="wrap">
+
+<section>
+  <p class="eyebrow">myaccesspartners.com · how it works</p>
+  <h1>The crew manual</h1>
+  <p class="lead">One website, two faces. The public pages tell producers and Indian partners what we do. The crew pages behind the Google sign in run the business. The investor pages are the ones with rules attached, so they get the most space here.</p>
+  <div class="toc">
+    <a href="#in">1 Getting in</a><a href="#journey">2 An investor, start to finish</a><a href="#files">3 The Files page</a><a href="#send">4 Sending a package</a><a href="#parties">5 Who we send to</a><a href="#matrix">6 The fund matrix</a><a href="#rules">7 The Rules page</a><a href="#say">8 What we may say</a><a href="#tools">9 The other tools</a><a href="#wrong">10 When something looks wrong</a>
+  </div>
+
+  <figure>
+    <svg viewBox="0 0 1000 300" role="img" aria-label="Site map">
+      <rect x="20" y="20" width="440" height="260" rx="12" fill="#FBF9F2" stroke="#DAD8D2"/>
+      <text x="40" y="56" font-family="Fjalla One,Arial" font-size="24" fill="#161B24">Public</text>
+      <text x="40" y="78" font-size="14" fill="#6A6F7A">Anyone with the preview key link</text>
+      <g font-size="15" fill="#161B24">
+        <rect x="40" y="96" width="195" height="46" rx="8" fill="#fff" stroke="#DAD8D2"/><text x="54" y="125">Home and portfolio</text>
+        <rect x="245" y="96" width="195" height="46" rx="8" fill="#fff" stroke="#DAD8D2"/><text x="259" y="125">Why New Zealand</text>
+        <rect x="40" y="152" width="400" height="46" rx="8" fill="#fff" stroke="#DAD8D2"/><text x="54" y="181">Wine · Mānuka honey · Whisky · Travel</text>
+        <rect x="40" y="210" width="400" height="54" rx="8" fill="#161B24"/><text x="54" y="234" fill="#F5F1E6" font-weight="700">The client's private page</text><text x="54" y="254" fill="#9AA1AD" font-size="13">one link per family · no key, no sign in</text>
+      </g>
+      <rect x="520" y="20" width="460" height="260" rx="12" fill="#161B24"/>
+      <text x="540" y="56" font-family="Fjalla One,Arial" font-size="24" fill="#F5F1E6">Crew</text>
+      <text x="540" y="78" font-size="14" fill="#9AA1AD">Google sign in · @myaccesspartners.com</text>
+      <g font-size="15" fill="#F5F1E6">
+        <rect x="540" y="96" width="205" height="46" rx="8" fill="#D98324"/><text x="554" y="125" fill="#161B24" font-weight="700">Investors · Files</text>
+        <rect x="755" y="96" width="205" height="46" rx="8" fill="#D98324"/><text x="769" y="125" fill="#161B24" font-weight="700">Investors · Rules</text>
+        <rect x="540" y="152" width="205" height="46" rx="8" fill="#1F2633" stroke="#3D5C4A"/><text x="554" y="181">CRM · Distributors</text>
+        <rect x="755" y="152" width="205" height="46" rx="8" fill="#1F2633" stroke="#3D5C4A"/><text x="769" y="181">Tours · Travel builder</text>
+        <rect x="540" y="208" width="205" height="46" rx="8" fill="#1F2633" stroke="#3D5C4A"/><text x="554" y="237">Calculator · Containers</text>
+        <rect x="755" y="208" width="205" height="46" rx="8" fill="#1F2633" stroke="#3D5C4A"/><text x="769" y="237">Finance · Home</text>
+      </g>
+    </svg>
+    <figcaption>The orange tiles are the investor pathway. The dark tile on the left is what the client sees. Everything else is the export and travel business.</figcaption>
+  </figure>
+</section>
+
+<section id="in">
+  <h2><span>1</span>Getting in</h2>
+  <ol class="steps">
+    <li><b>Open any crew page</b><p>For example myaccesspartners.com/investors.html. You get a "Crew and partners" screen.</p></li>
+    <li><b>Press "Continue with Google"</b><p>Pick your @myaccesspartners.com account. Paul's founder account works too. Any other account is refused.</p></li>
+    <li><b>You stay signed in</b><p>Until you press Sign out (top right of any crew page) or clear your browser.</p></li>
+  </ol>
+  <div class="cards">
+    <div class="card"><h4>Partners and preview visitors</h4><p>People who are not crew (a producer, Club7, Tusshar) get a link with the key on the end: <kbd>myaccesspartners.com/?key=…</kbd>. Ask Paul for it. It opens the public pages only.</p></div>
+    <div class="card"><h4>Clients</h4><p>Clients never sign in. Each family gets one private link to their own page. That is all they see.</p></div>
+  </div>
+</section>
+
+<section id="journey">
+  <h2><span>2</span>An investor, start to finish</h2>
+  <p class="lead">Five steps. The Files page tells you which one you are on and what to do next.</p>
+  <figure>
+    <svg viewBox="0 0 1000 200" role="img" aria-label="Five steps">
+      <defs><marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#9AA1AD"/></marker></defs>
+      <g font-family="Libre Franklin,Arial">
+        <rect x="10" y="30" width="176" height="140" rx="10" fill="#D98324"/><text x="24" y="60" font-size="13" font-weight="700" fill="#161B24">1 · YOU</text><text x="24" y="92" font-family="Fjalla One,Arial" font-size="21" fill="#161B24">Open a file</text><text x="24" y="118" font-size="13" fill="#161B24">Send the client</text><text x="24" y="136" font-size="13" fill="#161B24">their private link</text>
+        <path d="M188 100 L206 100" stroke="#9AA1AD" stroke-width="2" marker-end="url(#a)"/>
+        <rect x="210" y="30" width="176" height="140" rx="10" fill="#fff" stroke="#DAD8D2"/><text x="224" y="60" font-size="13" font-weight="700" fill="#3D5C4A">2 · CLIENT</text><text x="224" y="92" font-family="Fjalla One,Arial" font-size="21" fill="#161B24">Fills in details</text><text x="224" y="118" font-size="13" fill="#4A5160">Family, money,</text><text x="224" y="136" font-size="13" fill="#4A5160">uploads documents</text>
+        <path d="M388 100 L406 100" stroke="#9AA1AD" stroke-width="2" marker-end="url(#a)"/>
+        <rect x="410" y="30" width="176" height="140" rx="10" fill="#fff" stroke="#DAD8D2"/><text x="424" y="60" font-size="13" font-weight="700" fill="#3D5C4A">3 · CLIENT</text><text x="424" y="92" font-family="Fjalla One,Arial" font-size="21" fill="#161B24">Presses Submit</text><text x="424" y="118" font-size="13" fill="#4A5160">We get an email,</text><text x="424" y="136" font-size="13" fill="#4A5160">file turns green</text>
+        <path d="M588 100 L606 100" stroke="#9AA1AD" stroke-width="2" marker-end="url(#a)"/>
+        <rect x="610" y="30" width="176" height="140" rx="10" fill="#D98324"/><text x="624" y="60" font-size="13" font-weight="700" fill="#161B24">4 · YOU</text><text x="624" y="92" font-family="Fjalla One,Arial" font-size="21" fill="#161B24">Send package</text><text x="624" y="118" font-size="13" fill="#161B24">One button, to the</text><text x="624" y="136" font-size="13" fill="#161B24">adviser or anyone</text>
+        <path d="M788 100 L806 100" stroke="#9AA1AD" stroke-width="2" marker-end="url(#a)"/>
+        <rect x="810" y="30" width="180" height="140" rx="10" fill="#161B24"/><text x="824" y="60" font-size="13" font-weight="700" fill="#D98324">5 · ADVISER</text><text x="824" y="92" font-family="Fjalla One,Arial" font-size="21" fill="#F5F1E6">Takes it on</text><text x="824" y="118" font-size="13" fill="#9AA1AD">They advise and</text><text x="824" y="136" font-size="13" fill="#9AA1AD">lodge. We host.</text>
+      </g>
+    </svg>
+    <figcaption>Orange is you. White is the client. Dark is the licensed adviser, who does all the advising.</figcaption>
+  </figure>
+  <ol class="steps">
+    <li><b>Open a file</b><p>Files page, press <kbd>+ New file</kbd>, type the name and email, press <kbd>Open the file</kbd>. Press <kbd>Copy the invitation email</kbd> and paste it into an email to the client. Done. The file now says "Filling in details".</p></li>
+    <li><b>The client fills in their page</b><p>Nothing for you to do. Their details and documents appear on the file as they go. If it goes quiet for a week, chase them.</p></li>
+    <li><b>The client presses Submit</b><p>You get an email at hello@myaccesspartners.com. The file turns green and says "Ready to send". Open it, glance at the documents, press <kbd>Mark as sighted</kbd> on the ones you have looked at.</p></li>
+    <li><b>Send the package</b><p>On the file, scroll to "3 · Send the package". Choose who from the list (or type any email address), check the ticked documents, press <kbd>Send now</kbd>. The email is written for you and goes from hello@myaccesspartners.com with the documents attached. It is recorded on the file.</p></li>
+    <li><b>The adviser takes it on</b><p>From here the licensed adviser talks to the client directly. We host the visit, keep the file tidy and never give an opinion on eligibility.</p></li>
+  </ol>
+</section>
+
+<section id="files">
+  <h2><span>3</span>The Files page</h2>
+  <p>Investors, first tab. The list shows every family, what stage they are at and, in plain words, what to do next. Click a row to open the file.</p>
+  <figure>
+    <svg viewBox="0 0 1000 360" role="img" aria-label="Layout of a file">
+      <rect x="10" y="10" width="980" height="340" rx="10" fill="#FBF9F2" stroke="#DAD8D2"/>
+      <g font-family="Libre Franklin,Arial" font-size="14">
+        <text x="30" y="46" font-family="Fjalla One,Arial" font-size="24" fill="#161B24">Priya and Arjun Mehta</text>
+        <rect x="860" y="26" width="110" height="26" rx="13" fill="#E4F1E8"/><text x="877" y="44" font-size="11" font-weight="700" fill="#2E7D51">READY TO SEND</text>
+        <g fill="#F5F1E6"><rect x="30" y="66" width="180" height="54" rx="8" opacity=".6"/><rect x="220" y="66" width="180" height="54" rx="8" opacity=".6"/><rect x="410" y="66" width="180" height="54" rx="8" fill="#fff" stroke="#D98324" stroke-width="2"/><rect x="600" y="66" width="180" height="54" rx="8"/><rect x="790" y="66" width="180" height="54" rx="8"/></g>
+        <g font-size="12" fill="#3D5C4A" font-weight="700"><text x="42" y="88">✓ 1 SEND LINK</text><text x="232" y="88">✓ 2 CLIENT FILLS IN</text><text x="422" y="88" fill="#B26A15">3 CLIENT SUBMITS</text><text x="612" y="88">4 SEND PACKAGE</text><text x="802" y="88">5 WITH ADVISER</text></g>
+        <g font-size="12" fill="#6A6F7A"><text x="42" y="108">Done</text><text x="232" y="108">Done</text><text x="422" y="108" fill="#161B24">You are here</text><text x="612" y="108">Next</text><text x="802" y="108">Later</text></g>
+        <rect x="30" y="134" width="940" height="52" rx="8" fill="#161B24"/><text x="46" y="154" font-size="11" font-weight="700" fill="#D98324" letter-spacing="2">DO THIS NOW</text><text x="46" y="174" fill="#F5F1E6" font-size="15">The client has submitted. Check the documents, then send the package.</text><rect x="880" y="145" width="70" height="30" rx="15" fill="#D98324"/><text x="902" y="165" fill="#161B24" font-weight="700">Go</text>
+        <rect x="30" y="200" width="300" height="130" rx="8" fill="#fff" stroke="#DAD8D2"/><text x="44" y="226" font-family="Fjalla One,Arial" font-size="18" fill="#161B24">1 · The client's link</text><text x="44" y="250" fill="#4A5160">Copy the invitation email</text><text x="44" y="272" fill="#4A5160">Open in my mail app</text><text x="44" y="294" fill="#4A5160">Copy the link only</text>
+        <rect x="350" y="200" width="300" height="130" rx="8" fill="#fff" stroke="#DAD8D2"/><text x="364" y="226" font-family="Fjalla One,Arial" font-size="18" fill="#161B24">2 · Documents</text><text x="364" y="250" fill="#4A5160">Still to come: police certificate</text><text x="364" y="272" fill="#4A5160">Passport · Mark as sighted</text><text x="364" y="294" fill="#4A5160">Upload one the client emailed us</text>
+        <rect x="670" y="200" width="300" height="130" rx="8" fill="#fff" stroke="#DAD8D2"/><text x="684" y="226" font-family="Fjalla One,Arial" font-size="18" fill="#161B24">3 · Send the package</text><text x="684" y="250" fill="#4A5160">Send to: adviser, lawyer, fund…</text><text x="684" y="272" fill="#4A5160">Documents tick themselves</text><rect x="684" y="286" width="100" height="30" rx="15" fill="#3D5C4A"/><text x="708" y="306" fill="#fff" font-weight="700">Send now</text>
+      </g>
+    </svg>
+    <figcaption>A file, top to bottom. The step strip and the dark "Do this now" bar always tell you where you are. Below the three panels, folded away, are the client's answers, notes and the activity log.</figcaption>
+  </figure>
+  <div class="cards">
+    <div class="card"><h4>The stages</h4><p><b>New</b> → <b>Filling in details</b> → <b>Documents arriving</b> → <b>Ready to send</b> → <b>Package sent</b> → <b>With the adviser</b>. The site moves the file along by itself as the client and you act. You can override it under "Notes, stage and who looks after it".</p></div>
+    <div class="card"><h4>Documents</h4><p>Click a file name to open it (the link works for 10 minutes). <b>Mark as sighted</b> means a crew member has looked at it; it shows as "(sighted)" in the package email. <b>Reject</b> asks you for a reason and keeps it out of packages.</p></div>
+    <div class="card"><h4>Close file</h4><p>Top right. The client's link stops working and the file drops out of the working list. Use it for families who walk away.</p></div>
+    <div class="card"><h4>Notes</h4><p>Facts and next actions only. Never write an opinion on whether a family qualifies; that is regulated advice and it is discoverable.</p></div>
+  </div>
+</section>
+
+<section id="send">
+  <h2><span>4</span>Sending a package</h2>
+  <p>A package is a summary of what the client told us plus whichever documents you tick. It can go to anyone: a party from the list or any email address you type.</p>
+  <figure>
+    <svg viewBox="0 0 1000 150" role="img" aria-label="Send flow">
+      <defs><marker id="b" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#9AA1AD"/></marker></defs>
+      <g font-family="Libre Franklin,Arial" font-size="14" fill="#161B24">
+        <rect x="10" y="30" width="220" height="90" rx="10" fill="#fff" stroke="#DAD8D2"/><text x="26" y="58" font-family="Fjalla One,Arial" font-size="19">Choose who</text><text x="26" y="82" fill="#4A5160">Pick from the list or</text><text x="26" y="100" fill="#4A5160">type an email address</text>
+        <path d="M232 75 L252 75" stroke="#9AA1AD" stroke-width="2" marker-end="url(#b)"/>
+        <rect x="256" y="30" width="220" height="90" rx="10" fill="#fff" stroke="#DAD8D2"/><text x="272" y="58" font-family="Fjalla One,Arial" font-size="19">Check the ticks</text><text x="272" y="82" fill="#4A5160">The right documents for</text><text x="272" y="100" fill="#4A5160">that role tick themselves</text>
+        <path d="M478 75 L498 75" stroke="#9AA1AD" stroke-width="2" marker-end="url(#b)"/>
+        <rect x="502" y="30" width="220" height="90" rx="10" fill="#3D5C4A"/><text x="518" y="58" font-family="Fjalla One,Arial" font-size="19" fill="#fff">Send now</text><text x="518" y="82" fill="#F5F1E6">Email written for you,</text><text x="518" y="100" fill="#F5F1E6">documents attached</text>
+        <path d="M724 75 L744 75" stroke="#9AA1AD" stroke-width="2" marker-end="url(#b)"/>
+        <rect x="748" y="30" width="242" height="90" rx="10" fill="#161B24"/><text x="764" y="58" font-family="Fjalla One,Arial" font-size="19" fill="#D98324">Recorded</text><text x="764" y="82" fill="#F5F1E6">Who, when, which documents,</text><text x="764" y="100" fill="#F5F1E6">listed under "Sent so far"</text>
+      </g>
+    </svg>
+  </figure>
+  <h3>Who gets what by default</h3>
+  <table>
+    <thead><tr><th>Send to</th><th>Ticked for you</th><th>The email asks them to</th></tr></thead>
+    <tbody>
+      <tr><td><b>Licensed immigration adviser</b></td><td>Everything</td><td>Take the family on, confirm the document list, send engagement terms</td></tr>
+      <tr><td><b>NZ law firm</b></td><td>Passport, funds ownership, source of wealth, narrative, CV</td><td>Advise on the NZ legal side alongside the adviser</td></tr>
+      <tr><td><b>Fund manager</b></td><td>Passport, source of funds narrative</td><td>Confirm the fund is open, its terms, and that it is still on the Invest NZ list</td></tr>
+      <tr><td><b>Indian counsel</b> (Tusshar or "To be appointed")</td><td>Passport, PAN, Indian tax returns, funds ownership, source of wealth, narrative</td><td>Advise on FEMA, LRS, TCS and Indian tax residency</td></tr>
+      <tr><td><b>Accountant</b></td><td>Funds ownership, source of wealth, narrative</td><td>Review source of funds; later, the evidence letter</td></tr>
+      <tr><td><b>Any email address</b></td><td>Everything not rejected</td><td>"Please see the attached file"</td></tr>
+    </tbody>
+  </table>
+  <div class="tip"><b>Good to know</b>Press <kbd>Preview the email first</kbd> if you want to read or edit it before it goes. Over 30 MB the documents go as secure links that last 7 days instead of attachments. Under "Other ways to send" you can download a zip, copy the text, open your own mail app, or record a send you did by hand.</div>
+</section>
+
+<section id="parties">
+  <h2><span>5</span>Who we send to</h2>
+  <p>Investors, second tab. This is the list that appears under "Send to" on every file.</p>
+  <ol class="steps">
+    <li><b>Pick the role</b><p>Licensed immigration advisers, NZ law firms, Invest NZ approved funds, Indian counsel or accountants.</p></li>
+    <li><b>Pick the firm or person</b><p>Every licensed adviser, law firm and approved fund is already in the list with their published contact details. Tusshar Pawar and "To be appointed" are under Indian counsel.</p></li>
+    <li><b>Check and press Add</b><p>The form fills itself. Before the first introduction, confirm the adviser's licence on the IAA register or the lawyer's practising certificate on the Law Society register, and put the number in "Licence / reference".</p></li>
+  </ol>
+  <p>To change someone, edit the row in the table and press Save. Untick Active to hide them from the Send to list without deleting anything.</p>
+</section>
+
+<section id="matrix">
+  <h2><span>6</span>The fund matrix</h2>
+  <p>Investors, third tab. Every fund on the Invest NZ list on one chart. Left is safer, right is riskier, higher is a bigger return the manager says it aims for.</p>
+  <figure>
+    <svg viewBox="0 0 1000 250" role="img" aria-label="How to read the matrix">
+      <g font-family="Libre Franklin,Arial">
+        <line x1="80" y1="200" x2="960" y2="200" stroke="#9AA1AD" stroke-width="2"/><line x1="80" y1="200" x2="80" y2="30" stroke="#9AA1AD" stroke-width="2"/>
+        <text x="520" y="235" font-size="14" text-anchor="middle" fill="#4A5160">Safer  ◀  risk band by asset class  ▶  riskier</text>
+        <text transform="rotate(-90)" x="-115" y="50" font-size="14" text-anchor="middle" fill="#4A5160">Target return</text>
+        <circle cx="260" cy="150" r="11" fill="#D98324" stroke="#fff" stroke-width="2"/><text x="278" y="155" font-size="14" fill="#161B24" font-weight="600">Fits the client, target stated</text>
+        <line x1="600" y1="70" x2="600" y2="130" stroke="#D98324" stroke-width="3" opacity=".5"/><circle cx="600" cy="100" r="11" fill="#D98324" stroke="#fff" stroke-width="2"/><text x="618" y="105" font-size="14" fill="#161B24" font-weight="600">The line is the manager's range</text>
+        <circle cx="820" cy="60" r="7" fill="#C9CDD6" stroke="#fff" stroke-width="2"/><text x="836" y="65" font-size="14" fill="#4A5160">Outside this profile (tick "show all")</text>
+      </g>
+    </svg>
+  </figure>
+  <ul>
+    <li><b>Set three things</b>: what the client wants (safe, balanced, growth), whether they need money back during the visa period, and any sector interest.</li>
+    <li><b>Read the three cards</b> above the chart: the highest stated targets that fit. Then the table for the full shortlist.</li>
+    <li><b>Funds with no stated target</b> are only in the table, not on the chart. Most venture funds are like this.</li>
+  </ul>
+  <div class="tip"><b>The rule</b>The matrix builds a shortlist for the licensed adviser conversation. It is never shown to a client as a recommendation. Targets are the managers' own, unaudited and usually before fees. Check the live Invest NZ list on the day.</div>
+</section>
+
+<section id="rules">
+  <h2><span>7</span>The Rules page</h2>
+  <p>Investors · Rules. Everything about how an Indian family gets New Zealand residence by investment, checked against the government sources on 17 September 2026. The sixty second version is at the top; the detail is in 13 numbered sections with a jump menu.</p>
+  <div class="cards">
+    <div class="card"><h4>Show amounts in ₹</h4><p>The button near the top converts every NZ$ figure on the page into rupees at today's rate, for orientation when talking to a family. Press again to switch back.</p></div>
+    <div class="card dark"><h4>28 September 2026</h4><p>Invest NZ reissues its guidance and fund list on this date. Section 13 has the check again routine. Nothing on the page goes to a client until it has been re-checked after that date, and monthly after.</p></div>
+  </div>
+</section>
+
+<section id="say">
+  <h2><span>8</span>What we may and may not say</h2>
+  <div class="cards">
+    <div class="card ok"><h4>We may</h4><p>Explain how the site works. Quote the published rules and amounts. Collect documents the client chooses to give us. Introduce licensed advisers, lawyers, funds and Indian counsel. Host the family's visit to New Zealand.</p></div>
+    <div class="card no"><h4>We may not</h4><p>Say whether a family qualifies. Say which category or fund they should choose. Call a fund "government approved" (it is "on the Invest NZ list"). Say "golden passport". Fill in or lodge the application.</p></div>
+  </div>
+  <p>Why: immigration advice in New Zealand may only be given by an adviser licensed by the Immigration Advisers Authority or a New Zealand lawyer. Investment recommendations are regulated financial advice; Agile Strategy holds a FAP licence, Market Access Partners does not. Every email the site writes carries the introducer only wording for this reason.</p>
+</section>
+
+<section id="tools">
+  <h2><span>9</span>The other tools, in a line each</h2>
+  <table>
+    <thead><tr><th>Page</th><th>What it is for</th></tr></thead>
+    <tbody>
+      <tr><td><b>Home</b></td><td>The business on one page, live from the CRM, finance and container boards. Two containers before Christmas is the goal.</td></tr>
+      <tr><td><b>CRM</b></td><td>Every producer we could approach, their status, and the pack we approach them with.</td></tr>
+      <tr><td><b>Distributors</b></td><td>The Indian importers and distributors for wine, honey and spirits.</td></tr>
+      <tr><td><b>Tours</b></td><td>Every tour a travel partner books, with a producer on each stop and one click notices to them.</td></tr>
+      <tr><td><b>Builder</b></td><td>Builds a dated journey for a travel company: flights, transfers, producers, hotels, then the itinerary download.</td></tr>
+      <tr><td><b>Calculator</b></td><td>Landed price in India for a product: freight, duty, GST, margin.</td></tr>
+      <tr><td><b>Containers</b></td><td>Confirmed and tentative orders filling each container, and the free space still to sell.</td></tr>
+      <tr><td><b>Finance</b></td><td>Sales from quoted to paid, our 15% plus 5% take, budget against actual, Xero export.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section id="wrong">
+  <h2><span>10</span>When something looks wrong</h2>
+  <table>
+    <thead><tr><th>What you see</th><th>What to do</th></tr></thead>
+    <tbody>
+      <tr><td>"Crew only" after Google sign in</td><td>You picked the wrong Google account. Sign out and pick the @myaccesspartners.com one.</td></tr>
+      <tr><td>The client says their link does not work</td><td>Open their file. If it says Closed, the link is dead on purpose. Otherwise copy the link again and resend it; check they are not missing the end of it.</td></tr>
+      <tr><td>The client's documents are not showing</td><td>Press "← All files" and open the file again to refresh it. Files over 25 MB or not PDF, JPG, PNG, HEIC, Word or Excel are refused on the client's side.</td></tr>
+      <tr><td>"Send now" says email is not configured</td><td>The Resend key in Supabase has been removed. Tell Paul. Use "Other ways to send" meanwhile.</td></tr>
+      <tr><td>The email went but the recipient did not get it</td><td>Ask them to check spam for hello@myaccesspartners.com. The send is listed under "Sent so far" with its ID if Paul needs to look it up in Resend.</td></tr>
+      <tr><td>The rupee button says "placeholder rate"</td><td>The live rate could not be fetched. The figure is approximate; refresh the page.</td></tr>
+      <tr><td>Anything else</td><td>Tell Paul what page you were on and what you pressed. Nothing on this site can be broken by clicking around.</td></tr>
+    </tbody>
+  </table>
+  <h3>Where things live (for Paul)</h3>
+  <p style="font-size:15px">Site files: GitHub Agilestrategy/myaccesspartners, published by Netlify. Database, document vault and the two functions: Supabase project map-crm (Sydney). Email: Resend, domain myaccesspartners.com, keys stored as Supabase secrets. Sign in rule: gate.js in the Netlify edge functions. Preview key: MAP_ACCESS_KEY in Netlify.</p>
+</section>
+
+<footer>Market Access Partners Limited · crew manual · written 18 September 2026 · the site changes, so if a screen does not match this page, the site is right and the manual needs updating.</footer>
+</div>
+</body>
+</html>

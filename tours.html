@@ -104,6 +104,15 @@ footer .wrap{display:flex;justify-content:space-between;align-items:center;gap:1
 [hidden]{display:none!important}
 @media(max-width:860px){.g4,.g3{grid-template-columns:1fr 1fr}.stoprow,.legrow{grid-template-columns:1fr 1fr}}
 </style>
+<style id="crew-nav">
+header .wrap{align-items:center}
+nav.tools{display:flex;gap:10px 22px;font-size:14px;flex-wrap:wrap;align-items:center}
+nav.tools a{color:var(--mist);text-decoration:none;padding:4px 0;border-bottom:2px solid transparent}
+nav.tools a:hover{color:var(--ivory)}nav.tools a.on{color:var(--ivory);border-bottom-color:var(--saffron)}
+nav.tools .grp{display:inline-flex;gap:12px;align-items:center}
+nav.tools .grp b{font:700 10.5px var(--sans);letter-spacing:.14em;text-transform:uppercase;color:rgba(245,241,230,.45);margin-right:2px}
+nav.tools a.help{background:var(--saffron);color:var(--ink);padding:5px 14px;border-radius:999px;font-weight:600;border:none}
+</style>
 </head>
 <body>
 
@@ -121,7 +130,7 @@ footer .wrap{display:flex;justify-content:space-between;align-items:center;gap:1
 <header>
   <div class="wrap">
     <span class="mark"><a href="/">Market <b>Access</b> Partners · Internal</a></span>
-    <nav class="tools"><a href="/dashboard.html">Dashboard</a><a href="/crm.html">CRM</a><a href="/distributors.html">Distributors</a><a href="/tours.html" style="color:var(--ivory)">Tours</a><a href="/travel-builder.html">Travel builder</a><a href="/landed-price.html">Calculator</a><a href="/containers.html">Containers</a><a href="/finance.html">Finance</a><a href="/invest.html">Investor residence</a><a href="/investors.html">Investors</a></nav>
+    <nav class="tools"><a href="/dashboard.html">Home</a><span class="grp"><b>Investors</b><a href="/investors.html">Files</a><a href="/invest.html">Rules</a></span><span class="grp"><b>Producers</b><a href="/crm.html">CRM</a><a href="/distributors.html">Distributors</a></span><span class="grp"><b>Travel</b><a href="/tours.html" class="on">Tours</a><a href="/travel-builder.html">Builder</a></span><span class="grp"><b>Trade</b><a href="/landed-price.html">Calculator</a><a href="/containers.html">Containers</a></span><a href="/finance.html">Finance</a><a href="/manual.html" class="help">Manual</a></nav>
     <span id="who"></span>
   </div>
 </header>
