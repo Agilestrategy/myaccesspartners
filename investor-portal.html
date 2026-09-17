@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Investor file | Market Access Partners</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fjalla+One&family=Libre+Franklin:ital,wght@0,300..800;1,400&display=swap">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<style>
+:root{--ink:#161B24;--ink2:#1F2633;--ivory:#F5F1E6;--paper:#FBF9F2;--saffron:#D98324;--saffron-deep:#B26A15;--vine:#3D5C4A;--mist:#9AA1AD;--body:#4A5160;--line:rgba(22,27,36,.14);--ok:#2E7D51;--warn:#A33B2E;
+--serif:"Fjalla One","Arial Narrow",Arial,sans-serif;--sans:"Libre Franklin","Helvetica Neue",Arial,sans-serif}
+*{box-sizing:border-box;margin:0}
+body{background:var(--paper);color:var(--ink);font:400 15.5px/1.6 var(--sans)}
+.wrap{max-width:880px;margin:0 auto;padding:0 22px}
+header{background:var(--ink);color:var(--ivory);padding:20px 0}
+header .wrap{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.mark{font:700 14px var(--sans);letter-spacing:.06em;text-transform:uppercase}
+.mark b{color:var(--saffron)}
+.eyebrow{font:600 11px var(--sans);letter-spacing:.18em;text-transform:uppercase;color:var(--saffron)}
+h1{font-family:var(--serif);font-weight:400;font-size:clamp(28px,4vw,40px);margin:8px 0 10px;line-height:1.1}
+h2{font-family:var(--serif);font-weight:400;font-size:24px;margin:0 0 6px}
+h3{font:700 12px var(--sans);letter-spacing:.12em;text-transform:uppercase;color:var(--vine);margin:20px 0 8px}
+p{color:var(--body);margin-bottom:10px}
+.hero{padding:36px 0 20px}
+.notice{background:var(--ivory);border-left:4px solid var(--saffron);padding:14px 18px;border-radius:3px;margin:16px 0;font-size:14px}
+.notice b{color:var(--saffron-deep)}
+.card{background:#fff;border:1px solid var(--line);border-radius:6px;padding:22px 24px;margin:18px 0}
+.steps{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 4px}
+.steps span{font:600 12px var(--sans);padding:6px 12px;border-radius:999px;background:#fff;border:1px solid var(--line);color:var(--body)}
+.steps span.on{background:var(--ink);color:var(--ivory);border-color:var(--ink)}
+.steps span.done{background:var(--vine);color:#fff;border-color:var(--vine)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 18px}
+.field{margin-bottom:10px}
+.field label{display:block;font:600 12.5px var(--sans);margin-bottom:4px}
+.field input,.field select,.field textarea{width:100%;padding:9px 11px;border:1px solid var(--line);background:#fff;font:500 14px var(--sans);color:var(--ink);border-radius:4px}
+.field textarea{min-height:90px;resize:vertical}
+.field .hint{font-size:12px;color:#6A6F7A;margin-top:3px}
+.full{grid-column:1/-1}
+.btn{display:inline-block;padding:11px 22px;font:600 14px var(--sans);border:none;border-radius:999px;cursor:pointer;background:var(--saffron);color:var(--ink)}
+.btn.ghost{background:#fff;border:1px solid var(--line);color:var(--ink)}
+.btn:disabled{opacity:.5;cursor:default}
+.btn.sm{padding:7px 14px;font-size:12.5px}
+.kids{margin:6px 0}
+.kid{display:grid;grid-template-columns:1fr 100px 40px;gap:8px;margin-bottom:6px}
+.kid input{padding:7px 10px;border:1px solid var(--line);border-radius:4px;font:500 13.5px var(--sans)}
+.kid button{border:1px solid var(--line);background:#fff;border-radius:4px;cursor:pointer}
+.consent{display:flex;gap:10px;align-items:flex-start;font-size:13.5px;color:var(--ink);margin:12px 0}
+.consent input{margin-top:4px}
+.msg{font-size:13px;min-height:18px;margin-top:8px}
+.msg.err{color:var(--warn)}.msg.ok{color:var(--ok)}
+.doc{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:start;padding:14px 0;border-top:1px solid var(--line)}
+.doc:first-of-type{border-top:none}
+.doc .t{font-weight:700;color:var(--ink)}
+.doc .n{font-size:13px;color:#6A6F7A}
+.doc .who{display:inline-block;font:600 10.5px var(--sans);letter-spacing:.08em;text-transform:uppercase;background:var(--ivory);color:var(--vine);padding:2px 8px;border-radius:999px;margin-left:6px;vertical-align:middle}
+.files{margin-top:6px;font-size:13px}
+.files div{display:flex;gap:8px;align-items:center;padding:3px 0}
+.files .st{font:600 10.5px var(--sans);letter-spacing:.08em;text-transform:uppercase;padding:2px 7px;border-radius:999px;background:var(--ivory);color:var(--vine)}
+.files .st.verified{background:#E4F1E8;color:var(--ok)}
+.files .st.rejected{background:#FBEDEA;color:var(--warn)}
+.files button{border:none;background:none;color:var(--warn);cursor:pointer;font-size:12px}
+.up{display:flex;flex-direction:column;gap:6px;align-items:flex-end;min-width:200px}
+.up input[type=text]{width:200px;padding:6px 9px;border:1px solid var(--line);border-radius:4px;font:500 13px var(--sans)}
+.up label.btn{text-align:center}
+.up input[type=file]{display:none}
+.prog{height:6px;background:var(--line);border-radius:3px;overflow:hidden;width:200px}
+.prog i{display:block;height:100%;background:var(--saffron);width:0}
+.groupname{font:700 13px var(--sans);letter-spacing:.06em;text-transform:uppercase;color:var(--saffron-deep);margin:18px 0 4px}
+footer{margin:40px 0 50px;font-size:12.5px;color:#6A6F7A}
+#dead{display:none;padding:60px 0;text-align:center}
+@media(max-width:700px){.grid{grid-template-columns:1fr}.doc{grid-template-columns:1fr}.up{align-items:flex-start}}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<header><div class="wrap"><span class="mark">Market <b>Access</b> Partners</span><span style="font-size:12.5px;color:var(--mist)" id="hdr">Private investor file</span></div></header>
+
+<div class="wrap" id="dead"><h2>This link is not valid</h2><p id="deadmsg"></p></div>
+
+<div class="wrap" id="app" hidden>
+  <section class="hero">
+    <p class="eyebrow">New Zealand investor residence · your file</p>
+    <h1>Welcome, <span id="hello">there</span></h1>
+    <p>This private page is where you tell us about your family and upload the documents your New Zealand adviser will need. Everything you add here is held in a private, access controlled vault in New Zealand and is only forwarded to the parties you approve.</p>
+    <div class="notice"><b>Please read.</b> Market Access Partners is not a licensed immigration adviser and does not give immigration, legal or tax advice. We collect your information and documents so that your licensed New Zealand immigration adviser, your New Zealand law firm and your Indian counsel can advise you. Questions about eligibility, categories or timing go to them, and we will introduce you.</div>
+    <div class="steps"><span id="s1" class="on">1 About you</span><span id="s2">2 Documents</span><span id="s3">3 We introduce your advisers</span></div>
+  </section>
+
+  <section class="card" id="intake">
+    <h2>About you and your family</h2>
+    <p style="font-size:14px">Only what is needed to open your file. Your adviser will ask for the rest.</p>
+    <div class="grid">
+      <div class="field"><label>Your full name (as in passport)</label><input id="f_principal_name"></div>
+      <div class="field"><label>Email</label><input id="f_email" type="email"></div>
+      <div class="field"><label>Mobile (with country code)</label><input id="f_phone"></div>
+      <div class="field"><label>City</label><input id="f_city"></div>
+      <div class="field"><label>Country of residence</label><input id="f_country_of_residence" placeholder="India, UAE, other"></div>
+      <div class="field"><label>Are you currently resident in India for foreign exchange (FEMA) purposes?</label>
+        <select id="f_india_resident"><option value="">Choose</option><option value="resident">Yes, resident in India</option><option value="non_resident">No, I live outside India (NRI)</option><option value="unsure">Not sure</option></select>
+        <div class="hint">This is the single most important fact for your Indian counsel. Not sure is fine.</div></div>
+      <div class="field"><label>Partner's full name (if included)</label><input id="f_partner_name"></div>
+      <div class="field"><label>Children to be included (aged 24 and under)</label>
+        <div class="kids" id="kids"></div><button class="btn ghost sm" type="button" id="addkid">Add a child</button></div>
+      <div class="field"><label>Which category are you considering?</label>
+        <select id="f_category_interest"><option value="">Choose</option><option value="growth">Growth (NZ$5 million or more, 36 months)</option><option value="balanced">Balanced (NZ$10 million or more, 60 months)</option><option value="undecided">Undecided, I would like to discuss with an adviser</option></select>
+        <div class="hint">Published Immigration New Zealand categories. Your adviser confirms which fits.</div></div>
+      <div class="field"><label>Indicative amount you could invest (NZ$)</label><input id="f_funds_indicative_nzd" placeholder="5,000,000"></div>
+      <div class="field full"><label>Where do the funds sit today, and how were they earned? (a few lines)</label><textarea id="f_source_of_funds" placeholder="For example: sale of a business in 2024, held in Indian fixed deposits and listed shares; family property in Mumbai."></textarea></div>
+      <div class="field"><label>When would you like to move?</label><input id="f_target_timeline" placeholder="Within 12 months, 2027, exploring"></div>
+      <div class="field"><label>New Zealand sectors that interest you</label><input id="f_sectors_of_interest" placeholder="Wine, agriculture, technology, tourism"></div>
+    </div>
+    <label class="consent"><input type="checkbox" id="consent"><span>I confirm the information and documents I provide are mine and accurate, and I authorise Market Access Partners Limited to hold them securely and forward them to the licensed immigration adviser, New Zealand law firm, fund manager, accountant and Indian counsel I am introduced to, for the purpose of their advice. I understand Market Access Partners does not give immigration, legal, tax or financial advice, and that I can ask for my file to be deleted at any time by emailing hello@myaccesspartners.com.</span></label>
+    <button class="btn" id="saveIntake">Save and continue</button> <button class="btn ghost" id="saveDraft">Save draft</button>
+    <div class="msg" id="intakeMsg"></div>
+  </section>
+
+  <section class="card" id="docs">
+    <h2>Documents</h2>
+    <p style="font-size:14px">Upload what you have now; you can come back to this page any time. PDF, JPG, PNG, HEIC, Word or Excel, up to 25 MB each. Add the person's name so we can file each document correctly. Your adviser will confirm the final list; this is a collection list.</p>
+    <div id="checklist"></div>
+  </section>
+
+  <section class="card" id="next">
+    <h2>What happens next</h2>
+    <p style="font-size:14px">When you press "Save and continue" your Market Access Partners contact is notified. We introduce you to a licensed New Zealand immigration adviser and a New Zealand law firm, and, if you are resident in India, to Indian counsel for the foreign exchange side. If you would like to visit New Zealand to meet fund managers and see the businesses, we host that visit. Contact: hello@myaccesspartners.com.</p>
+  </section>
+
+  <footer>Market Access Partners Limited · company number 9458633 · 14 Francis Street, Grey Lynn, Auckland 1021, New Zealand · Your information is held in accordance with the New Zealand Privacy Act 2020 and is not sold or shared beyond the parties you approve.</footer>
+</div>
+
+<script>
+const SUPABASE_URL = "https://iwdibogfypdjgsinwube.supabase.co";
+const SUPABASE_ANON = "sb_publishable_BRmzLQw94Lt49xLFmDHJVQ_yoo68o4c";
+const API = SUPABASE_URL + "/functions/v1/investor-portal";
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+const $ = id => document.getElementById(id);
+const token = new URLSearchParams(location.search).get("t") || "";
+let lead = null, documents = [], checklist = [];
+const FIELDS = ["principal_name","email","phone","city","country_of_residence","india_resident","partner_name","category_interest","funds_indicative_nzd","source_of_funds","target_timeline","sectors_of_interest"];
+
+async function api(payload){
+  const r = await fetch(API, { method:"POST", headers:{ "content-type":"application/json" }, body: JSON.stringify({ token, ...payload }) });
+  const j = await r.json().catch(()=>({error:"Network error"}));
+  if (!r.ok) throw new Error(j.error || ("Error " + r.status));
+  return j;
+}
+function dead(msg){ $("dead").style.display="block"; $("deadmsg").textContent = msg; }
+
+function kidRow(k={name:"",age:""}){
+  const d=document.createElement("div"); d.className="kid";
+  d.innerHTML=`<input placeholder="Child's full name" value="${esc(k.name||"")}"><input placeholder="Age" type="number" min="0" max="24" value="${esc(k.age??"")}"><button type="button" title="Remove">×</button>`;
+  d.querySelector("button").onclick=()=>d.remove();
+  $("kids").appendChild(d);
+}
+const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function kids(){ return [...$("kids").querySelectorAll(".kid")].map(r=>({name:r.children[0].value.trim(), age:r.children[1].value?+r.children[1].value:null})).filter(k=>k.name); }
+
+function fillIntake(){
+  FIELDS.forEach(f=>{ const el=$("f_"+f); if(el && lead[f]!=null) el.value = lead[f]; });
+  $("kids").innerHTML=""; (lead.children||[]).forEach(kidRow);
+  $("hello").textContent = (lead.principal_name||"").split(" ")[0] || "there";
+  if (lead.consent_at) $("consent").checked = true;
+  steps();
+}
+function steps(){
+  const done1 = !!lead.intake_completed_at, done2 = documents.length>0;
+  $("s1").className = done1 ? "done" : "on";
+  $("s2").className = done2 ? "done" : (done1 ? "on" : "");
+  $("s3").className = ["ready","routed","with_adviser"].includes(lead.status) ? "done" : "";
+}
+async function saveIntake(complete){
+  const m=$("intakeMsg"); m.className="msg";
+  const fields={}; FIELDS.forEach(f=>fields[f]=$("f_"+f).value.trim()); fields.children=kids();
+  if (complete && !$("consent").checked){ m.className="msg err"; m.textContent="Please tick the authorisation box to continue."; return; }
+  if (complete && !fields.principal_name){ m.className="msg err"; m.textContent="Please enter your full name."; return; }
+  try{
+    const r = await api({ action:"intake", fields, complete, consent: $("consent").checked, consent_text: $("consent").checked ? document.querySelector(".consent span").textContent : "" });
+    lead = r.lead; m.className="msg ok"; m.textContent = complete ? "Saved. Please add your documents below." : "Draft saved."; steps();
+    if (complete) $("docs").scrollIntoView({behavior:"smooth"});
+  }catch(e){ m.className="msg err"; m.textContent=e.message; }
+}
+$("saveIntake").onclick=()=>saveIntake(true);
+$("saveDraft").onclick=()=>saveIntake(false);
+$("addkid").onclick=()=>kidRow();
+
+function renderDocs(){
+  const box=$("checklist"); box.innerHTML="";
+  let group="";
+  checklist.forEach(c=>{
+    if (c.group!==group){ group=c.group; const g=document.createElement("div"); g.className="groupname"; g.textContent=group; box.appendChild(g); }
+    const mine = documents.filter(d=>d.doc_key===c.key);
+    const who = {each:"Each family member", adults:"Everyone 17 and over", principal:"Principal applicant"}[c.who]||"";
+    const d=document.createElement("div"); d.className="doc";
+    d.innerHTML=`<div><div class="t">${esc(c.label)}<span class="who">${esc(who)}</span></div><div class="n">${esc(c.note)}</div>
+      <div class="files">${mine.map(f=>`<div><span>${esc(f.person||"")}${f.person?" · ":""}${esc(f.file_name)}</span><span class="st ${f.status}">${f.status}</span>${f.status==="received"?`<button data-id="${f.id}">remove</button>`:""}</div>`).join("")}</div></div>
+      <div class="up"><input type="text" placeholder="Whose document (name)" class="person"><label class="btn sm">Choose file<input type="file" data-key="${c.key}" accept=".pdf,.jpg,.jpeg,.png,.heic,.doc,.docx,.xls,.xlsx"></label><div class="prog" hidden><i></i></div><div class="msg"></div></div>`;
+    d.querySelector("input[type=file]").onchange = e => upload(e.target, d);
+    d.querySelectorAll(".files button").forEach(b=>b.onclick=async()=>{ if(!confirm("Remove this document?")) return; try{ const r=await api({action:"remove", id:b.dataset.id}); documents=r.documents; renderDocs(); steps(); }catch(err){ alert(err.message); } });
+    box.appendChild(d);
+  });
+}
+async function upload(input, row){
+  const file = input.files[0]; if(!file) return;
+  const msg=row.querySelector(".up .msg"), prog=row.querySelector(".prog"), bar=prog.querySelector("i");
+  const person=row.querySelector(".person").value.trim();
+  msg.className="msg"; msg.textContent="Uploading…"; prog.hidden=false; bar.style.width="20%";
+  try{
+    const mime = file.type || (file.name.toLowerCase().endsWith(".heic") ? "image/heic" : "application/octet-stream");
+    const u = await api({ action:"upload_url", doc_key: input.dataset.key, person, file_name: file.name, mime, size: file.size });
+    bar.style.width="50%";
+    const { error } = await sb.storage.from("investor-docs").uploadToSignedUrl(u.path, u.signed_token, file, { contentType: mime });
+    if (error) throw new Error(error.message);
+    bar.style.width="85%";
+    const r = await api({ action:"record", doc_key: input.dataset.key, person, file_path: u.path, file_name: file.name, mime, size: file.size });
+    documents = r.documents; bar.style.width="100%";
+    renderDocs(); steps();
+  }catch(e){ msg.className="msg err"; msg.textContent=e.message; prog.hidden=true; }
+  input.value="";
+}
+
+(async function boot(){
+  if (!token) return dead("This page needs the personal link you were sent.");
+  try{
+    const r = await api({ action:"get" });
+    lead=r.lead; documents=r.documents; checklist=r.checklist;
+    $("app").hidden=false; fillIntake(); renderDocs();
+  }catch(e){ dead(e.message); }
+})();
+</script>
+</body>
+</html>

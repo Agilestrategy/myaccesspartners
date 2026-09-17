@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Investors · MAP crew</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fjalla+One&family=Libre+Franklin:ital,wght@0,300..800;1,400&display=swap">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<style>
+:root{--ink:#161B24;--ink2:#1F2633;--ivory:#F5F1E6;--paper:#FBF9F2;--saffron:#D98324;--saffron-deep:#B26A15;--vine:#3D5C4A;--mist:#9AA1AD;--body:#4A5160;--line:rgba(22,27,36,.14);--ok:#2E7D51;--warn:#A33B2E;
+--serif:"Fjalla One","Arial Narrow",Arial,sans-serif;--sans:"Libre Franklin","Helvetica Neue",Arial,sans-serif}
+*{box-sizing:border-box;margin:0}
+body{background:var(--paper);color:var(--ink);font:400 14.5px/1.55 var(--sans)}
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+header{background:var(--ink);color:var(--ivory);padding:18px 0}
+header .wrap{display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap}
+.mark{font:700 14px var(--sans);letter-spacing:.06em;text-transform:uppercase}
+.mark b{color:var(--saffron)}
+nav.tools{display:flex;gap:18px;font-size:12.5px;flex-wrap:wrap}
+nav.tools a{color:var(--mist);text-decoration:none}
+nav.tools a:hover{color:var(--ivory)}
+#who{font-size:12.5px;color:var(--mist)}
+#who button{background:none;border:1px solid rgba(245,241,230,.3);color:var(--ivory);padding:4px 12px;margin-left:10px;font:500 12px var(--sans);cursor:pointer;border-radius:999px}
+h1{font-family:var(--serif);font-weight:400;font-size:clamp(26px,3.6vw,36px);margin:30px 0 6px}
+h2{font-family:var(--serif);font-weight:400;font-size:22px;margin:0 0 10px}
+h3{font:700 12px var(--sans);letter-spacing:.12em;text-transform:uppercase;color:var(--vine);margin:16px 0 8px}
+.eyebrow{font:600 11px var(--sans);letter-spacing:.18em;text-transform:uppercase;color:var(--saffron)}
+.sub{color:var(--body);max-width:80ch}
+.tabs{display:flex;gap:6px;margin:18px 0 6px;flex-wrap:wrap}
+.tabs button{font:600 13px var(--sans);padding:8px 16px;border:1px solid var(--line);background:#fff;border-radius:999px;cursor:pointer;color:var(--body)}
+.tabs button.on{background:var(--ink);color:var(--ivory);border-color:var(--ink)}
+.panel{background:#fff;border:1px solid var(--line);border-radius:6px;padding:20px 22px;margin:14px 0}
+.panel.ivory{background:var(--ivory)}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+thead th{font:600 11.5px var(--sans);letter-spacing:.06em;text-transform:uppercase;color:var(--vine);background:var(--ivory)}
+tr.row{cursor:pointer}tr.row:hover td{background:#FFF7E8}
+.pill{display:inline-block;font:600 10.5px var(--sans);letter-spacing:.08em;text-transform:uppercase;padding:2px 8px;border-radius:999px;background:var(--ivory);color:var(--vine);white-space:nowrap}
+.pill.new{background:#E9ECF3;color:#3A4560}.pill.documents,.pill.intake{background:#FFF1DC;color:var(--saffron-deep)}.pill.ready{background:#E4F1E8;color:var(--ok)}.pill.routed,.pill.with_adviser{background:var(--vine);color:#fff}.pill.closed{background:#E9E9E9;color:#555}
+.pill.verified{background:#E4F1E8;color:var(--ok)}.pill.rejected{background:#FBEDEA;color:var(--warn)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 18px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px 18px}
+.field{margin-bottom:8px}
+.field label{display:block;font:600 12px var(--sans);margin-bottom:3px}
+.field input,.field select,.field textarea{width:100%;padding:8px 10px;border:1px solid var(--line);background:#fff;font:500 13.5px var(--sans);color:var(--ink);border-radius:4px}
+.field textarea{min-height:70px;resize:vertical}
+.field .v{padding:6px 0;color:var(--ink);min-height:20px}
+.full{grid-column:1/-1}
+.btn{display:inline-block;padding:9px 18px;font:600 13px var(--sans);border:none;border-radius:999px;cursor:pointer;background:var(--saffron);color:var(--ink)}
+.btn.ghost{background:#fff;border:1px solid var(--line);color:var(--ink)}
+.btn.sm{padding:5px 12px;font-size:12px}
+.btn.danger{background:#FBEDEA;color:var(--warn)}
+.btn:disabled{opacity:.5;cursor:default}
+.msg{font-size:12.5px;min-height:16px;margin-top:6px}.msg.err{color:var(--warn)}.msg.ok{color:var(--ok)}
+.link{font:500 12.5px monospace;background:var(--ivory);padding:8px 10px;border-radius:4px;word-break:break-all}
+.two{display:grid;grid-template-columns:1.1fr .9fr;gap:20px;align-items:start}
+.emailbox{width:100%;min-height:260px;font:400 13px/1.5 monospace;padding:10px;border:1px solid var(--line);border-radius:4px;background:#fff}
+.chk{display:flex;gap:8px;align-items:flex-start;font-size:13px;padding:4px 0}
+.missing{color:var(--warn);font-size:12.5px}
+.events{font-size:12.5px;color:var(--body)}
+.events div{padding:3px 0;border-bottom:1px dashed var(--line)}
+.stat{display:inline-block;margin-right:18px;font-size:13px;color:var(--body)}.stat b{font-family:var(--serif);font-size:22px;color:var(--ink);margin-right:4px;font-weight:400}
+#gate{position:fixed;inset:0;background:var(--ink);display:flex;align-items:center;justify-content:center;z-index:50}
+#gate .card{background:var(--paper);padding:38px;max-width:380px;width:92%;border-top:3px solid var(--saffron);border-radius:6px}
+#gate h2{font-size:24px;margin:10px 0 6px}
+#gate p{font-size:13px;color:var(--body);margin-bottom:16px}
+#gate button{width:100%;padding:12px;background:var(--saffron);border:none;font:600 14px var(--sans);cursor:pointer;border-radius:999px;color:var(--ink)}
+#gate .err{color:var(--warn);font-size:12.5px;min-height:18px;margin-top:8px}
+[hidden]{display:none!important}
+@media(max-width:900px){.grid,.grid3,.two{grid-template-columns:1fr}table{display:block;overflow-x:auto}}
+</style>
+</head>
+<body>
+<div id="gate"><div class="card"><span class="mark">Market <b>Access</b> Partners</span><h2>Investors</h2><p>Crew only. Sign in with your Google account.</p><button id="signin-google">Continue with Google</button><div class="err" id="err"></div></div></div>
+
+<div id="app" hidden>
+<header><div class="wrap">
+  <span class="mark">Market <b>Access</b> Partners · Internal</span>
+  <nav class="tools"><a href="/dashboard.html">Dashboard</a><a href="/crm.html">CRM</a><a href="/distributors.html">Distributors</a><a href="/tours.html">Tours</a><a href="/travel-builder.html">Travel builder</a><a href="/landed-price.html">Calculator</a><a href="/containers.html">Containers</a><a href="/finance.html">Finance</a><a href="/invest.html">Investor residence</a><a href="/investors.html" style="color:var(--ivory)">Investors</a></nav>
+  <span id="who"></span>
+</div></header>
+
+<div class="wrap">
+  <p class="eyebrow" style="margin-top:30px">Investor residence · files</p>
+  <h1>Investors</h1>
+  <p class="sub">Open a file, send the client their private link, watch the documents arrive, then route the pack to the licensed adviser, the NZ law firm, the fund manager and Indian counsel. We collect and forward; we do not advise. The rules are on the <a href="/invest.html">Investor residence</a> page.</p>
+
+  <div class="tabs"><button class="on" data-tab="leads">Files</button><button data-tab="parties">Parties</button></div>
+
+  <!-- LEADS -->
+  <div id="tab-leads">
+    <div class="panel ivory">
+      <h3 style="margin-top:0">Open a new file</h3>
+      <div class="grid3">
+        <div class="field"><label>Principal applicant name</label><input id="n_name"></div>
+        <div class="field"><label>Email</label><input id="n_email"></div>
+        <div class="field"><label>Mobile</label><input id="n_phone"></div>
+        <div class="field"><label>Source</label><select id="n_source"><option value="referral">Referral</option><option value="pawar">Tusshar Pawar</option><option value="club7">Club7</option><option value="web">Website</option><option value="other">Other</option></select></div>
+        <div class="field"><label>Referrer</label><input id="n_referrer" placeholder="Who sent them"></div>
+        <div class="field"><label>Assigned to</label><input id="n_assigned" placeholder="paul, rohaan, shivaraman"></div>
+      </div>
+      <button class="btn" id="newLead">Open file and create client link</button><div class="msg" id="newMsg"></div>
+    </div>
+
+    <div class="panel" id="leadsPanel">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px"><div id="stats"></div><input id="q" placeholder="Search name, email, city" style="padding:7px 12px;border:1px solid var(--line);border-radius:999px;font:500 13px var(--sans);min-width:240px"></div>
+      <table style="margin-top:10px"><thead><tr><th>Name</th><th>Status</th><th>City</th><th>India resident</th><th>Category</th><th>Indicative NZ$</th><th>Docs</th><th>Assigned</th><th>Client last seen</th><th>Opened</th></tr></thead><tbody id="leads"></tbody></table>
+    </div>
+
+    <div id="detail" hidden>
+      <div class="panel">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+          <div><h2 id="d_name" style="margin:0"></h2><span id="d_status" class="pill"></span></div>
+          <div><button class="btn ghost sm" id="back">Back to files</button> <button class="btn danger sm" id="closeLead">Close file</button></div>
+        </div>
+        <h3>Client link</h3>
+        <div class="link" id="d_link"></div>
+        <div style="margin-top:8px"><button class="btn sm" id="copyLink">Copy link</button> <button class="btn ghost sm" id="copyInvite">Copy invitation email</button> <a class="btn ghost sm" id="mailInvite" href="#" target="_blank" rel="noopener">Open in mail</a></div>
+
+        <h3>Intake (as entered by the client)</h3>
+        <div class="grid" id="d_intake"></div>
+
+        <h3>Crew notes and handling</h3>
+        <div class="grid3">
+          <div class="field"><label>Status</label><select id="e_status"><option value="new">new</option><option value="intake">intake</option><option value="documents">documents</option><option value="ready">ready to route</option><option value="routed">routed</option><option value="with_adviser">with adviser</option><option value="closed">closed</option></select></div>
+          <div class="field"><label>Assigned to</label><input id="e_assigned"></div>
+          <div class="field"><label>Source / referrer</label><input id="e_referrer"></div>
+          <div class="field full"><label>Notes (never eligibility opinions; facts and next actions only)</label><textarea id="e_notes"></textarea></div>
+        </div>
+        <button class="btn sm" id="saveLead">Save</button><div class="msg" id="saveMsg"></div>
+      </div>
+
+      <div class="panel">
+        <h2>Documents</h2>
+        <div id="d_missing" class="missing"></div>
+        <table style="margin-top:8px"><thead><tr><th></th><th>Document</th><th>Person</th><th>File</th><th>Uploaded</th><th>Status</th><th>Note</th><th></th></tr></thead><tbody id="d_docs"></tbody></table>
+        <h3>Crew upload (documents the client emailed in)</h3>
+        <div class="grid3">
+          <div class="field"><label>Document type</label><select id="u_key"></select></div>
+          <div class="field"><label>Person</label><input id="u_person"></div>
+          <div class="field"><label>File</label><input type="file" id="u_file"></div>
+        </div>
+        <button class="btn sm" id="uploadCrew">Upload</button><div class="msg" id="uMsg"></div>
+      </div>
+
+      <div class="panel">
+        <h2>Route the pack</h2>
+        <p class="sub" style="font-size:13px">Pick the party, tick the documents, and the email is written for you. Download the selected documents as a zip to attach, or share the vault links. Then mark it sent so the file shows who has what.</p>
+        <div class="two">
+          <div>
+            <div class="field"><label>Send to</label><select id="r_party"></select></div>
+            <div class="field"><label>Documents to include</label><div id="r_docs"></div></div>
+            <div class="field"><label>Message note (optional)</label><input id="r_note" placeholder="Anything specific for this party"></div>
+            <button class="btn sm" id="r_build">Write the email</button> <button class="btn ghost sm" id="r_zip">Download selected as zip</button> <button class="btn ghost sm" id="r_sent">Mark as sent</button>
+            <div class="msg" id="rMsg"></div>
+          </div>
+          <div>
+            <div class="field"><label>Subject</label><input id="r_subject"></div>
+            <textarea class="emailbox" id="r_body"></textarea>
+            <div style="margin-top:6px"><button class="btn sm" id="r_copy">Copy email</button> <a class="btn ghost sm" id="r_mail" href="#" target="_blank" rel="noopener">Open in mail</a></div>
+          </div>
+        </div>
+        <h3>Sent so far</h3>
+        <div id="d_routings" class="events"></div>
+        <h3>Activity</h3>
+        <div id="d_events" class="events"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PARTIES -->
+  <div id="tab-parties" hidden>
+    <div class="panel">
+      <h2>Parties</h2>
+      <p class="sub" style="font-size:13px">The people packs go to. Confirm the adviser's licence on the IAA register and the lawyer's practising certificate on the NZ Law Society register before the first introduction, and record the reference here.</p>
+      <table><thead><tr><th>Role</th><th>Name</th><th>Firm</th><th>Email</th><th>Phone</th><th>Licence / reference</th><th>Active</th><th></th></tr></thead><tbody id="parties"></tbody></table>
+      <h3>Add a party</h3>
+      <div class="grid3">
+        <div class="field"><label>Role</label><select id="p_role"><option value="adviser">Licensed immigration adviser</option><option value="law_firm">NZ law firm</option><option value="fund_manager">Fund manager</option><option value="indian_counsel">Indian counsel</option><option value="accountant">Accountant</option><option value="other">Other</option></select></div>
+        <div class="field"><label>Name</label><input id="p_name"></div>
+        <div class="field"><label>Firm</label><input id="p_firm"></div>
+        <div class="field"><label>Email</label><input id="p_email"></div>
+        <div class="field"><label>Phone</label><input id="p_phone"></div>
+        <div class="field"><label>Licence / reference</label><input id="p_licence" placeholder="IAA licence number, practising certificate, Invest NZ listing date"></div>
+        <div class="field full"><label>Notes</label><input id="p_notes"></div>
+      </div>
+      <button class="btn sm" id="addParty">Add</button><div class="msg" id="pMsg"></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+const SUPABASE_URL = "https://iwdibogfypdjgsinwube.supabase.co";
+const SUPABASE_ANON = "sb_publishable_BRmzLQw94Lt49xLFmDHJVQ_yoo68o4c";
+const SITE = "https://myaccesspartners.com";
+const $ = id => document.getElementById(id);
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+let me = "", leads = [], parties = [], cur = null, curDocs = [], curEvents = [], curRoutings = [];
+const esc = s => String(s ?? "").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const fmtD = d => d ? new Date(d).toLocaleDateString("en-NZ",{day:"numeric",month:"short",year:"numeric"}) : "";
+const fmtN = n => n==null ? "" : "NZ$" + Number(n).toLocaleString("en-NZ");
+const CHECKLIST = [
+  {key:"passport",label:"Passport bio page",who:"each"},{key:"photo",label:"Passport photo",who:"each"},{key:"birth_cert",label:"Birth certificate",who:"each"},{key:"marriage",label:"Marriage certificate or partnership evidence",who:"principal"},
+  {key:"police",label:"Police certificate",who:"adults"},{key:"medical",label:"Medical and chest x ray",who:"each"},{key:"funds_ownership",label:"Evidence of ownership of nominated funds",who:"principal"},{key:"funds_source",label:"Evidence of lawful acquisition (source of wealth)",who:"principal"},
+  {key:"funds_narrative",label:"Source of funds narrative",who:"principal"},{key:"cv",label:"CV or business background",who:"principal"},{key:"pan",label:"PAN card",who:"adults"},{key:"india_tax",label:"Indian income tax returns (3 years)",who:"principal"},{key:"other",label:"Other",who:"principal"}];
+const ROLE = {adviser:"Licensed immigration adviser",law_firm:"NZ law firm",fund_manager:"Fund manager",indian_counsel:"Indian counsel",accountant:"Accountant",other:"Other"};
+const PARTY_DOCS = { adviser:["passport","photo","birth_cert","marriage","police","medical","funds_ownership","funds_source","funds_narrative","cv","other"], law_firm:["passport","funds_ownership","funds_source","funds_narrative","cv"], fund_manager:["passport","funds_narrative"], indian_counsel:["passport","pan","india_tax","funds_ownership","funds_source","funds_narrative"], accountant:["funds_ownership","funds_source","funds_narrative"], other:[] };
+
+/* gate */
+async function boot(){ const { data:{ session } } = await sb.auth.getSession(); if (session) show(session); }
+function show(session){ $("gate").hidden=true; $("app").hidden=false; me=session.user.email||""; $("who").innerHTML=esc(me)+'<button id="out">Sign out</button>'; $("out").onclick=async()=>{await sb.auth.signOut();location.reload();}; load(); }
+$("signin-google").onclick=async()=>{ const { error } = await sb.auth.signInWithOAuth({ provider:"google", options:{ redirectTo: location.origin+location.pathname } }); if(error) $("err").textContent="Google sign in failed: "+error.message; };
+sb.auth.onAuthStateChange((e,s)=>{ if(s && $("app").hidden) show(s); });
+
+/* tabs */
+document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{ document.querySelectorAll(".tabs button").forEach(x=>x.classList.toggle("on",x===b)); $("tab-leads").hidden=b.dataset.tab!=="leads"; $("tab-parties").hidden=b.dataset.tab!=="parties"; });
+
+async function load(){
+  const [l,p] = await Promise.all([ sb.from("investor_leads").select("*, investor_documents(count)").order("created_at",{ascending:false}), sb.from("investor_parties").select("*").order("role") ]);
+  leads=l.data||[]; parties=p.data||[]; renderLeads(); renderParties();
+  const id=new URLSearchParams(location.search).get("lead"); if(id){ const x=leads.find(z=>z.id===id); if(x) open(x); }
+}
+function renderLeads(){
+  const q=$("q").value.trim().toLowerCase();
+  const rows=leads.filter(l=>!q||[l.principal_name,l.email,l.city].join(" ").toLowerCase().includes(q));
+  $("leads").innerHTML=rows.map(l=>`<tr class="row" data-id="${l.id}"><td><b>${esc(l.principal_name||"(no name)")}</b><br><span style="font-size:12px;color:#6A6F7A">${esc(l.email||"")}</span></td><td><span class="pill ${l.status}">${l.status.replace("_"," ")}</span></td><td>${esc(l.city||"")}</td><td>${esc(l.india_resident||"")}</td><td>${esc(l.category_interest||"")}</td><td>${fmtN(l.funds_indicative_nzd)}</td><td>${l.investor_documents?.[0]?.count??0}</td><td>${esc(l.assigned_to||"")}</td><td>${fmtD(l.client_last_seen)}</td><td>${fmtD(l.created_at)}</td></tr>`).join("") || `<tr><td colspan="10" style="color:#6A6F7A">No files yet.</td></tr>`;
+  $("leads").querySelectorAll("tr.row").forEach(r=>r.onclick=()=>open(leads.find(l=>l.id===r.dataset.id)));
+  const c=s=>leads.filter(l=>l.status===s).length;
+  $("stats").innerHTML=`<span class="stat"><b>${leads.length}</b>files</span><span class="stat"><b>${c("documents")+c("intake")}</b>collecting</span><span class="stat"><b>${c("ready")}</b>ready</span><span class="stat"><b>${c("routed")+c("with_adviser")}</b>with advisers</span>`;
+}
+$("q").oninput=renderLeads;
+
+$("newLead").onclick=async()=>{
+  const m=$("newMsg"); m.className="msg";
+  const name=$("n_name").value.trim(); if(!name){ m.className="msg err"; m.textContent="Name needed."; return; }
+  const { data, error } = await sb.from("investor_leads").insert({ principal_name:name, email:$("n_email").value.trim()||null, phone:$("n_phone").value.trim()||null, source:$("n_source").value, referrer:$("n_referrer").value.trim()||null, assigned_to:$("n_assigned").value.trim()||me }).select("*").single();
+  if(error){ m.className="msg err"; m.textContent=error.message; return; }
+  await sb.from("investor_events").insert({ lead_id:data.id, actor:me, event:"file_opened" });
+  ["n_name","n_email","n_phone","n_referrer","n_assigned"].forEach(i=>$(i).value="");
+  m.className="msg ok"; m.textContent="File opened."; await load(); open(leads.find(l=>l.id===data.id));
+};
+
+const link = l => `${SITE}/investor-portal.html?t=${l.token}`;
+function inviteEmail(l){
+  const first=(l.principal_name||"").split(" ")[0];
+  return { subject:`Your private New Zealand investor file · Market Access Partners`, body:
+`Dear ${first||"there"},
+
+Thank you for your interest in New Zealand. Here is your private link to open your file with us:
+
+${link(l)}
+
+On that page you can tell us about your family and upload the documents your New Zealand adviser will need, at your own pace. Everything is held in a private vault in New Zealand and only forwarded to the parties you approve.
+
+Two things to be clear about from the start. Market Access Partners is not a licensed immigration adviser and does not give immigration, legal or tax advice; we introduce you to a licensed New Zealand immigration adviser, a New Zealand law firm and, where relevant, Indian counsel, and we host your visit to New Zealand. And New Zealand grants residence by investment, with citizenship available after five years of living here; the published rules are on Immigration New Zealand's website and your adviser will take you through them.
+
+Ngā mihi | Kind regards
+${me.split("@")[0]||"Paul"}
+Market Access Partners
+hello@myaccesspartners.com`};
+}
+
+function open(l){
+  cur=l; $("leadsPanel").hidden=true; $("detail").hidden=false; history.replaceState(null,"","?lead="+l.id);
+  $("d_name").textContent=l.principal_name||"(no name)"; $("d_status").className="pill "+l.status; $("d_status").textContent=l.status.replace("_"," ");
+  $("d_link").textContent=link(l);
+  const inv=inviteEmail(l); $("mailInvite").href=`mailto:${encodeURIComponent(l.email||"")}?subject=${encodeURIComponent(inv.subject)}&body=${encodeURIComponent(inv.body)}`;
+  const f=[["Email",l.email],["Mobile",l.phone],["City",l.city],["Country of residence",l.country_of_residence],["India resident (FEMA)",l.india_resident],["Partner",l.partner_name],["Children",(l.children||[]).map(k=>`${k.name}${k.age!=null?" ("+k.age+")":""}`).join(", ")],["Category interest",l.category_interest],["Indicative amount",fmtN(l.funds_indicative_nzd)],["Timeline",l.target_timeline],["Sectors",l.sectors_of_interest],["Source of funds (client's words)",l.source_of_funds],["Intake completed",fmtD(l.intake_completed_at)],["Consent given",fmtD(l.consent_at)]];
+  $("d_intake").innerHTML=f.map(([k,v])=>`<div class="field${k.startsWith("Source of funds")?" full":""}"><label>${k}</label><div class="v">${esc(v||"")||"<span style='color:#9AA1AD'>not yet</span>"}</div></div>`).join("");
+  $("e_status").value=l.status; $("e_assigned").value=l.assigned_to||""; $("e_referrer").value=[l.source,l.referrer].filter(Boolean).join(" / "); $("e_notes").value=l.notes||"";
+  $("u_key").innerHTML=CHECKLIST.map(c=>`<option value="${c.key}">${c.label}</option>`).join("");
+  $("r_party").innerHTML=parties.filter(p=>p.active).map(p=>`<option value="${p.id}">${ROLE[p.role]||p.role}: ${esc(p.name)}${p.firm?" ("+esc(p.firm)+")":""}</option>`).join("");
+  $("r_party").onchange=renderRouteDocs; $("r_subject").value=""; $("r_body").value="";
+  loadDocs();
+}
+$("back").onclick=()=>{ $("detail").hidden=true; $("leadsPanel").hidden=false; history.replaceState(null,"",location.pathname); load(); };
+$("copyLink").onclick=()=>navigator.clipboard.writeText(link(cur));
+$("copyInvite").onclick=()=>{ const i=inviteEmail(cur); navigator.clipboard.writeText("Subject: "+i.subject+"\n\n"+i.body); };
+$("saveLead").onclick=async()=>{
+  const m=$("saveMsg"); const { error } = await sb.from("investor_leads").update({ status:$("e_status").value, assigned_to:$("e_assigned").value.trim()||null, notes:$("e_notes").value }).eq("id",cur.id);
+  m.className=error?"msg err":"msg ok"; m.textContent=error?error.message:"Saved."; if(!error){ cur.status=$("e_status").value; $("d_status").className="pill "+cur.status; $("d_status").textContent=cur.status.replace("_"," "); await sb.from("investor_events").insert({lead_id:cur.id,actor:me,event:"status_"+cur.status}); }
+};
+$("closeLead").onclick=async()=>{ if(!confirm("Close this file? The client link stops working.")) return; await sb.from("investor_leads").update({status:"closed"}).eq("id",cur.id); await sb.from("investor_events").insert({lead_id:cur.id,actor:me,event:"file_closed"}); $("back").click(); };
+
+async function loadDocs(){
+  const [d,e,r]=await Promise.all([ sb.from("investor_documents").select("*").eq("lead_id",cur.id).order("uploaded_at"), sb.from("investor_events").select("*").eq("lead_id",cur.id).order("at",{ascending:false}).limit(40), sb.from("investor_routings").select("*, investor_parties(name, firm, role)").eq("lead_id",cur.id).order("sent_at",{ascending:false}) ]);
+  curDocs=d.data||[]; curEvents=e.data||[]; curRoutings=r.data||[]; renderDocs(); renderRouteDocs();
+  $("d_events").innerHTML=curEvents.map(x=>`<div>${fmtD(x.at)} · ${esc(x.actor||"")} · ${esc(x.event)}${x.detail?" · "+esc(JSON.stringify(x.detail)):""}</div>`).join("")||"<div>Nothing yet.</div>";
+  $("d_routings").innerHTML=curRoutings.map(x=>`<div>${fmtD(x.sent_at)} · to ${esc(x.investor_parties?.name||"")} (${ROLE[x.investor_parties?.role]||""}) · ${(x.doc_ids||[]).length} documents · by ${esc(x.sent_by||"")}${x.note?" · "+esc(x.note):""}</div>`).join("")||"<div>Not routed yet.</div>";
+}
+function renderDocs(){
+  const label=k=>CHECKLIST.find(c=>c.key===k)?.label||k;
+  $("d_docs").innerHTML=curDocs.map(d=>`<tr><td><input type="checkbox" class="sel" value="${d.id}"></td><td>${esc(label(d.doc_key))}</td><td>${esc(d.person||"")}</td><td><a href="#" data-view="${d.id}">${esc(d.file_name)}</a><br><span style="font-size:11.5px;color:#6A6F7A">${d.size_bytes?Math.round(d.size_bytes/1024)+" KB":""} · ${esc(d.uploaded_by)}</span></td><td>${fmtD(d.uploaded_at)}</td><td><span class="pill ${d.status}">${d.status}</span></td><td><input value="${esc(d.note||"")}" data-note="${d.id}" style="width:150px;padding:4px 6px;border:1px solid var(--line);border-radius:4px;font:500 12px var(--sans)"></td><td style="white-space:nowrap"><button class="btn ghost sm" data-verify="${d.id}">Verify</button> <button class="btn ghost sm" data-reject="${d.id}">Reject</button></td></tr>`).join("")||`<tr><td colspan="8" style="color:#6A6F7A">No documents yet.</td></tr>`;
+  $("d_docs").querySelectorAll("[data-view]").forEach(a=>a.onclick=async ev=>{ ev.preventDefault(); const d=curDocs.find(x=>x.id===a.dataset.view); const { data, error } = await sb.storage.from("investor-docs").createSignedUrl(d.file_path, 600); if(error) return alert(error.message); window.open(data.signedUrl,"_blank"); });
+  const setStatus=async(id,status)=>{ const note=$("d_docs").querySelector(`[data-note="${id}"]`).value; await sb.from("investor_documents").update({status,note}).eq("id",id); await sb.from("investor_events").insert({lead_id:cur.id,actor:me,event:"document_"+status,detail:{id,note}}); loadDocs(); };
+  $("d_docs").querySelectorAll("[data-verify]").forEach(b=>b.onclick=()=>setStatus(b.dataset.verify,"verified"));
+  $("d_docs").querySelectorAll("[data-reject]").forEach(b=>b.onclick=()=>setStatus(b.dataset.reject,"rejected"));
+  const have=new Set(curDocs.map(d=>d.doc_key));
+  const missing=CHECKLIST.filter(c=>c.key!=="other"&&!have.has(c.key)).map(c=>c.label);
+  $("d_missing").textContent=missing.length?"Not yet received: "+missing.join(", ")+".":"Every checklist item has at least one file.";
+}
+$("uploadCrew").onclick=async()=>{
+  const m=$("uMsg"); const file=$("u_file").files[0]; if(!file){ m.className="msg err"; m.textContent="Choose a file."; return; }
+  const path=`leads/${cur.id}/${$("u_key").value}/${Date.now()}_${file.name.replace(/[^A-Za-z0-9._-]+/g,"_")}`;
+  const { error } = await sb.storage.from("investor-docs").upload(path, file, { contentType:file.type||"application/octet-stream" });
+  if(error){ m.className="msg err"; m.textContent=error.message; return; }
+  await sb.from("investor_documents").insert({ lead_id:cur.id, doc_key:$("u_key").value, person:$("u_person").value.trim()||null, file_path:path, file_name:file.name, size_bytes:file.size, mime:file.type, uploaded_by:me });
+  await sb.from("investor_events").insert({lead_id:cur.id,actor:me,event:"document_uploaded_by_crew",detail:{doc_key:$("u_key").value,file_name:file.name}});
+  $("u_file").value=""; m.className="msg ok"; m.textContent="Uploaded."; loadDocs();
+};
+
+/* routing */
+function renderRouteDocs(){
+  const p=parties.find(x=>x.id===$("r_party").value); const def=new Set(PARTY_DOCS[p?.role]||[]);
+  const label=k=>CHECKLIST.find(c=>c.key===k)?.label||k;
+  $("r_docs").innerHTML=curDocs.map(d=>`<label class="chk"><input type="checkbox" value="${d.id}" ${def.has(d.doc_key)&&d.status!=="rejected"?"checked":""}><span>${esc(label(d.doc_key))}${d.person?" · "+esc(d.person):""} · ${esc(d.file_name)} <span class="pill ${d.status}">${d.status}</span></span></label>`).join("")||"<div style='color:#6A6F7A;font-size:13px'>No documents on file yet.</div>";
+}
+const selDocs=()=>[...$("r_docs").querySelectorAll("input:checked")].map(i=>curDocs.find(d=>d.id===i.value));
+$("r_build").onclick=()=>{
+  const p=parties.find(x=>x.id===$("r_party").value); if(!p) return;
+  const docs=selDocs(); const label=k=>CHECKLIST.find(c=>c.key===k)?.label||k; const l=cur;
+  const fam=[l.partner_name?`partner ${l.partner_name}`:null,(l.children||[]).length?`${l.children.length} child${l.children.length>1?"ren":""} (ages ${l.children.map(k=>k.age??"?").join(", ")})`:null].filter(Boolean).join(" and ");
+  const role=p.role;
+  const ask = role==="adviser" ? "Could you please take the family on as a client for advice on the Active Investor Plus category, confirm the document list you need, and let us know your engagement terms so we can introduce you by email."
+    : role==="law_firm" ? "Could you please advise on the New Zealand legal side (investment agreements, source of funds evidence, section 49 conditions, and in due course the NZ$5 million home pathway), working alongside the licensed adviser."
+    : role==="fund_manager" ? "The family has indicated interest in your sector. Could you please confirm whether your fund is open to a new commitment of this size and on what terms, and confirm it remains on the Invest NZ Acceptable Managed Funds List."
+    : role==="indian_counsel" ? "Could you please advise the family on the India side: FEMA residential status, LRS, TCS, the sequence for moving funds lawfully, and Indian tax residency, so the New Zealand timetable can be aligned with the Indian financial year."
+    : role==="accountant" ? "Could you please review the source of funds material and, when the investment is made, provide the evidence letter Immigration New Zealand requires."
+    : "Please see the attached file.";
+  $("r_subject").value=`Introduction: ${l.principal_name} · New Zealand investor residence file`;
+  $("r_body").value=
+`Dear ${p.name.split(" ")[0]},
+
+Please meet ${l.principal_name}${l.city?" of "+l.city:""}${fam?", with "+fam:""}, who has asked us to introduce you. ${l.principal_name.split(" ")[0]} is copied.
+
+Summary as provided by the client (we have not verified it and we do not advise):
+- Country of residence: ${l.country_of_residence||"not stated"}; India FEMA residence: ${l.india_resident||"not stated"}
+- Category of interest: ${l.category_interest||"undecided"}; indicative amount: ${fmtN(l.funds_indicative_nzd)||"not stated"}
+- Timeline: ${l.target_timeline||"not stated"}; sectors of interest: ${l.sectors_of_interest||"not stated"}
+- Source of funds, in the client's words: ${l.source_of_funds||"not stated"}
+
+${ask}
+
+Documents ${docs.length?"attached (or available in the secure vault on request)":"to follow"}:
+${docs.map(d=>`- ${label(d.doc_key)}${d.person?" · "+d.person:""} · ${d.file_name}${d.status==="verified"?" (sighted)":""}`).join("\n")||"- none yet"}
+${$("r_note").value.trim()?"\n"+$("r_note").value.trim()+"\n":""}
+The client has authorised Market Access Partners in writing${l.consent_at?" on "+fmtD(l.consent_at):""} to forward this information to you for the purpose of your advice. Market Access Partners is an introducer and host only; it is not a licensed immigration adviser and gives no immigration, legal or tax advice.
+
+Ngā mihi | Kind regards
+${me.split("@")[0]||"Paul"}
+Market Access Partners Limited · hello@myaccesspartners.com · myaccesspartners.com`;
+  $("r_mail").href=`mailto:${encodeURIComponent(p.email||"")}?cc=${encodeURIComponent(l.email||"")}&subject=${encodeURIComponent($("r_subject").value)}&body=${encodeURIComponent($("r_body").value)}`;
+};
+$("r_copy").onclick=()=>navigator.clipboard.writeText("Subject: "+$("r_subject").value+"\n\n"+$("r_body").value);
+$("r_zip").onclick=async()=>{
+  const docs=selDocs(); const m=$("rMsg"); if(!docs.length){ m.className="msg err"; m.textContent="Tick at least one document."; return; }
+  m.className="msg"; m.textContent="Preparing zip…";
+  const zip=new JSZip(); const label=k=>CHECKLIST.find(c=>c.key===k)?.label||k;
+  for(const d of docs){ const { data, error } = await sb.storage.from("investor-docs").download(d.file_path); if(error){ m.className="msg err"; m.textContent=error.message; return; } zip.file(`${label(d.doc_key).replace(/[^A-Za-z0-9 ]+/g,"")}${d.person?" - "+d.person:""} - ${d.file_name}`, data); }
+  const blob=await zip.generateAsync({type:"blob"}); const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=`${(cur.principal_name||"investor").replace(/[^A-Za-z0-9 ]+/g,"")} - documents.zip`; a.click();
+  m.className="msg ok"; m.textContent=`${docs.length} documents zipped.`;
+};
+$("r_sent").onclick=async()=>{
+  const p=parties.find(x=>x.id===$("r_party").value); const docs=selDocs(); const m=$("rMsg");
+  const { error } = await sb.from("investor_routings").insert({ lead_id:cur.id, party_id:p?.id||null, sent_by:me, doc_ids:docs.map(d=>d.id), note:$("r_note").value.trim()||null });
+  if(error){ m.className="msg err"; m.textContent=error.message; return; }
+  const next = ["new","intake","documents","ready"].includes(cur.status) ? (p?.role==="adviser"?"with_adviser":"routed") : cur.status;
+  await sb.from("investor_leads").update({status:next}).eq("id",cur.id); cur.status=next; $("e_status").value=next; $("d_status").className="pill "+next; $("d_status").textContent=next.replace("_"," ");
+  await sb.from("investor_events").insert({lead_id:cur.id,actor:me,event:"routed",detail:{to:p?.name,role:p?.role,docs:docs.length}});
+  m.className="msg ok"; m.textContent="Recorded."; loadDocs();
+};
+
+/* parties */
+function renderParties(){
+  $("parties").innerHTML=parties.map(p=>`<tr><td>${ROLE[p.role]||p.role}</td><td><input value="${esc(p.name)}" data-f="name" data-id="${p.id}"></td><td><input value="${esc(p.firm||"")}" data-f="firm" data-id="${p.id}"></td><td><input value="${esc(p.email||"")}" data-f="email" data-id="${p.id}"></td><td><input value="${esc(p.phone||"")}" data-f="phone" data-id="${p.id}"></td><td><input value="${esc(p.licence_ref||"")}" data-f="licence_ref" data-id="${p.id}"></td><td><input type="checkbox" ${p.active?"checked":""} data-f="active" data-id="${p.id}"></td><td><button class="btn ghost sm" data-save="${p.id}">Save</button></td></tr>`).join("");
+  $("parties").querySelectorAll("input").forEach(i=>{ i.style.cssText="width:100%;padding:5px 7px;border:1px solid var(--line);border-radius:4px;font:500 12.5px var(--sans)"; if(i.type==="checkbox") i.style.width="auto"; });
+  $("parties").querySelectorAll("[data-save]").forEach(b=>b.onclick=async()=>{ const id=b.dataset.save; const upd={}; $("parties").querySelectorAll(`[data-id="${id}"]`).forEach(i=>upd[i.dataset.f]=i.type==="checkbox"?i.checked:(i.value.trim()||null)); const { error } = await sb.from("investor_parties").update(upd).eq("id",id); b.textContent=error?"Error":"Saved"; setTimeout(()=>b.textContent="Save",1500); if(!error) load(); });
+}
+$("addParty").onclick=async()=>{
+  const m=$("pMsg"); const name=$("p_name").value.trim(); if(!name){ m.className="msg err"; m.textContent="Name needed."; return; }
+  const { error } = await sb.from("investor_parties").insert({ role:$("p_role").value, name, firm:$("p_firm").value.trim()||null, email:$("p_email").value.trim()||null, phone:$("p_phone").value.trim()||null, licence_ref:$("p_licence").value.trim()||null, notes:$("p_notes").value.trim()||null });
+  m.className=error?"msg err":"msg ok"; m.textContent=error?error.message:"Added."; if(!error){ ["p_name","p_firm","p_email","p_phone","p_licence","p_notes"].forEach(i=>$(i).value=""); load(); }
+};
+
+boot();
+</script>
+</body>
+</html>
