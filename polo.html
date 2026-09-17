@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Polo · MAP crew</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fjalla+One&family=Libre+Franklin:ital,wght@0,300..800;1,400&display=swap">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<style>
+:root{--ink:#161B24;--ink2:#1F2633;--ivory:#F5F1E6;--paper:#FBF9F2;--saffron:#D98324;--saffron-deep:#B26A15;--vine:#3D5C4A;--mist:#9AA1AD;--body:#4A5160;--line:rgba(22,27,36,.14);--ok:#2E7D51;--warn:#A33B2E;
+--serif:"Fjalla One","Arial Narrow",Arial,sans-serif;--sans:"Libre Franklin","Helvetica Neue",Arial,sans-serif}
+*{box-sizing:border-box;margin:0}
+body{background:var(--paper);color:var(--ink);font:400 15.5px/1.55 var(--sans)}
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+header{background:var(--ink);color:var(--ivory);padding:16px 0}
+header .wrap{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.mark{font:700 14px var(--sans);letter-spacing:.06em;text-transform:uppercase}
+.mark b{color:var(--saffron)}
+#who{font-size:12.5px;color:var(--mist)}
+#who button{background:none;border:1px solid rgba(245,241,230,.3);color:var(--ivory);padding:4px 12px;margin-left:10px;font:500 12px var(--sans);cursor:pointer;border-radius:999px}
+h1{font-family:var(--serif);font-weight:400;font-size:clamp(28px,3.6vw,38px);margin:26px 0 4px}
+h2{font-family:var(--serif);font-weight:400;font-size:24px;margin:0 0 10px}
+h3{font:700 12.5px var(--sans);letter-spacing:.12em;text-transform:uppercase;color:var(--vine);margin:18px 0 8px}
+.eyebrow{font:600 11px var(--sans);letter-spacing:.18em;text-transform:uppercase;color:var(--saffron)}
+.sub{color:var(--body);max-width:78ch}
+.panel{background:#fff;border:1px solid var(--line);border-radius:8px;padding:22px 24px;margin:14px 0}
+.panel.ivory{background:var(--ivory)}
+.panel.dark{background:var(--ink);color:var(--ivory);border-color:var(--ink)}
+.panel.dark h2{color:var(--saffron)}.panel.dark p{color:var(--ivory)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin:12px 0}
+.card{background:var(--ivory);border-radius:8px;padding:14px 16px;border-left:4px solid var(--saffron)}
+.card .n{font-family:var(--serif);font-size:26px}
+.card .r{font-size:13.5px;color:var(--body);margin-top:2px}
+.tabs{display:flex;gap:8px;margin:18px 0 6px;flex-wrap:wrap}
+.tabs button{font:600 14px var(--sans);padding:10px 20px;border:1px solid var(--line);background:#fff;border-radius:999px;cursor:pointer;color:var(--body)}
+.tabs button.on{background:var(--ink);color:var(--ivory);border-color:var(--ink)}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:10px 0}
+.toolbar input,.toolbar select{padding:9px 12px;border:1px solid var(--line);border-radius:999px;font:500 14px var(--sans);background:#fff}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+thead th{font:600 11.5px var(--sans);letter-spacing:.06em;text-transform:uppercase;color:var(--vine);background:var(--ivory)}
+.pill{display:inline-block;font:600 10.5px var(--sans);letter-spacing:.06em;text-transform:uppercase;padding:2px 8px;border-radius:999px;background:var(--ivory);color:var(--vine);white-space:nowrap}
+.pill.military{background:var(--vine);color:#fff}.pill.club{background:#E9ECF3;color:#3A4560}.pill.patron{background:#FFF1DC;color:var(--saffron-deep)}.pill.academy{background:#E4F1E8;color:var(--ok)}.pill.nz{background:var(--ink);color:var(--ivory)}
+.pill.exempt{background:#E4F1E8;color:var(--ok)}
+td select{min-width:140px}td input{min-width:160px}td select,td input{width:100%;padding:5px 7px;border:1px solid var(--line);border-radius:4px;font:500 13px var(--sans)}
+.btn{display:inline-block;padding:9px 18px;font:600 13.5px var(--sans);border:none;border-radius:999px;cursor:pointer;background:var(--saffron);color:var(--ink);text-decoration:none}
+.btn.ghost{background:#fff;border:1px solid var(--line);color:var(--ink)}
+.btn.sm{padding:6px 12px;font-size:12.5px}
+.next{font-size:13px;color:var(--body)}
+a{color:var(--saffron-deep)}
+details{border:1px solid var(--line);border-radius:8px;padding:0 18px;margin:12px 0;background:#fff}
+details summary{cursor:pointer;font:600 14.5px var(--sans);padding:14px 0;list-style:none;display:flex;justify-content:space-between}
+details summary::after{content:"+";font-size:20px;color:var(--mist)}details[open] summary::after{content:"−"}
+details .inner{padding:0 0 18px}
+#gate{position:fixed;inset:0;background:var(--ink);display:flex;align-items:center;justify-content:center;z-index:50}
+#gate .card2{background:var(--paper);padding:38px;max-width:380px;width:92%;border-top:3px solid var(--saffron);border-radius:6px}
+#gate h2{font-size:24px;margin:10px 0 6px}
+#gate p{font-size:13px;color:var(--body);margin-bottom:16px}
+#gate button{width:100%;padding:12px;background:var(--saffron);border:none;font:600 14px var(--sans);cursor:pointer;border-radius:999px;color:var(--ink)}
+#gate .err{color:var(--warn);font-size:12.5px;min-height:18px;margin-top:8px}
+[hidden]{display:none!important}
+@media(max-width:900px){table{display:block;overflow-x:auto}}
+</style>
+<style id="crew-nav">
+header .wrap{align-items:center}
+nav.tools{display:flex;gap:10px 22px;font-size:14px;flex-wrap:wrap;align-items:center}
+nav.tools a{color:var(--mist);text-decoration:none;padding:4px 0;border-bottom:2px solid transparent}
+nav.tools a:hover{color:var(--ivory)}nav.tools a.on{color:var(--ivory);border-bottom-color:var(--saffron)}
+nav.tools .grp{display:inline-flex;gap:12px;align-items:center}
+nav.tools .grp b{font:700 10.5px var(--sans);letter-spacing:.14em;text-transform:uppercase;color:rgba(245,241,230,.45);margin-right:2px}
+nav.tools a.help{background:var(--saffron);color:var(--ink);padding:5px 14px;border-radius:999px;font-weight:600;border:none}
+</style>
+</head>
+<body>
+<div id="gate"><div class="card2"><span class="mark">Market <b>Access</b> Partners</span><h2>Polo</h2><p>Crew only. Sign in with your Google account.</p><button id="signin-google">Continue with Google</button><div class="err" id="err"></div></div></div>
+
+<div id="app" hidden>
+<header><div class="wrap">
+  <span class="mark">Market <b>Access</b> Partners · Internal</span>
+  <nav class="tools"><a href="/dashboard.html">Home</a><span class="grp"><b>Investors</b><a href="/investors.html">Files</a><a href="/invest.html">Rules</a></span><span class="grp"><b>Producers</b><a href="/crm.html">CRM</a><a href="/distributors.html">Distributors</a></span><span class="grp"><b>Travel</b><a href="/tours.html">Tours</a><a href="/travel-builder.html">Builder</a></span><span class="grp"><b>Trade</b><a href="/landed-price.html">Calculator</a><a href="/containers.html">Containers</a><a href="/polo.html" class="on">Polo</a></span><a href="/finance.html">Finance</a><a href="/manual.html" class="help">Manual</a></nav>
+  <span id="who"></span>
+</div></header>
+
+<div class="wrap">
+  <p class="eyebrow" style="margin-top:28px">New Zealand polo ponies to India</p>
+  <h1>Polo</h1>
+  <p class="sub">Who we can supply: every Indian Polo Association centre, the Army, Navy and academy teams, the patron and corporate teams, and the New Zealand side that breeds and makes the horses. Ainsley Polo (Pukekohe) is the supply partner; the partner profile went to Kel and Lucy Ainsley on 14 September 2026 and nothing goes to Indian buyers until they have corrected it.</p>
+
+  <div class="cards">
+    <div class="card"><div class="n">35</div><div class="r">Clubs affiliated to the Indian Polo Association (its own page says 29 clubs plus 4 arena clubs). Registered office: B Squadron, 61 Cavalry, Delhi Cantt.</div></div>
+    <div class="card"><div class="n">Sep to Apr</div><div class="r">The Indian season: Delhi and Jaipur first, then Jodhpur, Mumbai, Hyderabad, Kolkata, Bengaluru, Chennai.</div></div>
+    <div class="card"><div class="n">39.65%</div><div class="r">Duty on a polo horse (HS 0101.29.10) without the exemption: BCD 30% + SWS + IGST 5%. On INR 18 lakh CIF that is about 7.14 lakh.</div></div>
+    <div class="card" style="border-left-color:var(--ok)"><div class="n">5%</div><div class="r">With the exemption (customs notification 33/2025): only IGST, about 90,000 on the same horse. Army, Navy, CAPF teams, IPA affiliated civilian teams and rated players qualify.</div></div>
+  </div>
+
+  <div class="panel dark">
+    <h2>Who to sell to first</h2>
+    <p>The duty exemption decides the order. Sell first to the buyers who pay 5%, not 39.65%: the Army, Navy and CAPF teams, IPA affiliated civilian teams (five years of affiliation, 14 goal, up to 30 horses in two years) and rated players (men +1 and above, women minus 1 and above; six horses in three years). Each needs a certificate from the Department of Youth Affairs and Sports, and every horse needs a DGFT import authorisation. Live horses are excluded from the NZ India FTA, so there is no FTA relief. Export path: 30 days pre export isolation and an MPI certificate in NZ, then at least 21 days quarantine in India; NZ autumn shipment lands for the September season.</p>
+  </div>
+
+  <div class="tabs"><button class="on" data-tab="india">Indian buyers</button><button data-tab="nz">New Zealand supply</button><button data-tab="how">How a sale works</button></div>
+
+  <div id="tab-india">
+    <div class="panel">
+      <div class="toolbar">
+        <input id="q" placeholder="Search name, city, notes" style="min-width:260px">
+        <select id="f-kind"><option value="">All types</option><option value="military">Military and academies</option><option value="club">Clubs</option><option value="patron">Patron and corporate teams</option><option value="academy">Schools and academies</option></select>
+        <select id="f-city"><option value="">All cities</option></select>
+        <select id="f-status"><option value="">Any status</option><option>not approached</option><option>approached</option><option>in discussion</option><option>buying</option><option>declined</option></select>
+        <span class="next" id="count"></span>
+      </div>
+      <table><thead><tr><th>Name</th><th>Type</th><th>City</th><th>Duty</th><th>Notes</th><th>Status</th><th>Our note</th></tr></thead><tbody id="rows"></tbody></table>
+      <p class="next" style="margin-top:10px">Duty column: <span class="pill exempt">exempt</span> means the buyer type qualifies for the BCD exemption under notification 33/2025 on certificate; "check" means the club may qualify as an IPA affiliated civilian team if it meets the five year, 14 goal test, and the rated players inside it qualify individually. Status and notes save on this device only for now; tell Paul if you want them shared through the CRM. Directory compiled 18 September 2026 from the IPA, club sites, LA POLO and the Indian Polo Awards 2026; contact people and emails are still to be gathered, Shiva first.</p>
+    </div>
+  </div>
+
+  <div id="tab-nz" hidden>
+    <div class="panel">
+      <h2>The New Zealand side</h2>
+      <p class="sub" style="margin-bottom:10px">Ainsley Polo is the partner. The rest of the list is the New Zealand polo world we host Indian buyers in and, over time, may source from under the Ainsley programme.</p>
+      <table><thead><tr><th>Name</th><th>Role</th><th>Where</th><th>Notes</th></tr></thead><tbody id="nzrows"></tbody></table>
+    </div>
+  </div>
+
+  <div id="tab-how" hidden>
+    <div class="panel">
+      <h2>How a sale works</h2>
+      <ol style="padding-left:22px;color:var(--body);line-height:1.7">
+        <li><b>Shiva opens the door</b> with a patron or team, framed as a standing supply relationship, not a one off shipment.</li>
+        <li><b>Buyer type decides the duty.</b> Army, Navy, CAPF, affiliated civilian team or rated player: they apply for the Youth Affairs and Sports certificate; anyone else pays 39.65%.</li>
+        <li><b>They come to see the horses.</b> Host at the NZ Open, Clevedon, 21 February 2027 (the 50th), then Ainsley's at Pukekohe. The Maharaja of Jaipur was in Clevedon looking at ponies in January 2025.</li>
+        <li><b>Price ex farm, MAP fee on top:</b> 15% of the ex farm price on confirmation plus 5% from the Indian receiver on landing; exclusive route to India for three years. Indicative bands (assumptions, to confirm with the Ainsleys): green NZ$6k to 12k, club NZ$12k to 25k, proven medium goal NZ$25k to 50k, high goal NZ$50k plus.</li>
+        <li><b>Export:</b> DGFT import authorisation in India, 30 days pre export isolation and MPI certificate in NZ, flight via Singapore or the Gulf with an agent, 21 days Indian quarantine. Landed cost above ex farm price is estimated at NZ$20k to 35k a horse before duty (unverified). NZ autumn shipment for the September season.</li>
+        <li><b>Volume:</b> 10 ponies season one, then 15 to 20 a season, with the breeding programme and academy behind it from 2027.</li>
+      </ol>
+      <details><summary>Sources</summary><div class="inner"><p class="next">Indian Polo Association (ipa.co.in, About us); Wikipedia, Indian Polo Association and Polo in India; TourMyIndia polo destinations; LA POLO Indian Polo Awards 2026 (ANI, 23 Mar 2026); NZ Herald Society Insider, Jan 2025; Customs notification 33/2025 and MPI OMAR Horses to India (2 Sep 2025), as recorded in the Ainsley Polo partner profile v3 (14 Sep 2026). Club details are as published; verify before an approach.</p></div></details>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+const SUPABASE_URL = "https://iwdibogfypdjgsinwube.supabase.co";
+const SUPABASE_ANON = "sb_publishable_BRmzLQw94Lt49xLFmDHJVQ_yoo68o4c";
+const $ = id => document.getElementById(id);
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+const esc = s => String(s ?? "").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+async function boot(){ const { data:{ session } } = await sb.auth.getSession(); if (session) show(session); }
+function show(session){ $("gate").hidden=true; $("app").hidden=false; $("who").innerHTML=esc(session.user.email||"")+'<button id="out">Sign out</button>'; $("out").onclick=async()=>{await sb.auth.signOut();location.reload();}; }
+$("signin-google").onclick=async()=>{ const { error } = await sb.auth.signInWithOAuth({ provider:"google", options:{ redirectTo: location.origin+location.pathname } }); if(error) $("err").textContent="Google sign in failed: "+error.message; };
+sb.auth.onAuthStateChange((e,s)=>{ if(s && $("app").hidden) show(s); });
+document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{ document.querySelectorAll(".tabs button").forEach(x=>x.classList.toggle("on",x===b)); ["india","nz","how"].forEach(t=>$("tab-"+t).hidden=b.dataset.tab!==t); });
+
+// kind: military | club | patron | academy. duty: exempt | check | full
+const INDIA = [
+  // Military and service teams
+  {n:"61st Cavalry",k:"military",c:"Jaipur / Delhi",d:"exempt",x:"The Army's horsed cavalry regiment and the engine of Indian polo; IPA registered office sits with B Squadron at Delhi Cantt. Risaldar Chandra Mohan Singh named Polo Trainer 2026."},
+  {n:"President's Bodyguard",k:"military",c:"New Delhi",d:"exempt",x:"Ceremonial cavalry of the President; fields polo teams in the Delhi season and the President's Polo Cup."},
+  {n:"Army Polo and Riding Centre (APRC)",k:"military",c:"New Delhi",d:"exempt",x:"Polo Club of the Season, Indian Polo Awards 2026. Home of the Delhi season on the Army grounds."},
+  {n:"Indian Navy Polo and Equestrian Club",k:"military",c:"Mumbai",d:"exempt",x:"Navy team; plays the Mumbai season at Mahalakshmi Race Course."},
+  {n:"Remount and Veterinary Corps (RVC) Polo Club",k:"military",c:"Meerut",d:"exempt",x:"The corps that breeds and remounts Army horses; a natural first conversation on breed and price."},
+  {n:"ASC Polo Club (Army Service Corps)",k:"military",c:"Bengaluru",d:"exempt",x:"ASC Centre and College team; anchors the Bengaluru polo revival."},
+  {n:"Artillery Polo Club",k:"military",c:"Nashik (Deolali)",d:"exempt",x:"School of Artillery team."},
+  {n:"Fort William Polo Club",k:"military",c:"Kolkata",d:"exempt",x:"Eastern Command; plays alongside Calcutta Polo Club on the Maidan."},
+  {n:"National Defence Academy Polo Club",k:"military",c:"Pune (Khadakwasla)",d:"exempt",x:"Cadet polo; the pipeline of future Army players."},
+  {n:"Indian Military Academy Polo Club",k:"military",c:"Dehradun",d:"exempt",x:"Runs the only polo academy inside a military academy in India."},
+  {n:"Officers Training Academy Polo Club",k:"military",c:"Chennai",d:"exempt",x:"OTA team; Chennai season with Madras Polo and Riders Club."},
+  {n:"Central Armed Police Forces (BSF, ITBP, CRPF)",k:"military",c:"Various",d:"exempt",x:"Named in the customs exemption as eligible importers. Which forces field polo teams is to be verified; BSF has mounted units."},
+  // Patron and corporate teams
+  {n:"Jaipur Polo Team (Sawai Padmanabh Singh)",k:"patron",c:"Jaipur",d:"check",x:"The Maharaja of Jaipur's team; Polo Patron of the Year 2026; toured Clevedon for ponies in January 2025. Jaipur is the first patron conversation."},
+  {n:"Jodhpur (Maharaja Gaj Singh II)",k:"patron",c:"Jodhpur",d:"check",x:"Jodhpur Polo and Equestrian Institute and the Jodhpur season are the royal family's; two grass fields, stabling for 40."},
+  {n:"Jindal Panther Polo",k:"patron",c:"Delhi / Noida",d:"check",x:"Naveen Jindal's team and the Jindal Polo and Equestrian Foundation; Best Team Low Goal and Best Junior Team 2026; sponsor of the Indian Polo Awards."},
+  {n:"Achievers Polo (Rajnigandha Achievers)",k:"patron",c:"Delhi",d:"check",x:"Best Team High Goal 2026; DS Group backed."},
+  {n:"Mayfair Polo",k:"patron",c:"Delhi",d:"check",x:"Emerging Polo Patron 2026."},
+  {n:"Aravali Polo",k:"patron",c:"Delhi",d:"check",x:"Regular Delhi season team (Baroda Cup finalist)."},
+  {n:"Sona Polo",k:"patron",c:"Delhi",d:"check",x:"Sunjay Kapur's team; its future after his death in 2025 is to be confirmed before any approach."},
+  // Clubs by centre
+  {n:"Rajasthan Polo Club",k:"club",c:"Jaipur",d:"check",x:"Category A centre. The Rambagh ground; runs the Jaipur season and the Maharaja Sawai Man Singh Cup."},
+  {n:"Jaipur Riding and Polo Club",k:"club",c:"Jaipur",d:"check",x:""},
+  {n:"Chinkara Polo Club",k:"club",c:"Jaipur",d:"check",x:""},
+  {n:"Haldighati Polo and Riding Club",k:"club",c:"Jaipur",d:"check",x:""},
+  {n:"Cavallo Riding and Polo Club",k:"club",c:"Jaipur",d:"check",x:""},
+  {n:"Jodhpur Polo and Equestrian Institute",k:"club",c:"Jodhpur",d:"check",x:"Category A centre."},
+  {n:"Imperial Riding and Polo Club",k:"club",c:"Udaipur",d:"check",x:""},
+  {n:"Delhi season clubs (Jaipur Polo Ground, APRC)",k:"club",c:"New Delhi",d:"check",x:"Category A centre. Civilian teams play on the Army grounds; Aspen Riding and Polo Academy for learners."},
+  {n:"Gurgaon Polo and Equestrian Club",k:"club",c:"Gurugram",d:"check",x:"Founded by Randeep Hooda, Aravalli hills."},
+  {n:"Amity Polo Club",k:"club",c:"Noida",d:"check",x:"Category A centre (Noida)."},
+  {n:"Amateur Riders' Club",k:"club",c:"Mumbai",d:"check",x:"Category A centre. Mahalakshmi Race Course; the Mumbai season with the Navy."},
+  {n:"Calcutta Polo Club",k:"club",c:"Kolkata",d:"check",x:"Category B centre. Founded 1862, oldest polo club still playing anywhere."},
+  {n:"Hyderabad Polo and Riding Club",k:"club",c:"Hyderabad",d:"check",x:"Category B centre. Arena Polo Club of the Season 2026."},
+  {n:"Hyderabad Choughan Polo Club",k:"club",c:"Hyderabad",d:"check",x:""},
+  {n:"Andhra Pradesh Riding Club",k:"club",c:"Hyderabad",d:"check",x:""},
+  {n:"Agram Riding and Polo Club",k:"club",c:"Bengaluru",d:"check",x:"Category B centre, with ASC."},
+  {n:"Bangalore Amateur Riders Institute",k:"club",c:"Bengaluru",d:"check",x:""},
+  {n:"Madras Polo and Riders Club",k:"club",c:"Chennai",d:"check",x:"Category B centre."},
+  {n:"Patiala Polo and Riding Club",k:"club",c:"Patiala",d:"check",x:"Category C centre; royal polo history."},
+  {n:"Leh Polo Club",k:"club",c:"Leh, Ladakh",d:"check",x:"Category C centre; Ladakh Polo Festival. High altitude, local ponies; a hosting story more than a buyer."},
+  {n:"All Manipur Polo Association",k:"club",c:"Imphal",d:"check",x:"Category C centre; Mapal Kangjeibung, the oldest polo ground in the world. Traditional sagol kangjei; local pony breed."},
+  {n:"Bhavnagar Polo Club",k:"club",c:"Bhavnagar",d:"check",x:"Hosts national tournaments."},
+  {n:"Patrons Polo Club",k:"club",c:"Delhi NCR",d:"check",x:"Best Polo Ground 2026."},
+  // Schools and academies
+  {n:"Mayo College",k:"academy",c:"Ajmer",d:"full",x:"About 50 horses and 250 students coached; the school of the royal players. A ponies and coaching conversation."},
+  {n:"Aspen Riding and Polo Academy",k:"academy",c:"New Delhi",d:"full",x:"Learn to play; Kel's coaching in India could sit here."},
+  {n:"Jindal Polo and Equestrian Foundation",k:"academy",c:"Noida",d:"check",x:"Jindal's own grounds and junior programme."},
+];
+const NZ = [
+  {n:"Ainsley Polo (Kel, Ross and Lucy Ainsley)",r:"Supply partner",w:"Tipperary Park, Pukekohe East; Beach Farm",x:"200 plus green horse operation, Running A brand since 1947; ponies have played Guards, the Argentine Open and the NZ Open. Partner profile v3 sent 14 Sep 2026; breeding programme and academy planned. Lucy is Executive Director of the NZ Polo Open."},
+  {n:"Ainsley Saddlery (Ross Ainsley)",r:"Saddlery, ships to India",w:"Pukekohe",x:"MVP saddle endorsed by Cambiaso and Pieres; teams won the Indian Polo Challenge Shield July 2025 with prizes from the Maharaja of Jaipur."},
+  {n:"New Zealand Polo Association",r:"Governing body",w:"National",x:"Lists Ainsley Polo as an official learn to play provider; handicaps and season calendar."},
+  {n:"Auckland Polo Club",r:"Hosting venue",w:"Clevedon",x:"Home of the NZ Open; 50th Open on 21 February 2027, the day to host Indian buyers. President Tony van den Brink."},
+  {n:"Bombay Hills Polo Club",r:"Hosting venue",w:"Bombay Hills, south Auckland",x:"The Ainsleys' club; handicaps listed here."},
+  {n:"Kihikihi and Cambridge polo clubs",r:"Waikato circuit",w:"Waikato",x:"Waikato tournaments in January; second stop for a buyer tour. Verify contacts."},
+  {n:"Hawke's Bay Polo Club",r:"Regional",w:"Hastings",x:"Fits the Hawke's Bay tour module. Verify contacts."},
+  {n:"Rangitikei and Manawatu polo",r:"Regional",w:"Manawatu",x:"Verify contacts."},
+  {n:"Christchurch Polo Club",r:"Regional",w:"Canterbury",x:"Verify contacts."},
+];
+const KIND={military:"Military",club:"Club",patron:"Patron / corporate",academy:"School / academy"};
+const DUTY={exempt:'<span class="pill exempt">exempt</span>',check:'<span class="pill">check</span>',full:'<span class="pill" style="background:#FBEDEA;color:var(--warn)">full duty</span>'};
+const key=n=>"map_polo_"+n.replace(/[^A-Za-z0-9]+/g,"_");
+const getS=n=>{ try{ return JSON.parse(localStorage.getItem(key(n))||"{}"); }catch(e){ return {}; } };
+const setS=(n,o)=>{ try{ localStorage.setItem(key(n),JSON.stringify(o)); }catch(e){} };
+const cities=[...new Set(INDIA.map(x=>x.c))].sort(); cities.forEach(c=>{ const o=document.createElement("option"); o.value=c; o.textContent=c; $("f-city").appendChild(o); });
+function render(){
+  const q=$("q").value.trim().toLowerCase(), k=$("f-kind").value, c=$("f-city").value, st=$("f-status").value;
+  const rows=INDIA.filter(x=>(!q||(x.n+" "+x.c+" "+x.x).toLowerCase().includes(q))&&(!k||x.k===k)&&(!c||x.c===c)&&(!st||(getS(x.n).status||"not approached")===st));
+  $("rows").innerHTML=rows.map(x=>{ const s=getS(x.n); return `<tr><td><b>${esc(x.n)}</b></td><td><span class="pill ${x.k}">${KIND[x.k]}</span></td><td>${esc(x.c)}</td><td>${DUTY[x.d]}</td><td class="next">${esc(x.x)}</td><td><select data-n="${esc(x.n)}" data-f="status">${["not approached","approached","in discussion","buying","declined"].map(o=>`<option ${(s.status||"not approached")===o?"selected":""}>${o}</option>`).join("")}</select></td><td><input data-n="${esc(x.n)}" data-f="note" value="${esc(s.note||"")}" placeholder="Contact, next step"></td></tr>`; }).join("");
+  $("count").textContent=rows.length+" of "+INDIA.length;
+  $("rows").querySelectorAll("select,input").forEach(el=>el.onchange=()=>{ const s=getS(el.dataset.n); s[el.dataset.f]=el.value; setS(el.dataset.n,s); });
+}
+["q","f-kind","f-city","f-status"].forEach(id=>$(id).addEventListener("input",render));
+render();
+$("nzrows").innerHTML=NZ.map(x=>`<tr><td><b>${esc(x.n)}</b></td><td><span class="pill nz">${esc(x.r)}</span></td><td>${esc(x.w)}</td><td class="next">${esc(x.x)}</td></tr>`).join("");
+boot();
+</script>
+</body>
+</html>

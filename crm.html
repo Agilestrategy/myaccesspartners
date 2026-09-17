@@ -46,6 +46,15 @@ a.plain{color:var(--saffron)}
 .doc p{font-size:12px;color:var(--muted);flex:1}
 .doc a{align-self:flex-start;font:600 12px var(--sans);color:var(--ink);background:var(--ivory);border:1px solid var(--line);text-decoration:none;padding:6px 14px;border-radius:999px}
 .doc a:hover{background:var(--saffron);color:#fff;border-color:var(--saffron)}
+.doc .thumb{width:100%;aspect-ratio:16/10;object-fit:cover;object-position:top;border:1px solid var(--line);border-radius:4px;background:var(--ivory);display:block}
+.doc .row{display:flex;gap:8px;flex-wrap:wrap}
+#pv{position:fixed;inset:0;background:rgba(22,27,36,.82);z-index:80;display:flex;align-items:center;justify-content:center;padding:24px}
+#pv .box{background:#fff;width:min(1100px,100%);height:min(88vh,900px);border-radius:8px;display:flex;flex-direction:column;overflow:hidden}
+#pv .bar{display:flex;justify-content:space-between;align-items:center;padding:10px 16px;border-bottom:1px solid var(--line);font:600 14px var(--sans)}
+#pv .bar a{margin-left:12px;font-weight:500;color:var(--saffron)}
+#pv iframe{flex:1;border:0;width:100%}
+#pv button{background:none;border:1px solid var(--line);border-radius:999px;padding:5px 14px;cursor:pointer;font:600 13px var(--sans)}
+
 
 .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:8px 0 12px}
 .toolbar input[type=search]{flex:1;min-width:180px;padding:9px 16px;border:1px solid var(--line);border-radius:999px;font:400 13.5px var(--sans);background:#fff}
@@ -132,7 +141,7 @@ nav.tools a.help{background:var(--saffron);color:var(--ink);padding:5px 14px;bor
 <header>
   <div class="wrap">
     <span class="mark"><a href="/">Market <b>Access</b> Partners · Internal</a></span>
-    <nav class="tools"><a href="/dashboard.html">Home</a><span class="grp"><b>Investors</b><a href="/investors.html">Files</a><a href="/invest.html">Rules</a></span><span class="grp"><b>Producers</b><a href="/crm.html" class="on">CRM</a><a href="/distributors.html">Distributors</a></span><span class="grp"><b>Travel</b><a href="/tours.html">Tours</a><a href="/travel-builder.html">Builder</a></span><span class="grp"><b>Trade</b><a href="/landed-price.html">Calculator</a><a href="/containers.html">Containers</a></span><a href="/finance.html">Finance</a><a href="/manual.html" class="help">Manual</a></nav>
+    <nav class="tools"><a href="/dashboard.html">Home</a><span class="grp"><b>Investors</b><a href="/investors.html">Files</a><a href="/invest.html">Rules</a></span><span class="grp"><b>Producers</b><a href="/crm.html" class="on">CRM</a><a href="/distributors.html">Distributors</a></span><span class="grp"><b>Travel</b><a href="/tours.html">Tours</a><a href="/travel-builder.html">Builder</a></span><span class="grp"><b>Trade</b><a href="/landed-price.html">Calculator</a><a href="/containers.html">Containers</a><a href="/polo.html">Polo</a></span><a href="/finance.html">Finance</a><a href="/manual.html" class="help">Manual</a></nav>
     <span id="who"></span>
   </div>
 </header>
@@ -144,11 +153,11 @@ nav.tools a.help{background:var(--saffron);color:var(--ink);padding:5px 14px;bor
   <div id="msg"></div>
 
   <h2 class="sec">Category packs</h2>
-  <p class="secnote">The pitch deck and one pager for each portfolio: open in Drive or download straight to your machine, ready to attach.</p>
+  <p class="secnote">The pitch deck and one pager for each portfolio. Press Preview to read it here, or download straight to your machine, ready to attach.</p>
   <div class="docgrid" id="packs"></div>
 
   <h2 class="sec">Client collateral builder</h2>
-  <p class="secnote">Pick a category, pick the client, and it builds their personalised one pager and slide deck on the spot: their name on the cover, their story inside, our deal at the back.</p>
+  <p class="secnote">Pick a category, pick the client, and it builds their personalised one pager and slide deck on the spot: their name on the cover, their story inside, the tours they will host, our deal at the back.</p>
   <div class="toolbar" style="margin-bottom:6px">
     <select id="g-cat" aria-label="Collateral category"><option value="wine">Wine</option><option value="honey">Mānuka honey</option><option value="whisky">Whisky &amp; spirits</option></select>
     <select id="g-prod" aria-label="Client" style="flex:1;min-width:220px"><option value="">Loading producers…</option></select>
@@ -158,8 +167,9 @@ nav.tools a.help{background:var(--saffron);color:var(--ink);padding:5px 14px;bor
   <div id="g-msg" role="status" style="font-size:12px;min-height:16px;color:var(--good);margin-bottom:20px"></div>
 
   <h2 class="sec">The templates</h2>
-  <p class="secnote">All in MAP colours and letterhead, filed in the shared Drive folder. <a class="plain" href="https://drive.google.com/drive/folders/14FcLH-9mgiQNljWfSFspM5Z2mR2ePOA4" target="_blank" rel="noopener">Open the Drive folder</a></p>
+  <p class="secnote">All in MAP colours and letterhead, filed in the shared Drive folder. Press Preview to read one without leaving this page. <a class="plain" href="https://drive.google.com/drive/folders/14FcLH-9mgiQNljWfSFspM5Z2mR2ePOA4" target="_blank" rel="noopener">Open the Drive folder</a></p>
   <div class="docgrid" id="docs"></div>
+  <div id="pv" hidden><div class="box"><div class="bar"><span id="pv-title"></span><span><a id="pv-open" href="#" target="_blank" rel="noopener">Open in Drive</a> <button id="pv-close">Close</button></span></div><iframe id="pv-frame" allow="autoplay"></iframe></div></div>
 
   <h2 class="sec">Outreach targets</h2>
   <p class="secnote">533 wineries plus the first 13 whisky distilleries, independent and corporate separated. Click a name to work it.</p>
@@ -276,6 +286,15 @@ const PACKS = [
   {t:"Travel: Club7 provenance tours", tag:"onepager", d:"Waiheke, Hawke's Bay and Central Otago journeys for India's premium traveller. No partner, no visit. Bookings run from /tours.html.",
    deck:"1XDFQ2H9aEl-3YSD-dd52PP2rHBQPGfpp", op:"1Qf8G0lEqlcTvT_TnEeLE4Rx6Rnajbt13"},
 ];
+const thumbUrl=id=>"https://drive.google.com/thumbnail?id="+id+"&sz=w600";
+const viewUrl=x=>x.url||("https://drive.google.com/file/d/"+x.id+"/view");
+const previewUrl=x=>x.url?x.url.replace(/\/edit.*$/,"/preview"):("https://drive.google.com/file/d/"+x.id+"/preview");
+function openPreview(title,pu,vu){ $("pv-title").textContent=title; $("pv-open").href=vu; $("pv-frame").src=pu; $("pv").hidden=false; }
+$("pv-close").onclick=()=>{ $("pv").hidden=true; $("pv-frame").src="about:blank"; };
+$("pv").addEventListener("click",e=>{ if(e.target.id==="pv") $("pv-close").click(); });
+document.addEventListener("keydown",e=>{ if(e.key==="Escape"&&!$("pv").hidden) $("pv-close").click(); });
+const thumb=(id,alt)=>{ const im=document.createElement("img"); im.className="thumb"; im.loading="lazy"; im.alt=alt; im.src=thumbUrl(id); im.onerror=()=>im.remove(); return im; };
+const mkBtn=(label,fn)=>{ const a=document.createElement("a"); a.textContent=label; a.href="#"; a.onclick=e=>{ e.preventDefault(); fn(); }; return a; };
 (function renderPacks(){
   const g = document.getElementById("packs");
   PACKS.forEach(x=>{
@@ -283,15 +302,16 @@ const PACKS = [
     const tag=document.createElement("span"); tag.className="tag deck"; tag.textContent="Category pack";
     const h=document.createElement("h3"); h.innerHTML=x.t;
     const p=document.createElement("p"); p.innerHTML=x.d;
-    const row=document.createElement("div"); row.style.cssText="display:flex;gap:8px;flex-wrap:wrap";
+    const row=document.createElement("div"); row.className="row";
     const mk=(label,href)=>{ const a=document.createElement("a"); a.textContent=label; a.href=href; a.target="_blank"; a.rel="noopener"; return a; };
+    const title=h.textContent;
     row.append(
-      mk("Deck","https://drive.google.com/file/d/"+x.deck+"/view"),
+      mkBtn("Preview deck",()=>openPreview(title+" · deck",previewUrl({id:x.deck}),viewUrl({id:x.deck}))),
+      mkBtn("Preview one pager",()=>openPreview(title+" · one pager",previewUrl({id:x.op}),viewUrl({id:x.op}))),
       mk("⭳ Deck","https://drive.google.com/uc?export=download&id="+x.deck),
-      mk("One pager","https://drive.google.com/file/d/"+x.op+"/view"),
       mk("⭳ One pager","https://drive.google.com/uc?export=download&id="+x.op),
     );
-    card.append(tag,h,p,row); g.appendChild(card);
+    card.append(tag,thumb(x.deck,title),h,p,row); g.appendChild(card);
   });
 })();
 (function renderDocs(){
@@ -301,9 +321,11 @@ const PACKS = [
     const tag=document.createElement("span"); tag.className="tag "+x.tag; tag.textContent=TAGNAMES[x.tag]||x.tag;
     const h=document.createElement("h3"); h.innerHTML=x.t;
     const p=document.createElement("p"); p.textContent=x.d;
-    const a=document.createElement("a"); a.textContent="Open in Drive"; a.target="_blank"; a.rel="noopener";
-    a.href = x.url || ("https://drive.google.com/file/d/"+x.id+"/view");
-    card.append(tag,h,p,a); g.appendChild(card);
+    const row=document.createElement("div"); row.className="row";
+    const title=h.textContent;
+    row.append(mkBtn("Preview",()=>openPreview(title,previewUrl(x),viewUrl(x))));
+    const a=document.createElement("a"); a.textContent="Open in Drive"; a.target="_blank"; a.rel="noopener"; a.href=viewUrl(x); row.append(a);
+    card.append(tag); if(x.id) card.append(thumb(x.id,title)); card.append(h,p,row); g.appendChild(card);
   });
 })();
 
@@ -408,6 +430,7 @@ function toggleDetail(p, tr){
 "Kia ora "+first+",\n\n"+
 "The NZ-India FTA was signed in April and takes effect next year. We are Market Access Partners, the exclusive route to market taking a limited portfolio of independent NZ producers into India ahead of entry into force, and "+p.name+" is on our shortlist.\n\n"+
 "Two 20ft containers ship to Mumbai before Christmas (cutoffs 20 Nov and 5 Dec). No retainers and no listing fees: we earn 15% of FOB only when your order confirms.\n\n"+
+"There is a second door too. We build provenance tours of New Zealand for India's premium traveller, sold through major Indian tour operators, and only producers signed with us host the groups. Partners get the tour parties as well as the orders.\n\n"+
 "I have attached a one pager and our producer deck. Worth a 20 minute call this week about getting your "+prod+" on the water?\n\n"+
 "Ngā mihi,\n"+(me.split("@")[0]||"The MAP team")+"\nMarket Access Partners · myaccesspartners.com\n\n"+
 "Attach from Drive: MAP_One_Pager.docx + MAP_Producer_Pitch_Deck.pptx"+(p.category==="whisky"?" + MAP_NZ_Whisky_Story_Brief.docx":"");
@@ -565,6 +588,14 @@ const DEAL_LINES = [
   "Exclusive route to India for 3 years, with a right of renewal in your favour. Floor prices held: no discounting without your consent.",
   "Two 20ft containers ship to Mumbai before Christmas 2026: cutoffs 20 November and 5 December.",
 ];
+const TOUR_HEAD = "Your visitors, our tours";
+const TOUR_INTRO = n => "Market Access Partners also builds provenance tours of New Zealand for India's premium traveller, sold through major Indian tour operators (Club7 Holidays, Mumbai, is the first). Signed partners are written into the itineraries, so "+n+" receives the tour parties as well as the export orders.";
+const TOUR_LINES = [
+  "Groups of 10 to 40 from India, hosted at partner wineries, distilleries and apiaries: a winemaker or sommelier led morning, a distillery or honey afternoon, a long table evening. Provenance, not consumption.",
+  "No partner, no visit. Only producers signed with MAP receive tour parties, so the visitors are yours, not the region's.",
+  "Each hosted visit is paid at an agreed net rate per head, cellar door sales on the day are yours, and every guest flies home already knowing your name before your bottles reach the Indian shelf.",
+  "The first groups travel in the February to April 2027 harvest window; itineraries and dates are confirmed with you before anything is sold.",
+];
 const INKC="161B24", SAFFRONC="C97B1E", VINEC="2E7D51", IVORYC="F5F1E6", PAPERC="FBF9F2", MISTC="9AA1AD", DIMC="6A6F7A";
 const SERIFC="Fjalla One", SANSC="Libre Franklin";
 const gmsg=(t,bad)=>{ const m=$("g-msg"); m.textContent=t; m.style.color=bad?"var(--bad)":"var(--good)"; };
@@ -618,6 +649,13 @@ $("g-deck").onclick = async ()=>{
   s.addText("No retainers. No listing fees. No cost to look.",{x:1.0,y:5.7,w:5.1,h:.4,fontFace:SANSC,fontSize:13,bold:true,color:SAFFRONC,isTextBox:true,margin:0});
   [["Exclusive, 3 years","Your exclusive route to India, renewal in your favour."],["Premium held","No discounting below agreed floors without consent."],["Your story travels","Every product ships with its story and Indian-cuisine matches."],["Giving back","5% of profits to an Indian charity, 5% to a NZ charity."]].forEach((f,i)=>{ const y=2.2+i*1.05; s.addText(f[0],{x:6.95,y,w:5.7,h:.35,fontFace:SERIFC,fontSize:15,color:INKC,isTextBox:true,margin:0}); s.addText(f[1],{x:6.95,y:y+.36,w:5.75,h:.6,fontFace:SANSC,fontSize:11.5,color:DIMC,isTextBox:true,margin:0}); });
   foot(s,4);
+  s=d.addSlide(); s.background={color:"FFFFFF"};
+  s.addText("YOUR VISITORS, OUR TOURS",{x:.6,y:.55,w:10,h:.35,fontFace:SANSC,fontSize:12,bold:true,color:SAFFRONC,charSpacing:3,isTextBox:true,margin:0});
+  s.addText("India's premium travellers, hosted at "+p.name+".",{x:.6,y:.95,w:12.1,h:.8,fontFace:SERIFC,fontSize:32,color:INKC,isTextBox:true,margin:0});
+  s.addText(TOUR_INTRO(p.name),{x:.6,y:1.95,w:12.1,h:1.0,fontFace:SANSC,fontSize:14,color:INKC,isTextBox:true,margin:0});
+  TOUR_LINES.forEach((t,i)=>{ const x=.6+(i%2)*6.15, y=3.2+Math.floor(i/2)*1.55; s.addShape("roundRect",{x,y,w:5.95,h:1.35,rectRadius:.06,fill:{color:i===1?INKC:PAPERC}}); s.addText(t,{x:x+.25,y:y+.15,w:5.45,h:1.05,fontFace:SANSC,fontSize:11.5,color:i===1?IVORYC:INKC,isTextBox:true,margin:0}); });
+  s.addText("Tours are sold and marketed by our Indian tour partners; Market Access Partners hosts in New Zealand and pays partners a net rate per head.",{x:.6,y:6.4,w:12,h:.5,fontFace:SANSC,fontSize:11,italic:true,color:DIMC,isTextBox:true,margin:0});
+  foot(s,5);
   s=d.addSlide(); s.background={color:INKC};
   wm(s,.8,.7,16,true);
   s.addText("Two containers before Christmas.",{x:.8,y:2.3,w:11.7,h:1.1,fontFace:SERIFC,fontSize:44,color:IVORYC,isTextBox:true,margin:0});
@@ -647,6 +685,9 @@ $("g-doc").onclick = async ()=>{
     eb("Why "+p.name),
     ...C.why(p.name).map(bull),
     ...(p.notes?[para("Our note on you: "+p.notes)]:[]),
+    eb(TOUR_HEAD),
+    para(TOUR_INTRO(p.name)),
+    ...TOUR_LINES.map(bull),
     eb("The deal"),
     ...DEAL_LINES.map(bull),
     new Paragraph({children:[T("Talk to us this week: "),T("hello@myaccesspartners.com",{bold:true,color:SAFFRONC})],spacing:{before:160}}),
