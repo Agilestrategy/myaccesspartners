@@ -85,6 +85,13 @@ details .inner{padding:0 0 18px}
 .topcard .n{font-family:var(--serif);font-size:19px}
 .topcard .r{font-size:13.5px;color:var(--body);margin-top:4px}
 .toggle{display:inline-flex;gap:8px;align-items:center;font-size:13.5px;color:var(--body);cursor:pointer}
+#m_wrap{position:relative}
+#m_tip{position:absolute;pointer-events:none;background:var(--ink);color:var(--ivory);padding:10px 14px;border-radius:8px;font-size:13.5px;line-height:1.4;max-width:320px;box-shadow:0 8px 24px rgba(22,27,36,.25);z-index:5;transform:translate(-50%,calc(-100% - 16px))}
+#m_tip b{display:block;font-family:var(--serif);font-weight:400;font-size:17px;color:#fff}
+#m_tip .t{color:var(--saffron);font-weight:600}
+#m_tip .go{color:var(--mist);font-size:12px;margin-top:4px}
+.dot{cursor:pointer;transition:r .12s}
+.dot:hover{filter:brightness(1.08)}
 #gate{position:fixed;inset:0;background:var(--ink);display:flex;align-items:center;justify-content:center;z-index:50}
 #gate .card{background:var(--paper);padding:38px;max-width:380px;width:92%;border-top:3px solid var(--saffron);border-radius:6px}
 #gate h2{font-size:24px;margin:10px 0 6px}
@@ -95,12 +102,14 @@ details .inner{padding:0 0 18px}
 @media(max-width:900px){.grid,.grid3,.two,.topcards{grid-template-columns:1fr}.steps{grid-template-columns:1fr 1fr}table{display:block;overflow-x:auto}}
 </style>
 <style id="crew-nav">
-nav.tools{display:flex;gap:10px 22px;font-size:14px;flex-wrap:wrap;align-items:center}
+header .wrap{align-items:center}
+nav.tools{display:flex;gap:10px 22px;font-size:15px;flex-wrap:wrap;align-items:center}
 nav.tools a{color:var(--mist);text-decoration:none;padding:4px 0;border-bottom:2px solid transparent}
 nav.tools a:hover{color:var(--ivory)}nav.tools a.on{color:var(--ivory);border-bottom-color:var(--saffron)}
 nav.tools .grp{display:inline-flex;gap:12px;align-items:center}
-nav.tools .grp b{font:700 10.5px var(--sans);letter-spacing:.14em;text-transform:uppercase;color:rgba(245,241,230,.45);margin-right:2px}
-nav.tools a.help{background:var(--saffron);color:var(--ink);padding:5px 14px;border-radius:999px;font-weight:600;border:none}
+nav.tools .grp b{font:700 13px var(--sans);letter-spacing:.12em;text-transform:uppercase;color:rgba(245,241,230,.6);margin-right:2px}
+nav.tools a.help{background:var(--saffron);color:var(--ink);padding:6px 16px;border-radius:999px;font-weight:600;border:none}
+nav.tools a.prop{background:var(--vine);color:#fff;padding:6px 16px;border-radius:999px;font-weight:600;border:none}
 </style>
 </head>
 <body>
@@ -109,7 +118,7 @@ nav.tools a.help{background:var(--saffron);color:var(--ink);padding:5px 14px;bor
 <div id="app" hidden>
 <header><div class="wrap">
   <span class="mark">Market <b>Access</b> Partners · Internal</span>
-  <nav class="tools"><a href="/dashboard.html">Home</a><span class="grp"><b>Investors</b><a href="/investors.html" class="on">Files</a><a href="/invest.html">Rules</a></span><span class="grp"><b>Producers</b><a href="/crm.html">CRM</a><a href="/distributors.html">Distributors</a></span><span class="grp"><b>Travel</b><a href="/tours.html">Tours</a><a href="/travel-builder.html">Builder</a></span><span class="grp"><b>Trade</b><a href="/landed-price.html">Calculator</a><a href="/containers.html">Containers</a><a href="/polo.html">Polo</a></span><a href="/finance.html">Finance</a><a href="/manual.html" class="help">Manual</a></nav>
+  <nav class="tools"><a href="/dashboard.html">Home</a><span class="grp"><b>Investors</b><a href="/investors.html" class="on">Files</a><a href="/invest.html">Rules</a></span><span class="grp"><b>Producers</b><a href="/crm.html">CRM</a><a href="/distributors.html">Distributors</a></span><span class="grp"><b>Travel</b><a href="/tours.html">Tours</a><a href="/travel-builder.html">Builder</a></span><span class="grp"><b>Trade</b><a href="/landed-price.html">Calculator</a><a href="/containers.html">Containers</a><a href="/polo.html">Polo</a></span><a href="/finance.html">Finance</a><a href="/proposal.html" class="prop">Build a proposal</a><a href="/manual.html" class="help">Manual</a></nav>
   <span id="who"></span>
 </div></header>
 
@@ -221,16 +230,16 @@ nav.tools a.help{background:var(--saffron);color:var(--ink);padding:5px 14px;bor
   <div id="tab-matrix" hidden>
     <div class="panel">
       <h2>Fund matrix</h2>
-      <p class="sub" style="margin-bottom:12px">Every fund on the Invest NZ list, placed by how risky its asset class is (left is safer) and the return the manager says it aims for. Pick what the client wants and the chart shows the funds that fit. It builds a shortlist for the licensed adviser; it is never a recommendation to the client.</p>
+      <p class="sub" style="margin-bottom:12px">Every fund on the Invest NZ list, placed by how risky its asset class is (left is safer) and the return the manager says it aims for. Pick what the client wants and the chart shows the funds that fit. Hover a number for the fund's name and target; click it to open the manager's website. It builds a shortlist for the licensed adviser; it is never a recommendation to the client.</p>
       <div class="grid3" style="margin:12px 0 6px">
         <div class="field"><label>The client wants</label><select id="m_profile"><option value="preserve">To keep the money safe</option><option value="balanced" selected>A balance of income and growth</option><option value="growth">Growth, and accepts venture risk</option></select></div>
         <div class="field"><label>Needs money back during the visa period?</label><select id="m_liq"><option value="any">No, locked up is fine</option><option value="some">Yes, prefers some liquidity</option></select></div>
         <div class="field"><label>Sector interest (optional)</label><input id="m_sector" placeholder="agriculture, technology, energy, tourism"></div>
       </div>
       <div class="topcards" id="m_top"></div>
-      <div id="m_chart"></div>
+      <div id="m_wrap"><div id="m_chart"></div><div id="m_tip" hidden></div></div>
       <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-top:8px"><label class="toggle"><input type="checkbox" id="m_all"> Show the funds outside this profile too</label><span class="next" id="m_notarget"></span></div>
-      <h3>Shortlist for this profile (numbers match the chart)</h3>
+      <h3>Shortlist for this profile (numbers match the chart · names open the fund's website)</h3>
       <table><thead><tr><th>Fund</th><th>Type</th><th>Risk band</th><th>Manager's stated target</th><th>Notes from the listing</th></tr></thead><tbody id="m_rows"></tbody></table>
       <details><summary id="m_nt_sum"></summary><div class="inner"><table><thead><tr><th>Fund</th><th>Type</th><th>Risk band</th><th>Target</th><th>Notes from the listing</th></tr></thead><tbody id="m_rows2"></tbody></table></div></details>
       <div class="script" id="m_reco" style="margin:12px 0;font-size:14.5px"></div>
@@ -524,37 +533,51 @@ function matrixFilter(){
     .filter(f=>!sec || (f.sectors+" "+f.note+" "+f.name).toLowerCase().includes(sec))
     .sort((a,b)=>((b.ret_hi||0)+(b.ret_lo||0))-((a.ret_hi||0)+(a.ret_lo||0)) || a.risk-b.risk);
 }
+const FUND_SITE={}; (Array.isArray(window.MAP_DIRECTORY)?window.MAP_DIRECTORY:[]).filter(d=>d.role==="fund_manager").forEach(d=>{ FUND_SITE[d.name.toLowerCase()]=d.website||""; if(d.firm) FUND_SITE[d.firm.toLowerCase()]=FUND_SITE[d.firm.toLowerCase()]||d.website||""; });
+const siteOf=f=>FUND_SITE[f.name.toLowerCase()]||"";
+const BAND_TINT={1:"#E8F0EA",2:"#F0F3EE",3:"#F8F4EA",4:"#FBEEDD",5:"#F9E4D2"};
 function renderMatrix(){
   const rows=matrixFilter(); const sel=new Set(rows.map(f=>f.name)); const showAll=$("m_all").checked;
   const tgt=(f)=>f.ret_lo===f.ret_hi?f.ret_lo+"%":f.ret_lo+" to "+f.ret_hi+"%";
   const top=rows.filter(f=>f.ret_lo!=null).slice(0,3);
-  $("m_top").innerHTML=top.map((f,i)=>`<div class="topcard"><div class="eyebrow">Highest stated target · ${i+1}</div><div class="n">${esc(f.name)}</div><div class="r">${tgt(f)} p.a. target · ${esc(f.type)} · risk band ${f.risk} ${RISK_LABEL[f.risk]}</div></div>`).join("")||`<div class="topcard" style="grid-column:1/-1"><div class="n">No fund in this profile states a return target</div><div class="r">The table below lists what fits; each would need its information memorandum.</div></div>`;
-  // chart: only funds with a stated target are plotted; profile funds in colour, others grey when "show all" is on
+  const link=f=>siteOf(f)?`<a href="${esc(siteOf(f))}" target="_blank" rel="noopener" style="color:inherit">${esc(f.name)}</a>`:esc(f.name);
+  $("m_top").innerHTML=top.map((f,i)=>`<div class="topcard"><div class="eyebrow">Highest stated target · ${i+1}</div><div class="n">${link(f)}</div><div class="r">${tgt(f)} p.a. target · ${esc(f.type)} · risk band ${f.risk} ${RISK_LABEL[f.risk]}${siteOf(f)?` · <a href="${esc(siteOf(f))}" target="_blank" rel="noopener">website ↗</a>`:""}</div></div>`).join("")||`<div class="topcard" style="grid-column:1/-1"><div class="n">No fund in this profile states a return target</div><div class="r">The table below lists what fits; each would need its information memorandum.</div></div>`;
   const plot=FUNDS.filter(f=>f.ret_lo!=null && (showAll||sel.has(f.name)));
-  const W=980,H=420,L=60,R=20,T=20,B=60; const maxY=26;
+  const W=980,H=440,L=64,R=24,T=24,B=64; const maxY=26;
   const x=r=>L+(r-0.5)/5*(W-L-R); const y=v=>T+(1-v/maxY)*(H-T-B);
-  let svg=`<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;background:#fff;border:1px solid var(--line);border-radius:8px" role="img" aria-label="Fund matrix">`;
-  for(let v=0;v<=maxY;v+=5){ svg+=`<line x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}" stroke="rgba(22,27,36,.1)"/><text x="${L-8}" y="${y(v)+4}" font-size="12" text-anchor="end" fill="#6A6F7A">${v}%</text>`; }
-  for(let r=1;r<=5;r++){ svg+=`<line x1="${x(r)}" x2="${x(r)}" y1="${T}" y2="${H-B}" stroke="rgba(22,27,36,.06)"/><text x="${x(r)}" y="${H-B+20}" font-size="13" text-anchor="middle" fill="#161B24" font-weight="700">${r}</text><text x="${x(r)}" y="${H-B+36}" font-size="11" text-anchor="middle" fill="#6A6F7A">${RISK_LABEL[r]}</text>`; }
-  svg+=`<text x="${(L+W-R)/2}" y="${H-6}" font-size="12" text-anchor="middle" fill="#6A6F7A">Safer ◀ risk band by asset class ▶ riskier</text>`;
-  svg+=`<text transform="rotate(-90)" x="${-(T+H-B)/2}" y="14" font-size="12" text-anchor="middle" fill="#6A6F7A">Manager's stated target return, % a year</text>`;
+  let svg=`<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;background:#fff;border:1px solid var(--line);border-radius:10px" role="img" aria-label="Fund matrix">
+  <defs><filter id="sh" x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-color="#161B24" flood-opacity=".28"/></filter><linearGradient id="gy" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#161B24" stop-opacity=".04"/></linearGradient></defs>`;
+  const bw=(W-L-R)/5;
+  for(let r=1;r<=5;r++){ svg+=`<rect x="${L+(r-1)*bw}" y="${T}" width="${bw}" height="${H-T-B}" fill="${BAND_TINT[r]}"/>`; }
+  svg+=`<rect x="${L}" y="${T}" width="${W-L-R}" height="${H-T-B}" fill="url(#gy)"/>`;
+  for(let v=0;v<=maxY;v+=5){ svg+=`<line x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}" stroke="rgba(22,27,36,.12)" stroke-dasharray="${v?"3 4":"0"}"/><text x="${L-10}" y="${y(v)+4}" font-size="12" text-anchor="end" fill="#4A5160" font-weight="600">${v}%</text>`; }
+  for(let r=1;r<=5;r++){ svg+=`<text x="${x(r)}" y="${H-B+22}" font-size="15" text-anchor="middle" fill="#161B24" font-weight="700">${r}</text><text x="${x(r)}" y="${H-B+39}" font-size="11.5" text-anchor="middle" fill="#4A5160">${RISK_LABEL[r]}</text>`; }
+  svg+=`<text x="${(L+W-R)/2}" y="${H-6}" font-size="12" text-anchor="middle" fill="#6A6F7A" font-weight="600">SAFER  ◀  risk band by asset class  ▶  RISKIER</text>`;
+  svg+=`<text transform="rotate(-90)" x="${-(T+H-B)/2}" y="16" font-size="12" text-anchor="middle" fill="#6A6F7A" font-weight="600">Manager's stated target return, % a year</text>`;
   const byBand={}; plot.forEach(f=>{ (byBand[f.risk]=byBand[f.risk]||[]).push(f); });
+  const dots=[];
   plot.forEach(f=>{
-    const band=byBand[f.risk]; const i=band.indexOf(f); const spread=(W-L-R)/5*0.7; const jx=band.length>1?x(f.risk)-spread/2+spread*((i+0.5)/band.length):x(f.risk);
-    const yy=y((f.ret_lo+f.ret_hi)/2); const on=sel.has(f.name);
+    const band=byBand[f.risk]; const i=band.indexOf(f); const spread=bw*0.7; const jx=band.length>1?x(f.risk)-spread/2+spread*((i+0.5)/band.length):x(f.risk);
+    const yy=y((f.ret_lo+f.ret_hi)/2); const on=sel.has(f.name); const rank=on?rows.indexOf(f)+1:0; const idx=FUNDS.indexOf(f);
     const col=on?"#D98324":"#C9CDD6";
-    if(f.ret_lo!==f.ret_hi) svg+=`<line x1="${jx}" x2="${jx}" y1="${y(f.ret_lo)}" y2="${y(f.ret_hi)}" stroke="${col}" stroke-width="3" opacity=".5"/>`;
-    const rank=on?rows.indexOf(f)+1:0;
-    svg+=`<circle cx="${jx}" cy="${yy}" r="${on?12:6}" fill="${col}" stroke="#fff" stroke-width="2"><title>${rank?rank+". ":""}${esc(f.name)} · ${esc(f.type)} · risk band ${f.risk} · ${tgt(f)} target${f.note?" · "+esc(f.note):""}</title></circle>`;
-    if(on) svg+=`<text x="${jx}" y="${yy+4}" font-size="12" fill="#161B24" font-weight="700" text-anchor="middle">${rank}</text>`;
+    if(f.ret_lo!==f.ret_hi) svg+=`<line x1="${jx}" x2="${jx}" y1="${y(f.ret_lo)}" y2="${y(f.ret_hi)}" stroke="${col}" stroke-width="4" stroke-linecap="round" opacity=".45"/>`;
+    dots.push(`<g class="dot" data-i="${idx}" data-on="${on?1:0}"><circle cx="${jx}" cy="${yy}" r="${on?14:7}" fill="${col}" stroke="#fff" stroke-width="2.5" filter="url(#sh)"/>${on?`<text x="${jx}" y="${yy+4.5}" font-size="12.5" fill="#161B24" font-weight="700" text-anchor="middle" pointer-events="none">${rank}</text>`:""}</g>`);
   });
-  svg+=`</svg>`;
+  svg+=dots.join("")+`</svg>`;
   $("m_chart").innerHTML=svg;
+  const tip=$("m_tip"), wrap=$("m_wrap");
+  $("m_chart").querySelectorAll(".dot").forEach(g=>{
+    const f=FUNDS[+g.dataset.i]; const rank=rows.indexOf(f)+1;
+    g.addEventListener("mouseenter",()=>{ tip.innerHTML=`<b>${rank>0?rank+". ":""}${esc(f.name)}</b><span class="t">${tgt(f)} a year target</span> · ${esc(f.type)} · risk band ${f.risk} ${RISK_LABEL[f.risk]}${f.note?"<br>"+esc(f.note):""}<div class="go">${siteOf(f)?"Click to open "+esc(siteOf(f).replace(/^https?:\/\//,"")):"No website on file"}</div>`; tip.hidden=false; });
+    g.addEventListener("mousemove",e=>{ const r=wrap.getBoundingClientRect(); tip.style.left=(e.clientX-r.left)+"px"; tip.style.top=(e.clientY-r.top)+"px"; });
+    g.addEventListener("mouseleave",()=>{ tip.hidden=true; });
+    g.addEventListener("click",()=>{ if(siteOf(f)) window.open(siteOf(f),"_blank","noopener"); });
+  });
   const noTarget=rows.filter(f=>f.ret_lo==null).length;
   $("m_notarget").textContent=`${rows.length} funds fit this profile · ${rows.length-noTarget} plotted · ${noTarget} state no target and are only in the table`;
-  $("m_rows").innerHTML=rows.filter(f=>f.ret_lo!=null).map((f,i)=>`<tr><td><b>${i+1}. ${esc(f.name)}</b></td><td>${esc(f.type)}</td><td>${f.risk} · ${RISK_LABEL[f.risk]}</td><td>${f.ret_lo!=null?tgt(f)+" p.a.":"<span style='color:#9AA1AD'>not stated</span>"}</td><td>${esc(f.note||"")}${f.sectors?" · "+esc(f.sectors):""}</td></tr>`).join("")||`<tr><td colspan="5" style="color:#6A6F7A">No fund with a stated target matches every filter. Loosen the sector or liquidity setting.</td></tr>`;
+  $("m_rows").innerHTML=rows.filter(f=>f.ret_lo!=null).map((f,i)=>`<tr><td><b>${i+1}. ${link(f)}</b>${siteOf(f)?` <a href="${esc(siteOf(f))}" target="_blank" rel="noopener" style="font-size:12px">↗</a>`:""}</td><td>${esc(f.type)}</td><td>${f.risk} · ${RISK_LABEL[f.risk]}</td><td>${tgt(f)+" p.a."}</td><td>${esc(f.note||"")}${f.sectors?" · "+esc(f.sectors):""}</td></tr>`).join("")||`<tr><td colspan="5" style="color:#6A6F7A">No fund with a stated target matches every filter. Loosen the sector or liquidity setting.</td></tr>`;
   const nt=rows.filter(f=>f.ret_lo==null);
-  $("m_rows2").innerHTML=nt.map(f=>`<tr><td><b>${esc(f.name)}</b></td><td>${esc(f.type)}</td><td>${f.risk} · ${RISK_LABEL[f.risk]}</td><td><span style='color:#9AA1AD'>not stated</span></td><td>${esc(f.note||"")}${f.sectors?" · "+esc(f.sectors):""}</td></tr>`).join("");
+  $("m_rows2").innerHTML=nt.map(f=>`<tr><td><b>${link(f)}</b></td><td>${esc(f.type)}</td><td>${f.risk} · ${RISK_LABEL[f.risk]}</td><td><span style='color:#9AA1AD'>not stated</span></td><td>${esc(f.note||"")}${f.sectors?" · "+esc(f.sectors):""}</td></tr>`).join("");
   $("m_nt_sum").textContent=`${nt.length} more fund${nt.length===1?"":"s"} fit this profile but state no return target`;
   const prof=$("m_profile").value;
   const why = prof==="preserve" ? "keeping the money safe, so only private credit and infrastructure debt style funds (risk bands 1 and 2) are shown; these carry the lowest asset class risk that still qualifies for the Growth category, and several offer monthly or quarterly liquidity"
