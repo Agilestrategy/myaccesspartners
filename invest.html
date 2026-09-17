@@ -85,6 +85,10 @@ ul.plain li{margin-bottom:6px}
 .script{background:#fff;border:1px dashed var(--saffron);padding:14px 18px;margin:10px 0 18px;border-radius:4px;font-size:14px;color:var(--ink)}
 .script em{color:var(--saffron-deep);font-style:normal;font-weight:700}
 .foot{margin:30px 0 60px;font-size:12px;color:#6A6F7A;max-width:100ch}
+.btn-inr{font:600 13px var(--sans);padding:8px 16px;border-radius:999px;border:1px solid var(--saffron);background:#fff;color:var(--saffron-deep);cursor:pointer}
+.btn-inr[aria-pressed="true"]{background:var(--saffron);color:var(--ink)}
+.inr{display:inline-block;font:600 .85em var(--sans);color:var(--vine);background:#E4F1E8;padding:0 6px;border-radius:999px;margin-left:5px;white-space:nowrap;vertical-align:baseline}
+.tile .big .inr{font-size:13px;display:block;margin:6px 0 0;width:max-content}
 @media(max-width:860px){.cols{grid-template-columns:1fr}.steps li{padding-left:56px}table{display:block;overflow-x:auto}}
 @media print{header{position:static}.toc,.toolbar{display:none}}
 </style>
@@ -115,6 +119,9 @@ ul.plain li{margin-bottom:6px}
     <p>New Zealand sells <strong>residence</strong> by investment. A passport requires <strong>citizenship</strong>, which comes only after 5 years of residence with real physical presence (1,350 days over 5 years, at least 240 days in every 12 months) and an English conversation test. India does not permit dual citizenship, so an Indian who takes a New Zealand passport surrenders the Indian one and moves to an OCI card. Never use the phrase "golden passport" in anything client facing.</p>
   </div>
 
+  <div class="toolbar" style="margin:10px 0 0">
+    <button id="inrToggle" class="btn-inr" type="button" aria-pressed="false">Show amounts in ₹ (INR)</button><span class="count" id="inrNote">Live mid market rate, converted on the page for orientation only.</span>
+  </div>
   <div class="toc">
     <a href="#tiers">1 Categories and amounts</a><a href="#investments">2 What counts</a><a href="#process">3 Step by step</a><a href="#funds">4 Fund list and status</a><a href="#qualify">5 How a fund qualifies</a><a href="#citizenship">6 Residence to passport</a><a href="#home">7 Buying a home</a><a href="#tax">8 Tax</a><a href="#india">9 India side</a><a href="#dubai">10 Dubai comparison</a><a href="#compliance">11 What we may say</a><a href="#assist">12 How we assist</a><a href="#recheck">13 Check again routine</a><a href="#sources">Sources</a>
   </div>
@@ -545,6 +552,36 @@ function render(){
 }
 $("fq").addEventListener("input",render);$("ft").addEventListener("change",render);
 render();
+window.render=render;
+
+// ---- NZ$ to INR toggle. Converts every NZ$ figure on the page at the live mid market rate; orientation only, not a quote. ----
+(function(){
+  const btn=document.getElementById("inrToggle"), note=document.getElementById("inrNote");
+  let rate=null, on=false;
+  const RX=/NZ\$\s?([\d,]+(?:\.\d+)?)\s?(billion|million|M|k)?(?![\w])/g;
+  const toNum=(n,u)=>{ let v=parseFloat(n.replace(/,/g,"")); if(u==="billion") v*=1e9; else if(u==="million"||u==="M") v*=1e6; else if(u==="k") v*=1e3; return v; };
+  const fmtINR=v=>{ if(v>=1e7) return "₹"+(v/1e7).toLocaleString("en-IN",{maximumFractionDigits:v/1e7>=100?0:1})+" crore"; if(v>=1e5) return "₹"+(v/1e5).toLocaleString("en-IN",{maximumFractionDigits:1})+" lakh"; return "₹"+Math.round(v).toLocaleString("en-IN"); };
+  async function getRate(){
+    if(rate) return rate;
+    try{ const r=await fetch("https://api.frankfurter.dev/v1/latest?base=NZD&symbols=INR").then(x=>x.json()); if(r?.rates?.INR){ rate=r.rates.INR; note.textContent=`Live mid market: NZ$1 = ₹${rate.toFixed(2)} (ECB, ${r.date}). Orientation only; banks quote worse.`; return rate; } }catch(e){}
+    try{ const r=await fetch("https://open.er-api.com/v6/latest/NZD").then(x=>x.json()); if(r?.rates?.INR){ rate=r.rates.INR; note.textContent=`Live mid market: NZ$1 = ₹${rate.toFixed(2)}. Orientation only; banks quote worse.`; return rate; } }catch(e){}
+    rate=50; note.textContent="Live rate unavailable; using NZ$1 = ₹50 as a placeholder."; return rate;
+  }
+  function apply(){
+    const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT,{acceptNode:n=>{ const p=n.parentElement; if(!p||p.closest("script,style,#inrToggle,#inrNote,.inr")) return NodeFilter.FILTER_REJECT; return RX.test(n.nodeValue)?NodeFilter.FILTER_ACCEPT:NodeFilter.FILTER_REJECT; }});
+    const nodes=[]; while(walker.nextNode()) nodes.push(walker.currentNode);
+    nodes.forEach(n=>{
+      const frag=document.createDocumentFragment(); let last=0; const txt=n.nodeValue; RX.lastIndex=0; let m;
+      while((m=RX.exec(txt))){ frag.appendChild(document.createTextNode(txt.slice(last,m.index+m[0].length))); const sp=document.createElement("span"); sp.className="inr"; sp.textContent=fmtINR(toNum(m[1],m[2])*rate); frag.appendChild(sp); last=m.index+m[0].length; }
+      frag.appendChild(document.createTextNode(txt.slice(last))); n.parentNode.replaceChild(frag,n);
+    });
+  }
+  function remove(){ document.querySelectorAll(".inr").forEach(e=>e.remove()); document.body.normalize(); }
+  btn.onclick=async()=>{ on=!on; btn.setAttribute("aria-pressed",String(on)); btn.textContent=on?"Hide ₹ amounts":"Show amounts in ₹ (INR)"; if(on){ await getRate(); apply(); } else remove(); };
+  // keep conversions in sync when the fund table re-renders
+  const origRender=window.render; if(typeof origRender==="function"){ window.render=function(){ origRender.apply(this,arguments); if(on){ remove(); apply(); } }; }
+})();
+
 </script>
 </body>
 </html>

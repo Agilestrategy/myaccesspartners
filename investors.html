@@ -9,6 +9,8 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fjalla+One&family=Libre+Franklin:ital,wght@0,300..800;1,400&display=swap">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<script src="/directory.js"></script>
+<script src="/fund-matrix.js"></script>
 <style>
 :root{--ink:#161B24;--ink2:#1F2633;--ivory:#F5F1E6;--paper:#FBF9F2;--saffron:#D98324;--saffron-deep:#B26A15;--vine:#3D5C4A;--mist:#9AA1AD;--body:#4A5160;--line:rgba(22,27,36,.14);--ok:#2E7D51;--warn:#A33B2E;
 --serif:"Fjalla One","Arial Narrow",Arial,sans-serif;--sans:"Libre Franklin","Helvetica Neue",Arial,sans-serif}
@@ -88,7 +90,7 @@ tr.row{cursor:pointer}tr.row:hover td{background:#FFF7E8}
   <h1>Investors</h1>
   <p class="sub">Open a file, send the client their private link, watch the documents arrive, then route the pack to the licensed adviser, the NZ law firm, the fund manager and Indian counsel. We collect and forward; we do not advise. The rules are on the <a href="/invest.html">Investor residence</a> page.</p>
 
-  <div class="tabs"><button class="on" data-tab="leads">Files</button><button data-tab="parties">Parties</button></div>
+  <div class="tabs"><button class="on" data-tab="leads">Files</button><button data-tab="parties">Parties</button><button data-tab="matrix">Fund matrix</button></div>
 
   <!-- LEADS -->
   <div id="tab-leads">
@@ -147,14 +149,16 @@ tr.row{cursor:pointer}tr.row:hover td{background:#FFF7E8}
       </div>
 
       <div class="panel">
-        <h2>Route the pack</h2>
-        <p class="sub" style="font-size:13px">Pick the party, tick the documents, and the email is written for you. Download the selected documents as a zip to attach, or share the vault links. Then mark it sent so the file shows who has what.</p>
+        <h2>Send the package</h2>
+        <p class="sub" style="font-size:13px">Pick a party or type any email address, tick the documents, and the email is written for you. "Send now" sends it from hello@myaccesspartners.com with the documents attached (secure 7 day links instead when the pack is over 30 MB) and records the send on the file. The zip and "Open in mail" routes are there if you prefer to send it yourself.</p>
         <div class="two">
           <div>
-            <div class="field"><label>Send to</label><select id="r_party"></select></div>
+            <div class="field"><label>Party (prefills the address)</label><select id="r_party"><option value="">Any email address</option></select></div>
+            <div class="grid"><div class="field"><label>To</label><input id="r_to" placeholder="name@firm.co.nz, another@firm.com"></div><div class="field"><label>CC</label><input id="r_cc" placeholder="Client, referrer, Paul"></div></div>
             <div class="field"><label>Documents to include</label><div id="r_docs"></div></div>
-            <div class="field"><label>Message note (optional)</label><input id="r_note" placeholder="Anything specific for this party"></div>
-            <button class="btn sm" id="r_build">Write the email</button> <button class="btn ghost sm" id="r_zip">Download selected as zip</button> <button class="btn ghost sm" id="r_sent">Mark as sent</button>
+            <div class="field"><label>Message note (optional)</label><input id="r_note" placeholder="Anything specific for this recipient"></div>
+            <label class="chk" style="margin-bottom:8px"><input type="checkbox" id="r_links"><span>Send secure links instead of attachments</span></label>
+            <button class="btn sm" id="r_build">Write the email</button> <button class="btn sm" id="r_send" style="background:var(--vine);color:#fff">Send now</button> <button class="btn ghost sm" id="r_zip">Download zip</button> <button class="btn ghost sm" id="r_sent">Record a manual send</button>
             <div class="msg" id="rMsg"></div>
           </div>
           <div>
@@ -163,7 +167,8 @@ tr.row{cursor:pointer}tr.row:hover td{background:#FFF7E8}
             <div style="margin-top:6px"><button class="btn sm" id="r_copy">Copy email</button> <a class="btn ghost sm" id="r_mail" href="#" target="_blank" rel="noopener">Open in mail</a></div>
           </div>
         </div>
-        <h3>Sent so far</h3>
+        
+<h3>Sent so far</h3>
         <div id="d_routings" class="events"></div>
         <h3>Activity</h3>
         <div id="d_events" class="events"></div>
@@ -171,6 +176,23 @@ tr.row{cursor:pointer}tr.row:hover td{background:#FFF7E8}
     </div>
   </div>
 
+  <!-- FUND MATRIX -->
+  <div id="tab-matrix" hidden>
+    <div class="panel">
+      <h2>Fund matrix: manager stated target return against indicative risk</h2>
+      <p class="sub" style="font-size:13px">Every fund on the Invest NZ Acceptable Managed Funds List (24 Aug 2026), placed by asset class risk band and the return target the manager states in its own listing. These are private, wholesale funds: there is no published track record, the targets are the managers' own, and "risk band" is a classification by asset class, not a rating. Use this to build a shortlist for the licensed adviser conversation, never as a recommendation to the client.</p>
+      <div class="grid3" style="margin:12px 0 6px">
+        <div class="field"><label>Client's priority</label><select id="m_profile"><option value="preserve">Capital preservation (lowest risk that still qualifies)</option><option value="balanced" selected>Balance of income and growth</option><option value="growth">Growth, comfortable with venture risk</option></select></div>
+        <div class="field"><label>Liquidity need during the 36 or 60 months</label><select id="m_liq"><option value="any">No need (locked is fine)</option><option value="some">Prefer some liquidity (open ended or distributions)</option></select></div>
+        <div class="field"><label>Sector interest (optional)</label><input id="m_sector" placeholder="agriculture, technology, renewable energy, tourism"></div>
+      </div>
+      <div id="m_chart"></div>
+      <h3>Shortlist for this profile</h3>
+      <table><thead><tr><th>Fund</th><th>Type</th><th>Risk band</th><th>Manager stated target</th><th>Notes from the listing</th></tr></thead><tbody id="m_rows"></tbody></table>
+      <div class="script" id="m_reco"></div>
+      <p style="font-size:12px;color:#6A6F7A"><strong>Disclaimer.</strong> This matrix is a crew planning aid built from information the fund managers publish on the Invest New Zealand list and their own websites. Return figures are targets or projections stated by the managers, are not guaranteed, are not audited performance, and are often gross of fees. The risk band is an indicative grouping by asset class assigned by Market Access Partners and is not a rating. Nothing here is financial advice or a recommendation to invest. Any recommendation to a client is regulated financial advice under the Financial Markets Conduct Act 2013 and may only be given by a licensed financial advice provider (Agile Strategy holds a FAP licence; Market Access Partners does not), and whether a fund is an acceptable investment for the visa is confirmed by Invest New Zealand and Immigration New Zealand, on advice from a licensed immigration adviser or lawyer. Check the live Invest NZ list on the day of any transaction.</p>
+    </div>
+  </div>
   <!-- PARTIES -->
   <div id="tab-parties" hidden>
     <div class="panel">
@@ -179,12 +201,18 @@ tr.row{cursor:pointer}tr.row:hover td{background:#FFF7E8}
       <table><thead><tr><th>Role</th><th>Name</th><th>Firm</th><th>Email</th><th>Phone</th><th>Licence / reference</th><th>Active</th><th></th></tr></thead><tbody id="parties"></tbody></table>
       <h3>Add a party</h3>
       <div class="grid3">
-        <div class="field"><label>Role</label><select id="p_role"><option value="adviser">Licensed immigration adviser</option><option value="law_firm">NZ law firm</option><option value="fund_manager">Fund manager</option><option value="indian_counsel">Indian counsel</option><option value="accountant">Accountant</option><option value="other">Other</option></select></div>
+        <div class="field full"><label>Pick from the directory (prefills the form)</label>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><select id="dir_role" style="padding:8px 10px;border:1px solid var(--line);border-radius:4px;font:500 13.5px var(--sans)"><option value="">All roles</option><option value="adviser">Licensed immigration advisers</option><option value="law_firm">NZ law firms</option><option value="fund_manager">Invest NZ approved funds</option><option value="indian_counsel">Indian counsel</option><option value="accountant">Accountants</option></select>
+          <select id="dir_pick" style="flex:1;min-width:280px;padding:8px 10px;border:1px solid var(--line);border-radius:4px;font:500 13.5px var(--sans)"></select></div>
+          <div class="hint" style="font-size:12px;color:#6A6F7A;margin-top:4px">Contacts as published on each firm's site or register, checked 18 Sep 2026. Not listed? Search the registers: <a href="https://iaa.govt.nz/for-migrants/find-a-licensed-adviser/" target="_blank" rel="noopener">IAA</a> · <a href="https://www.lawsociety.org.nz/for-the-public/find-a-lawyer/" target="_blank" rel="noopener">NZ Law Society</a> · <a href="https://www.nzte.govt.nz/page/managed-funds" target="_blank" rel="noopener">Invest NZ funds</a> · <a href="https://fsp-register.companiesoffice.govt.nz/" target="_blank" rel="noopener">FSPR</a> · <a href="https://www.charteredaccountantsanz.com/find-a-ca" target="_blank" rel="noopener">CA ANZ</a></div></div>
+        <div class="field"><label>Role</label>
+<select id="p_role"><option value="adviser">Licensed immigration adviser</option><option value="law_firm">NZ law firm</option><option value="fund_manager">Fund manager</option><option value="indian_counsel">Indian counsel</option><option value="accountant">Accountant</option><option value="other">Other</option></select></div>
         <div class="field"><label>Name</label><input id="p_name"></div>
         <div class="field"><label>Firm</label><input id="p_firm"></div>
         <div class="field"><label>Email</label><input id="p_email"></div>
         <div class="field"><label>Phone</label><input id="p_phone"></div>
         <div class="field"><label>Licence / reference</label><input id="p_licence" placeholder="IAA licence number, practising certificate, Invest NZ listing date"></div>
+        <div class="field"><label>Website</label><input id="p_web"></div>
         <div class="field full"><label>Notes</label><input id="p_notes"></div>
       </div>
       <button class="btn sm" id="addParty">Add</button><div class="msg" id="pMsg"></div>
@@ -217,7 +245,7 @@ $("signin-google").onclick=async()=>{ const { error } = await sb.auth.signInWith
 sb.auth.onAuthStateChange((e,s)=>{ if(s && $("app").hidden) show(s); });
 
 /* tabs */
-document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{ document.querySelectorAll(".tabs button").forEach(x=>x.classList.toggle("on",x===b)); $("tab-leads").hidden=b.dataset.tab!=="leads"; $("tab-parties").hidden=b.dataset.tab!=="parties"; });
+document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{ document.querySelectorAll(".tabs button").forEach(x=>x.classList.toggle("on",x===b)); $("tab-leads").hidden=b.dataset.tab!=="leads"; $("tab-parties").hidden=b.dataset.tab!=="parties"; $("tab-matrix").hidden=b.dataset.tab!=="matrix"; if(b.dataset.tab==="matrix") renderMatrix(); });
 
 async function load(){
   const [l,p] = await Promise.all([ sb.from("investor_leads").select("*, investor_documents(count)").order("created_at",{ascending:false}), sb.from("investor_parties").select("*").order("role") ]);
@@ -269,12 +297,13 @@ function open(l){
   $("d_name").textContent=l.principal_name||"(no name)"; $("d_status").className="pill "+l.status; $("d_status").textContent=l.status.replace("_"," ");
   $("d_link").textContent=link(l);
   const inv=inviteEmail(l); $("mailInvite").href=`mailto:${encodeURIComponent(l.email||"")}?subject=${encodeURIComponent(inv.subject)}&body=${encodeURIComponent(inv.body)}`;
-  const f=[["Email",l.email],["Mobile",l.phone],["City",l.city],["Country of residence",l.country_of_residence],["India resident (FEMA)",l.india_resident],["Partner",l.partner_name],["Children",(l.children||[]).map(k=>`${k.name}${k.age!=null?" ("+k.age+")":""}`).join(", ")],["Category interest",l.category_interest],["Indicative amount",fmtN(l.funds_indicative_nzd)],["Timeline",l.target_timeline],["Sectors",l.sectors_of_interest],["Source of funds (client's words)",l.source_of_funds],["Intake completed",fmtD(l.intake_completed_at)],["Consent given",fmtD(l.consent_at)]];
+  const f=[["Email",l.email],["Mobile",l.phone],["City",l.city],["Country of residence",l.country_of_residence],["India resident (FEMA)",l.india_resident],["Partner",l.partner_name],["Children",(l.children||[]).map(k=>`${k.name}${k.age!=null?" ("+k.age+")":""}`).join(", ")],["Category interest",l.category_interest],["Indicative amount",fmtN(l.funds_indicative_nzd)],["Timeline",l.target_timeline],["Sectors",l.sectors_of_interest],["Source of funds (client's words)",l.source_of_funds],["Referred by (client's answer)",[l.referrer,l.referrer_email].filter(Boolean).join(" · ")],["Intake completed",fmtD(l.intake_completed_at)],["Consent given",fmtD(l.consent_at)],["Submitted by client",fmtD(l.submitted_at)]];
   $("d_intake").innerHTML=f.map(([k,v])=>`<div class="field${k.startsWith("Source of funds")?" full":""}"><label>${k}</label><div class="v">${esc(v||"")||"<span style='color:#9AA1AD'>not yet</span>"}</div></div>`).join("");
   $("e_status").value=l.status; $("e_assigned").value=l.assigned_to||""; $("e_referrer").value=[l.source,l.referrer].filter(Boolean).join(" / "); $("e_notes").value=l.notes||"";
   $("u_key").innerHTML=CHECKLIST.map(c=>`<option value="${c.key}">${c.label}</option>`).join("");
-  $("r_party").innerHTML=parties.filter(p=>p.active).map(p=>`<option value="${p.id}">${ROLE[p.role]||p.role}: ${esc(p.name)}${p.firm?" ("+esc(p.firm)+")":""}</option>`).join("");
-  $("r_party").onchange=renderRouteDocs; $("r_subject").value=""; $("r_body").value="";
+  $("r_party").innerHTML='<option value="">Any email address</option>'+parties.filter(p=>p.active).map(p=>`<option value="${p.id}">${ROLE[p.role]||p.role}: ${esc(p.name)}${p.firm?" ("+esc(p.firm)+")":""}</option>`).join("");
+  $("r_party").onchange=()=>{ const p=parties.find(x=>x.id===$("r_party").value); if(p&&p.email) $("r_to").value=p.email; renderRouteDocs(); };
+  $("r_to").value=""; $("r_cc").value=l.email||""; $("r_subject").value=""; $("r_body").value="";
   loadDocs();
 }
 $("back").onclick=()=>{ $("detail").hidden=true; $("leadsPanel").hidden=false; history.replaceState(null,"",location.pathname); load(); };
@@ -290,7 +319,7 @@ async function loadDocs(){
   const [d,e,r]=await Promise.all([ sb.from("investor_documents").select("*").eq("lead_id",cur.id).order("uploaded_at"), sb.from("investor_events").select("*").eq("lead_id",cur.id).order("at",{ascending:false}).limit(40), sb.from("investor_routings").select("*, investor_parties(name, firm, role)").eq("lead_id",cur.id).order("sent_at",{ascending:false}) ]);
   curDocs=d.data||[]; curEvents=e.data||[]; curRoutings=r.data||[]; renderDocs(); renderRouteDocs();
   $("d_events").innerHTML=curEvents.map(x=>`<div>${fmtD(x.at)} · ${esc(x.actor||"")} · ${esc(x.event)}${x.detail?" · "+esc(JSON.stringify(x.detail)):""}</div>`).join("")||"<div>Nothing yet.</div>";
-  $("d_routings").innerHTML=curRoutings.map(x=>`<div>${fmtD(x.sent_at)} · to ${esc(x.investor_parties?.name||"")} (${ROLE[x.investor_parties?.role]||""}) · ${(x.doc_ids||[]).length} documents · by ${esc(x.sent_by||"")}${x.note?" · "+esc(x.note):""}</div>`).join("")||"<div>Not routed yet.</div>";
+  $("d_routings").innerHTML=curRoutings.map(x=>`<div>${fmtD(x.sent_at)} · to ${esc(x.to_email||x.investor_parties?.name||"")}${x.investor_parties?" ("+esc(x.investor_parties.name)+", "+(ROLE[x.investor_parties.role]||"")+")":""} · ${(x.doc_ids||[]).length} documents · ${esc(x.delivery||x.method||"")} · by ${esc(x.sent_by||"")}${x.note?" · "+esc(x.note):""}</div>`).join("")||"<div>Not sent anywhere yet.</div>";
 }
 function renderDocs(){
   const label=k=>CHECKLIST.find(c=>c.key===k)?.label||k;
@@ -321,7 +350,7 @@ function renderRouteDocs(){
 }
 const selDocs=()=>[...$("r_docs").querySelectorAll("input:checked")].map(i=>curDocs.find(d=>d.id===i.value));
 $("r_build").onclick=()=>{
-  const p=parties.find(x=>x.id===$("r_party").value); if(!p) return;
+  const p=parties.find(x=>x.id===$("r_party").value) || { name: ($("r_to").value.split("@")[0]||"there"), role:"other", email:$("r_to").value };
   const docs=selDocs(); const label=k=>CHECKLIST.find(c=>c.key===k)?.label||k; const l=cur;
   const fam=[l.partner_name?`partner ${l.partner_name}`:null,(l.children||[]).length?`${l.children.length} child${l.children.length>1?"ren":""} (ages ${l.children.map(k=>k.age??"?").join(", ")})`:null].filter(Boolean).join(" and ");
   const role=p.role;
@@ -342,6 +371,7 @@ Summary as provided by the client (we have not verified it and we do not advise)
 - Category of interest: ${l.category_interest||"undecided"}; indicative amount: ${fmtN(l.funds_indicative_nzd)||"not stated"}
 - Timeline: ${l.target_timeline||"not stated"}; sectors of interest: ${l.sectors_of_interest||"not stated"}
 - Source of funds, in the client's words: ${l.source_of_funds||"not stated"}
+- Referred by: ${[l.source,l.referrer,l.referrer_email].filter(Boolean).join(" · ")||"not stated"}
 
 ${ask}
 
@@ -353,7 +383,7 @@ The client has authorised Market Access Partners in writing${l.consent_at?" on "
 Ngā mihi | Kind regards
 ${me.split("@")[0]||"Paul"}
 Market Access Partners Limited · hello@myaccesspartners.com · myaccesspartners.com`;
-  $("r_mail").href=`mailto:${encodeURIComponent(p.email||"")}?cc=${encodeURIComponent(l.email||"")}&subject=${encodeURIComponent($("r_subject").value)}&body=${encodeURIComponent($("r_body").value)}`;
+  $("r_mail").href=`mailto:${encodeURIComponent($("r_to").value||p.email||"")}?cc=${encodeURIComponent($("r_cc").value||"")}&subject=${encodeURIComponent($("r_subject").value)}&body=${encodeURIComponent($("r_body").value)}`;
 };
 $("r_copy").onclick=()=>navigator.clipboard.writeText("Subject: "+$("r_subject").value+"\n\n"+$("r_body").value);
 $("r_zip").onclick=async()=>{
@@ -364,15 +394,39 @@ $("r_zip").onclick=async()=>{
   const blob=await zip.generateAsync({type:"blob"}); const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=`${(cur.principal_name||"investor").replace(/[^A-Za-z0-9 ]+/g,"")} - documents.zip`; a.click();
   m.className="msg ok"; m.textContent=`${docs.length} documents zipped.`;
 };
+$("r_send").onclick=async()=>{
+  const m=$("rMsg"); const docs=selDocs(); const p=parties.find(x=>x.id===$("r_party").value);
+  if(!$("r_body").value.trim()) $("r_build").click();
+  if(!$("r_to").value.trim()){ m.className="msg err"; m.textContent="Enter a recipient email."; return; }
+  if(!confirm(`Send this package with ${docs.length} document${docs.length===1?"":"s"} to ${$("r_to").value}?`)) return;
+  m.className="msg"; m.textContent="Sending…";
+  const { data:{ session } } = await sb.auth.getSession();
+  const r = await fetch(SUPABASE_URL+"/functions/v1/investor-send",{ method:"POST", headers:{ "content-type":"application/json", "Authorization":"Bearer "+session.access_token, "apikey":SUPABASE_ANON },
+    body: JSON.stringify({ lead_id:cur.id, to:$("r_to").value, cc:$("r_cc").value, subject:$("r_subject").value, message:$("r_body").value, doc_ids:docs.map(d=>d.id), party_id:p?.id||null, note:$("r_note").value.trim()||null, mode: $("r_links").checked?"links":"attach" }) });
+  const j = await r.json().catch(()=>({error:"Network error"}));
+  if(!r.ok){ m.className="msg err"; m.textContent=j.error||("Error "+r.status); return; }
+  m.className="msg ok"; m.textContent=`Sent to ${$("r_to").value} (${j.attached} attached, ${j.links} links).`; cur.status="routed"; $("e_status").value="routed"; $("d_status").className="pill routed"; $("d_status").textContent="routed"; loadDocs();
+};
 $("r_sent").onclick=async()=>{
   const p=parties.find(x=>x.id===$("r_party").value); const docs=selDocs(); const m=$("rMsg");
-  const { error } = await sb.from("investor_routings").insert({ lead_id:cur.id, party_id:p?.id||null, sent_by:me, doc_ids:docs.map(d=>d.id), note:$("r_note").value.trim()||null });
+  const { error } = await sb.from("investor_routings").insert({ lead_id:cur.id, party_id:p?.id||null, sent_by:me, doc_ids:docs.map(d=>d.id), to_email:$("r_to").value.trim()||null, cc_email:$("r_cc").value.trim()||null, subject:$("r_subject").value||null, method:"manual", delivery:"manual", note:$("r_note").value.trim()||null });
+
   if(error){ m.className="msg err"; m.textContent=error.message; return; }
   const next = ["new","intake","documents","ready"].includes(cur.status) ? (p?.role==="adviser"?"with_adviser":"routed") : cur.status;
   await sb.from("investor_leads").update({status:next}).eq("id",cur.id); cur.status=next; $("e_status").value=next; $("d_status").className="pill "+next; $("d_status").textContent=next.replace("_"," ");
   await sb.from("investor_events").insert({lead_id:cur.id,actor:me,event:"routed",detail:{to:p?.name,role:p?.role,docs:docs.length}});
   m.className="msg ok"; m.textContent="Recorded."; loadDocs();
 };
+
+/* directory */
+const DIR = Array.isArray(window.MAP_DIRECTORY) ? window.MAP_DIRECTORY : [];
+function renderDir(){
+  const role=$("dir_role").value; const rows=DIR.filter(d=>!role||d.role===role);
+  $("dir_pick").innerHTML='<option value="">Choose a firm…</option>'+rows.map(d=>`<option value="${DIR.indexOf(d)}">${esc(d.name)}${d.firm&&d.firm!==d.name?" · "+esc(d.firm):""}${d.city?" · "+esc(d.city):""}</option>`).join("");
+}
+$("dir_role").onchange=()=>{ renderDir(); if($("dir_role").value) $("p_role").value=$("dir_role").value; };
+$("dir_pick").onchange=()=>{ const d=DIR[+$("dir_pick").value]; if(!d) return; $("p_role").value=d.role; $("p_name").value=d.name; $("p_firm").value=d.firm||""; $("p_email").value=d.email||""; $("p_phone").value=d.phone||""; $("p_licence").value=d.licence_ref||""; $("p_web").value=d.website||""; $("p_notes").value=[d.city,d.note].filter(Boolean).join(" · "); };
+renderDir();
 
 /* parties */
 function renderParties(){
@@ -382,9 +436,50 @@ function renderParties(){
 }
 $("addParty").onclick=async()=>{
   const m=$("pMsg"); const name=$("p_name").value.trim(); if(!name){ m.className="msg err"; m.textContent="Name needed."; return; }
-  const { error } = await sb.from("investor_parties").insert({ role:$("p_role").value, name, firm:$("p_firm").value.trim()||null, email:$("p_email").value.trim()||null, phone:$("p_phone").value.trim()||null, licence_ref:$("p_licence").value.trim()||null, notes:$("p_notes").value.trim()||null });
-  m.className=error?"msg err":"msg ok"; m.textContent=error?error.message:"Added."; if(!error){ ["p_name","p_firm","p_email","p_phone","p_licence","p_notes"].forEach(i=>$(i).value=""); load(); }
+  const { error } = await sb.from("investor_parties").insert({ role:$("p_role").value, name, firm:$("p_firm").value.trim()||null, email:$("p_email").value.trim()||null, phone:$("p_phone").value.trim()||null, licence_ref:$("p_licence").value.trim()||null, notes:[$("p_web").value.trim(),$("p_notes").value.trim()].filter(Boolean).join(" · ")||null });
+  m.className=error?"msg err":"msg ok"; m.textContent=error?error.message:"Added."; if(!error){ ["p_name","p_firm","p_email","p_phone","p_licence","p_web","p_notes"].forEach(i=>$(i).value=""); $("dir_pick").value=""; load(); }
 };
+
+/* fund matrix */
+const FUNDS = Array.isArray(window.MAP_FUNDS) ? window.MAP_FUNDS : [];
+const RISK_LABEL={1:"Lowest",2:"Low",3:"Moderate",4:"High",5:"Highest (venture)"};
+function matrixFilter(){
+  const prof=$("m_profile").value, liq=$("m_liq").value, sec=$("m_sector").value.trim().toLowerCase();
+  const maxRisk = prof==="preserve"?2:(prof==="balanced"?3:5); const minRisk = prof==="growth"?3:1;
+  return FUNDS.filter(f=>f.risk>=minRisk && f.risk<=maxRisk)
+    .filter(f=>liq==="any" || /liquidit|redemption|open ended|distribution|monthly|quarterly|weekly/i.test(f.note))
+    .filter(f=>!sec || (f.sectors+" "+f.note+" "+f.name).toLowerCase().includes(sec))
+    .sort((a,b)=>((b.ret_hi||0)+(b.ret_lo||0))-((a.ret_hi||0)+(a.ret_lo||0)) || a.risk-b.risk);
+}
+function renderMatrix(){
+  const sel=new Set(matrixFilter().map(f=>f.name));
+  const W=980,H=440,L=60,R=20,T=34,B=60; const maxY=26;
+  const x=r=>L+(r-0.5)/5*(W-L-R); const y=v=>T+(1-v/maxY)*(H-T-B);
+  let svg=`<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;background:#fff;border:1px solid var(--line);border-radius:6px" role="img" aria-label="Fund matrix">`;
+  for(let v=0;v<=maxY;v+=5){ svg+=`<line x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}" stroke="rgba(22,27,36,.1)"/><text x="${L-8}" y="${y(v)+4}" font-size="11" text-anchor="end" fill="#6A6F7A">${v}%</text>`; }
+  for(let r=1;r<=5;r++){ svg+=`<line x1="${x(r)}" x2="${x(r)}" y1="${T}" y2="${H-B}" stroke="rgba(22,27,36,.06)"/><text x="${x(r)}" y="${H-B+18}" font-size="11" text-anchor="middle" fill="#161B24" font-weight="700">${r}</text><text x="${x(r)}" y="${H-B+32}" font-size="10" text-anchor="middle" fill="#6A6F7A">${RISK_LABEL[r]}</text>`; }
+  svg+=`<text x="${(L+W-R)/2}" y="${H-8}" font-size="11" text-anchor="middle" fill="#6A6F7A">Indicative risk band by asset class (lower is safer)</text>`;
+  svg+=`<text transform="rotate(-90)" x="${-(T+H-B)/2}" y="14" font-size="11" text-anchor="middle" fill="#6A6F7A">Manager stated target return, % p.a.</text>`;
+  const byBand={}; FUNDS.forEach(f=>{ (byBand[f.risk]=byBand[f.risk]||[]).push(f); });
+  FUNDS.forEach(f=>{
+    const band=byBand[f.risk]; const i=band.indexOf(f); const spread=(W-L-R)/5*0.72; const jx=x(f.risk)-spread/2+spread*((i+0.5)/band.length);
+    const stated=f.ret_lo!=null; const yy=stated?y((f.ret_lo+f.ret_hi)/2):y(0.6); const on=sel.has(f.name);
+    const col=on?(stated?"#D98324":"#3D5C4A"):"#C9CDD6";
+    if(stated&&f.ret_lo!==f.ret_hi) svg+=`<line x1="${jx}" x2="${jx}" y1="${y(f.ret_lo)}" y2="${y(f.ret_hi)}" stroke="${col}" stroke-width="2" opacity=".6"/>`;
+    svg+=`<circle cx="${jx}" cy="${yy}" r="${on?7:5}" fill="${col}" ${stated?"":'stroke="#6A6F7A" stroke-dasharray="2 2"'} opacity="${on?1:.55}"><title>${esc(f.name)} · ${esc(f.type)} · risk band ${f.risk} · ${stated?(f.ret_lo===f.ret_hi?f.ret_lo+"%":f.ret_lo+" to "+f.ret_hi+"%")+" target":"no return target stated"}${f.note?" · "+esc(f.note):""}</title></circle>`;
+    if(on&&stated) svg+=`<text x="${jx+9}" y="${yy+4}" font-size="10" fill="#161B24">${esc(f.name.length>26?f.name.slice(0,24)+"…":f.name)}</text>`;
+  });
+  svg+=`<g font-size="11"><circle cx="${L+10}" cy="${T-16}" r="6" fill="#D98324"/><text x="${L+22}" y="${T-12}" fill="#161B24">Fits profile, target stated</text><circle cx="${L+200}" cy="${T-16}" r="6" fill="#3D5C4A"/><text x="${L+212}" y="${T-12}" fill="#161B24">Fits profile, no target stated (shown at the base line)</text><circle cx="${L+520}" cy="${T-16}" r="5" fill="#C9CDD6"/><text x="${L+532}" y="${T-12}" fill="#161B24">Outside this profile</text></g></svg>`;
+  $("m_chart").innerHTML=svg;
+  const rows=matrixFilter();
+  $("m_rows").innerHTML=rows.map(f=>`<tr><td><b>${esc(f.name)}</b></td><td>${esc(f.type)}</td><td>${f.risk} · ${RISK_LABEL[f.risk]}</td><td class="num">${f.ret_lo!=null?(f.ret_lo===f.ret_hi?f.ret_lo+"% p.a.":f.ret_lo+" to "+f.ret_hi+"% p.a."):"<span style='color:#9AA1AD'>not stated</span>"}</td><td>${esc(f.note||"")}${f.sectors?" · "+esc(f.sectors):""}</td></tr>`).join("")||`<tr><td colspan="5" style="color:#6A6F7A">No fund matches every filter. Loosen the sector or liquidity setting.</td></tr>`;
+  const prof=$("m_profile").value; const top=rows.filter(f=>f.ret_lo!=null).slice(0,3); const noTarget=rows.filter(f=>f.ret_lo==null).length;
+  const why = prof==="preserve" ? "capital preservation, so only private credit and infrastructure debt style funds (risk bands 1 and 2) are shown; these carry the lowest asset class risk that still qualifies for the Growth category, and several offer monthly or quarterly liquidity"
+    : prof==="balanced" ? "a balance of income and growth, so private credit, infrastructure and real asset private equity (risk bands 1 to 3) are shown, which is where the clearest stated targets sit (typically 5 to 15% p.a.)"
+    : "growth with venture risk accepted, so private equity, fund of funds and venture capital (risk bands 3 to 5) are shown; most venture funds state no return target and outcomes are widely dispersed";
+  $("m_reco").innerHTML = `<em>Crew note for the adviser conversation:</em> the client's stated priority is ${why}. ${top.length?`The highest stated targets in this set are ${top.map(f=>esc(f.name)+" ("+(f.ret_lo===f.ret_hi?f.ret_lo:f.ret_lo+" to "+f.ret_hi)+"%)").join(", ")}.`:""} ${noTarget?`${noTarget} matching fund${noTarget>1?"s":""} publish no target and would need the information memorandum.`:""} Suggested next step: send the shortlist to the licensed immigration adviser and, for the investment decision, to a licensed financial adviser; ask each manager for the IM, fee schedule, and confirmation of Invest NZ listing on the day. This is not a recommendation to the client.`;
+}
+["m_profile","m_liq","m_sector"].forEach(id=>$(id).addEventListener("input",renderMatrix));
 
 boot();
 </script>

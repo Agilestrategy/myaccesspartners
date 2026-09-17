@@ -110,6 +110,8 @@ footer{margin:40px 0 50px;font-size:12.5px;color:#6A6F7A}
       <div class="field full"><label>Where do the funds sit today, and how were they earned? (a few lines)</label><textarea id="f_source_of_funds" placeholder="For example: sale of a business in 2024, held in Indian fixed deposits and listed shares; family property in Mumbai."></textarea></div>
       <div class="field"><label>When would you like to move?</label><input id="f_target_timeline" placeholder="Within 12 months, 2027, exploring"></div>
       <div class="field"><label>New Zealand sectors that interest you</label><input id="f_sectors_of_interest" placeholder="Wine, agriculture, technology, tourism"></div>
+      <div class="field"><label>Who introduced you to Market Access Partners?</label><input id="f_referrer" placeholder="Name or firm"></div>
+      <div class="field"><label>Their email (so we can keep them in the loop)</label><input id="f_referrer_email" type="email"></div>
     </div>
     <label class="consent"><input type="checkbox" id="consent"><span>I confirm the information and documents I provide are mine and accurate, and I authorise Market Access Partners Limited to hold them securely and forward them to the licensed immigration adviser, New Zealand law firm, fund manager, accountant and Indian counsel I am introduced to, for the purpose of their advice. I understand Market Access Partners does not give immigration, legal, tax or financial advice, and that I can ask for my file to be deleted at any time by emailing hello@myaccesspartners.com.</span></label>
     <button class="btn" id="saveIntake">Save and continue</button> <button class="btn ghost" id="saveDraft">Save draft</button>
@@ -122,9 +124,16 @@ footer{margin:40px 0 50px;font-size:12.5px;color:#6A6F7A}
     <div id="checklist"></div>
   </section>
 
+  <section class="card" id="submit">
+    <h2>Submit your file</h2>
+    <p style="font-size:14px">When you have added what you have (you can add more later), press Submit. We are notified, your file is marked ready, and we make the introductions to your licensed New Zealand adviser, the New Zealand law firm and, if you are resident in India, Indian counsel. The person who introduced you is noted on the file.</p>
+    <div id="submitBox"><button class="btn" id="submitNow">Submit now</button> <span class="msg" id="submitMsg" style="display:inline-block;margin-left:10px"></span></div>
+    <div id="submittedBox" hidden class="notice"><b>Submitted.</b> Thank you. Your file was submitted on <span id="submittedOn"></span>. You can still add documents above; we will see them arrive. Questions: hello@myaccesspartners.com.</div>
+  </section>
+
   <section class="card" id="next">
     <h2>What happens next</h2>
-    <p style="font-size:14px">When you press "Save and continue" your Market Access Partners contact is notified. We introduce you to a licensed New Zealand immigration adviser and a New Zealand law firm, and, if you are resident in India, to Indian counsel for the foreign exchange side. If you would like to visit New Zealand to meet fund managers and see the businesses, we host that visit. Contact: hello@myaccesspartners.com.</p>
+    <p style="font-size:14px">Once you submit, your Market Access Partners contact is notified. We introduce you to a licensed New Zealand immigration adviser and a New Zealand law firm, and, if you are resident in India, to Indian counsel for the foreign exchange side. If you would like to visit New Zealand to meet fund managers and see the businesses, we host that visit. Contact: hello@myaccesspartners.com.</p>
   </section>
 
   <footer>Market Access Partners Limited · company number 9458633 · 14 Francis Street, Grey Lynn, Auckland 1021, New Zealand · Your information is held in accordance with the New Zealand Privacy Act 2020 and is not sold or shared beyond the parties you approve.</footer>
@@ -138,7 +147,7 @@ const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 const $ = id => document.getElementById(id);
 const token = new URLSearchParams(location.search).get("t") || "";
 let lead = null, documents = [], checklist = [];
-const FIELDS = ["principal_name","email","phone","city","country_of_residence","india_resident","partner_name","category_interest","funds_indicative_nzd","source_of_funds","target_timeline","sectors_of_interest"];
+const FIELDS = ["principal_name","email","phone","city","country_of_residence","india_resident","partner_name","category_interest","funds_indicative_nzd","source_of_funds","target_timeline","sectors_of_interest","referrer","referrer_email"];
 
 async function api(payload){
   const r = await fetch(API, { method:"POST", headers:{ "content-type":"application/json" }, body: JSON.stringify({ token, ...payload }) });
@@ -166,9 +175,10 @@ function fillIntake(){
 }
 function steps(){
   const done1 = !!lead.intake_completed_at, done2 = documents.length>0;
+  if (lead.submitted_at){ $("submitBox").hidden=true; $("submittedBox").hidden=false; $("submittedOn").textContent=new Date(lead.submitted_at).toLocaleDateString("en-NZ",{day:"numeric",month:"long",year:"numeric"}); }
   $("s1").className = done1 ? "done" : "on";
   $("s2").className = done2 ? "done" : (done1 ? "on" : "");
-  $("s3").className = ["ready","routed","with_adviser"].includes(lead.status) ? "done" : "";
+  $("s3").className = (lead.submitted_at || ["ready","routed","with_adviser"].includes(lead.status)) ? "done" : "";
 }
 async function saveIntake(complete){
   const m=$("intakeMsg"); m.className="msg";
@@ -184,6 +194,14 @@ async function saveIntake(complete){
 $("saveIntake").onclick=()=>saveIntake(true);
 $("saveDraft").onclick=()=>saveIntake(false);
 $("addkid").onclick=()=>kidRow();
+$("submitNow").onclick=async()=>{
+  const m=$("submitMsg"); m.className="msg";
+  if(!lead.consent_at || !$("consent").checked){ m.className="msg err"; m.textContent="Please tick the authorisation box and press Save and continue first."; $("intake").scrollIntoView({behavior:"smooth"}); return; }
+  if(!confirm("Submit your file to Market Access Partners now? You can still add documents afterwards.")) return;
+  m.textContent="Submitting…";
+  try{ await saveIntake(false); const r=await api({action:"submit"}); lead=r.lead; m.className="msg ok"; m.textContent=""; steps(); }
+  catch(e){ m.className="msg err"; m.textContent=e.message; }
+};
 
 function renderDocs(){
   const box=$("checklist"); box.innerHTML="";
