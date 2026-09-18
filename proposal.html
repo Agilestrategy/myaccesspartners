@@ -72,6 +72,7 @@ nav.tools .grp b{font:700 13px var(--sans);letter-spacing:.12em;text-transform:u
 nav.tools a.help{background:var(--saffron);color:var(--ink);padding:6px 16px;border-radius:999px;font-weight:600;border:none}
 nav.tools a.prop{background:var(--vine);color:#fff;padding:6px 16px;border-radius:999px;font-weight:600;border:none}
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" defer></script>
 </head>
 <body>
 <div id="gate"><div class="card2"><span class="mark">Market <b>Access</b> Partners</span><h2>Build a proposal</h2><p>Crew only. Sign in with your Google account.</p><button id="signin-google">Continue with Google</button><div class="err" id="err"></div></div></div>
@@ -162,7 +163,13 @@ function client(){ const n=$("name").value.trim(); if(!n){ $("bMsg").className="
 const PDF_NAME={wine:["MAP_Wine_Pitch_Deck","MAP_Wine_One_Pager"],honey:["MAP_Manuka_Honey_Pitch_Deck","MAP_Manuka_Honey_One_Pager"],whisky:["MAP_Whisky_and_Bespoke_Spirits_Pitch_Deck","MAP_Whisky_and_Bespoke_Spirits_One_Pager"],travel:["MAP_Travel_Provenance_Tours_Pitch_Deck","MAP_Travel_Provenance_Tours_One_Pager"],polo:["MAP_Polo_Pitch_Deck","MAP_Polo_One_Pager"],investors:["MAP_Investor_Residence_Pitch_Deck","MAP_Investor_Residence_One_Pager"]};
 const viewUrl=id=>"https://drive.google.com/file/d/"+id+"/view", dl=id=>"https://drive.google.com/uc?export=download&id="+id;
 let pvUrl="";
-function pvLoad(){ const host=$("pv-host"); host.innerHTML=""; const f=document.createElement("iframe"); f.style.cssText="flex:1;border:0;width:100%"; $("pv-note").textContent="Loading…"; f.onload=()=>{ $("pv-note").textContent=""; }; f.src=pvUrl; host.appendChild(f); setTimeout(()=>{ if($("pv-note").textContent==="Loading…") $("pv-note").textContent="Slow to load? Press Reload or Open in Drive."; },7000); }
+async function pvRenderPdf(url){ const host=$("pv-host"); host.innerHTML=""; host.style.cssText="flex:1;overflow:auto;background:#5b5f66;padding:16px;display:block"; $("pv-note").textContent="Loading…";
+  try{ if(!window.pdfjsLib) throw new Error("PDF engine still loading, press Reload"); pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+    const pdf=await pdfjsLib.getDocument(url).promise; const w=Math.min(host.clientWidth-32,1000);
+    for(let i=1;i<=pdf.numPages;i++){ const page=await pdf.getPage(i); const v0=page.getViewport({scale:1}); const scale=w/v0.width; const vp=page.getViewport({scale:scale*2}); const c=document.createElement("canvas"); c.width=vp.width; c.height=vp.height; c.style.cssText="display:block;width:"+w+"px;margin:0 auto 14px;box-shadow:0 4px 18px rgba(0,0,0,.35);background:#fff"; host.appendChild(c); await page.render({canvasContext:c.getContext("2d"),viewport:vp}).promise; }
+    $("pv-note").textContent=pdf.numPages+(pdf.numPages===1?" page":" pages"); }
+  catch(e){ $("pv-note").textContent=""; host.innerHTML='<div style="margin:auto;text-align:center;color:#fff;font:500 15px var(--sans)">Could not render the PDF here. <a href="'+url.split("#")[0]+'" target="_blank" rel="noopener" style="color:#D98324">Open it in a new tab</a>.</div>'; } }
+function pvLoad(){ if(pvUrl.startsWith("/")) return pvRenderPdf(pvUrl.split("#")[0]); const host=$("pv-host"); host.innerHTML=""; host.style.cssText="flex:1;display:flex"; const f=document.createElement("iframe"); f.style.cssText="flex:1;border:0;width:100%"; $("pv-note").textContent="Loading…"; f.onload=()=>{ $("pv-note").textContent=""; }; f.src=pvUrl; host.appendChild(f); setTimeout(()=>{ if($("pv-note").textContent==="Loading…") $("pv-note").textContent="Slow to load? Press Reload or Open in Drive."; },7000); }
 function openPreview(title,id,path){ $("pv-title").textContent=title; $("pv-open").href=viewUrl(id); pvUrl=path+"#toolbar=1&view=FitH"; $("pv").hidden=false; pvLoad(); }
 $("pv-reload").onclick=pvLoad;
 $("pv-close").onclick=()=>{ $("pv").hidden=true; $("pv-host").innerHTML=""; };
