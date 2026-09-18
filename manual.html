@@ -64,14 +64,17 @@ nav.tools a{color:var(--mist);text-decoration:none;padding:4px 0;border-bottom:2
 nav.tools a:hover{color:var(--ivory)}nav.tools a.on{color:var(--ivory);border-bottom-color:var(--saffron)}
 nav.tools .grp{display:inline-flex;gap:12px;align-items:center}
 nav.tools .grp b{font:700 13px var(--sans);letter-spacing:.12em;text-transform:uppercase;color:rgba(245,241,230,.6);margin-right:2px}
-nav.tools a.help{background:var(--saffron);color:var(--ink);padding:6px 16px;border-radius:999px;font-weight:600;border:none}
+nav.tools a.help{background:transparent;color:var(--saffron);padding:6px 16px;border-radius:999px;font-weight:600;border:1.5px solid var(--saffron)}
+nav.tools a.help:hover{background:var(--saffron);color:var(--ink)}
+nav.tools a.appt{background:var(--saffron);color:var(--ink);padding:6px 16px;border-radius:999px;font-weight:600;border:none}
+nav.tools a.appt.on{box-shadow:0 0 0 2px var(--ivory) inset}
 nav.tools a.prop{background:var(--vine);color:#fff;padding:6px 16px;border-radius:999px;font-weight:600;border:none}
 </style>
 </head>
 <body>
 <header><div class="wrap">
   <span class="mark">Market <b>Access</b> Partners · Internal</span>
-  <nav class="tools"><a href="/dashboard.html">Home</a><span class="grp"><b>Investors</b><a href="/investors.html">Files</a><a href="/invest.html">Rules</a></span><span class="grp"><b>Producers</b><a href="/crm.html">CRM</a><a href="/distributors.html">Distributors</a></span><span class="grp"><b>Travel</b><a href="/tours.html">Tours</a><a href="/travel-builder.html">Builder</a></span><span class="grp"><b>Trade</b><a href="/landed-price.html">Calculator</a><a href="/containers.html">Containers</a><a href="/polo.html">Polo</a></span><a href="/finance.html">Finance</a><a href="/proposal.html" class="prop">Build a proposal</a><a href="/manual.html" class="help on">Manual</a></nav>
+  <nav class="tools"><a href="/dashboard.html">Home</a><span class="grp"><b>Investors</b><a href="/investors.html">Files</a><a href="/invest.html">Rules</a></span><span class="grp"><b>Producers</b><a href="/crm.html">CRM</a><a href="/distributors.html">Distributors</a></span><span class="grp"><b>Travel</b><a href="/tours.html">Tours</a><a href="/travel-builder.html">Builder</a></span><span class="grp"><b>Trade</b><a href="/landed-price.html">Calculator</a><a href="/containers.html">Containers</a><a href="/polo.html">Polo</a></span><a href="/finance.html">Finance</a><a href="/appointments.html" class="appt">Appointments</a><a href="/proposal.html" class="prop">Build a proposal</a><a href="/manual.html" class="help on">Manual</a></nav>
   <span id="who">Crew manual · 18 Sep 2026 · <a href="/packs/MAP_Crew_Manual.pdf" style="color:var(--saffron)">PDF</a></span>
 </div></header>
 
@@ -274,6 +277,7 @@ nav.tools a.prop{background:var(--vine);color:#fff;padding:6px 16px;border-radiu
       <tr><td><b>Home</b></td><td>The business on one page, live from the CRM, finance and container boards. Two containers before Christmas is the goal.</td></tr>
       <tr><td><b>CRM</b></td><td>Every producer we could approach, their status, and the pack we approach them with.</td></tr>
       <tr><td><b>Distributors</b></td><td>The Indian importers and distributors for wine, honey and spirits.</td></tr>
+      <tr><td><b>Appointments</b></td><td>Send a guest a real calendar invitation from your MAP address (orange button in the header). Type the guest, date, time and length, press Send. A copy lands in your own Google Calendar. Cancel and Resend from the Upcoming list.</td></tr>
       <tr><td><b>Tours</b></td><td>Every tour a travel partner books, with a producer on each stop and one click notices to them.</td></tr>
       <tr><td><b>Builder</b></td><td>Builds a dated journey for a travel company: flights, transfers, producers, hotels, then the itinerary download.</td></tr>
       <tr><td><b>Calculator</b></td><td>Landed price in India for a product: freight, duty, GST, margin.</td></tr>

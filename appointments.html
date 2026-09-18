@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Appointments · MAP crew</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fjalla+One&family=Libre+Franklin:ital,wght@0,300..800;1,400&display=swap">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<style>
+:root{--ink:#161B24;--ink2:#1F2633;--ivory:#F5F1E6;--paper:#FBF9F2;--saffron:#D98324;--saffron-deep:#B26A15;--vine:#3D5C4A;--mist:#9AA1AD;--body:#4A5160;--line:rgba(22,27,36,.14);--ok:#2E7D51;--warn:#A33B2E;
+--serif:"Fjalla One","Arial Narrow",Arial,sans-serif;--sans:"Libre Franklin","Helvetica Neue",Arial,sans-serif}
+*{box-sizing:border-box;margin:0}
+body{background:var(--paper);color:var(--ink);font:400 15.5px/1.55 var(--sans)}
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+header{background:var(--ink);color:var(--ivory);padding:16px 0}
+header .wrap{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.mark{font:700 14px var(--sans);letter-spacing:.06em;text-transform:uppercase}
+.mark b{color:var(--saffron)}
+#who{font-size:12.5px;color:var(--mist)}
+#who button{background:none;border:1px solid rgba(245,241,230,.3);color:var(--ivory);padding:4px 12px;margin-left:10px;font:500 12px var(--sans);cursor:pointer;border-radius:999px}
+h1{font-family:var(--serif);font-weight:400;font-size:clamp(28px,3.6vw,38px);margin:26px 0 4px}
+h2{font-family:var(--serif);font-weight:400;font-size:24px;margin:0 0 10px}
+h3{font:700 12.5px var(--sans);letter-spacing:.12em;text-transform:uppercase;color:var(--vine);margin:18px 0 8px}
+.eyebrow{font:600 11px var(--sans);letter-spacing:.18em;text-transform:uppercase;color:var(--saffron)}
+.sub{color:var(--body);max-width:78ch}
+.panel{background:#fff;border:1px solid var(--line);border-radius:8px;padding:22px 24px;margin:14px 0}
+.panel.ivory{background:var(--ivory)}
+.panel.dark{background:var(--ink);color:var(--ivory);border-color:var(--ink)}
+.panel.dark h2{color:var(--saffron)}.panel.dark p{color:var(--ivory)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin:12px 0}
+.card{background:var(--ivory);border-radius:8px;padding:14px 16px;border-left:4px solid var(--saffron)}
+.card .n{font-family:var(--serif);font-size:26px}
+.card .r{font-size:13.5px;color:var(--body);margin-top:2px}
+.tabs{display:flex;gap:8px;margin:18px 0 6px;flex-wrap:wrap}
+.tabs button{font:600 14px var(--sans);padding:10px 20px;border:1px solid var(--line);background:#fff;border-radius:999px;cursor:pointer;color:var(--body)}
+.tabs button.on{background:var(--ink);color:var(--ivory);border-color:var(--ink)}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:10px 0}
+.toolbar input,.toolbar select{padding:9px 12px;border:1px solid var(--line);border-radius:999px;font:500 14px var(--sans);background:#fff}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+thead th{font:600 11.5px var(--sans);letter-spacing:.06em;text-transform:uppercase;color:var(--vine);background:var(--ivory)}
+.pill{display:inline-block;font:600 10.5px var(--sans);letter-spacing:.06em;text-transform:uppercase;padding:2px 8px;border-radius:999px;background:var(--ivory);color:var(--vine);white-space:nowrap}
+.pill.military{background:var(--vine);color:#fff}.pill.club{background:#E9ECF3;color:#3A4560}.pill.patron{background:#FFF1DC;color:var(--saffron-deep)}.pill.academy{background:#E4F1E8;color:var(--ok)}.pill.nz{background:var(--ink);color:var(--ivory)}
+.pill.exempt{background:#E4F1E8;color:var(--ok)}
+td select{min-width:140px}td input{min-width:160px}td select,td input{width:100%;padding:5px 7px;border:1px solid var(--line);border-radius:4px;font:500 13px var(--sans)}
+.btn{display:inline-block;padding:9px 18px;font:600 13.5px var(--sans);border:none;border-radius:999px;cursor:pointer;background:var(--saffron);color:var(--ink);text-decoration:none}
+.btn.ghost{background:#fff;border:1px solid var(--line);color:var(--ink)}
+.btn.sm{padding:6px 12px;font-size:12.5px}
+.next{font-size:13px;color:var(--body)}
+a{color:var(--saffron-deep)}
+details{border:1px solid var(--line);border-radius:8px;padding:0 18px;margin:12px 0;background:#fff}
+details summary{cursor:pointer;font:600 14.5px var(--sans);padding:14px 0;list-style:none;display:flex;justify-content:space-between}
+details summary::after{content:"+";font-size:20px;color:var(--mist)}details[open] summary::after{content:"−"}
+details .inner{padding:0 0 18px}
+#gate{position:fixed;inset:0;background:var(--ink);display:flex;align-items:center;justify-content:center;z-index:50}
+#gate .card2{background:var(--paper);padding:38px;max-width:380px;width:92%;border-top:3px solid var(--saffron);border-radius:6px}
+#gate h2{font-size:24px;margin:10px 0 6px}
+#gate p{font-size:13px;color:var(--body);margin-bottom:16px}
+#gate button{width:100%;padding:12px;background:var(--saffron);border:none;font:600 14px var(--sans);cursor:pointer;border-radius:999px;color:var(--ink)}
+#gate .err{color:var(--warn);font-size:12.5px;min-height:18px;margin-top:8px}
+[hidden]{display:none!important}
+@media(max-width:900px){table{display:block;overflow-x:auto}}
+</style>
+<style id="crew-nav">
+header .wrap{align-items:center}
+nav.tools{display:flex;gap:10px 22px;font-size:15px;flex-wrap:wrap;align-items:center}
+nav.tools a{color:var(--mist);text-decoration:none;padding:4px 0;border-bottom:2px solid transparent}
+nav.tools a:hover{color:var(--ivory)}nav.tools a.on{color:var(--ivory);border-bottom-color:var(--saffron)}
+nav.tools .grp{display:inline-flex;gap:12px;align-items:center}
+nav.tools .grp b{font:700 13px var(--sans);letter-spacing:.12em;text-transform:uppercase;color:rgba(245,241,230,.6);margin-right:2px}
+nav.tools a.help{background:transparent;color:var(--saffron);padding:6px 16px;border-radius:999px;font-weight:600;border:1.5px solid var(--saffron)}
+nav.tools a.help:hover{background:var(--saffron);color:var(--ink)}
+nav.tools a.appt{background:var(--saffron);color:var(--ink);padding:6px 16px;border-radius:999px;font-weight:600;border:none}
+nav.tools a.appt.on{box-shadow:0 0 0 2px var(--ivory) inset}
+nav.tools a.prop{background:var(--vine);color:#fff;padding:6px 16px;border-radius:999px;font-weight:600;border:none}
+</style>
+<style id="appt">
+header{border-bottom:4px solid var(--saffron)}
+.hero{background:var(--saffron);color:var(--ink);padding:26px 0 22px;margin-bottom:8px}
+.hero h1{margin:0 0 4px}
+.hero .sub{color:var(--ink);opacity:.85}
+.hero .from{display:inline-block;margin-top:10px;background:var(--ink);color:var(--ivory);padding:6px 14px;border-radius:999px;font:600 13px var(--sans)}
+.hero .from b{color:var(--saffron)}
+.grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:18px;align-items:start}
+@media(max-width:960px){.grid{grid-template-columns:1fr}}
+.form{background:#fff;border:1px solid var(--line);border-radius:8px;padding:22px 24px;border-top:5px solid var(--saffron)}
+.form label{display:block;font:600 12px var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--vine);margin:14px 0 5px}
+.form label:first-child{margin-top:0}
+.form input,.form select,.form textarea{width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:6px;font:500 15px var(--sans);background:var(--paper);color:var(--ink)}
+.form input:focus,.form select:focus,.form textarea:focus{outline:2px solid var(--saffron);border-color:var(--saffron);background:#fff}
+.form textarea{min-height:88px;resize:vertical}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.row3{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:12px}
+@media(max-width:600px){.row,.row3{grid-template-columns:1fr}}
+.hint{font-size:12.5px;color:var(--mist);margin-top:4px}
+.actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:20px}
+.btn.big{padding:13px 26px;font-size:15px}
+.btn:disabled{opacity:.55;cursor:wait}
+#msg{font-size:14px;min-height:20px;margin-top:10px}
+#msg.ok{color:var(--ok)}#msg.bad{color:var(--warn)}
+.list .item{display:grid;grid-template-columns:78px 1fr auto;gap:14px;padding:14px 0;border-bottom:1px solid var(--line);align-items:start}
+.list .item:last-child{border-bottom:none}
+.date{background:var(--ivory);border-radius:6px;text-align:center;padding:8px 4px;border-top:3px solid var(--saffron)}
+.date .d{font-family:var(--serif);font-size:24px;line-height:1}
+.date .m{font:600 11px var(--sans);letter-spacing:.1em;text-transform:uppercase;color:var(--vine);margin-top:3px}
+.item .t{font:600 15.5px var(--sans)}
+.item .w{font-size:13.5px;color:var(--body);margin-top:2px}
+.item .g{font-size:13px;color:var(--mist);margin-top:2px}
+.item.cancelled .t{text-decoration:line-through;color:var(--mist)}
+.item .ops{display:flex;flex-direction:column;gap:6px}
+.pill.sent{background:#E4F1E8;color:var(--ok)}.pill.cancelled{background:#F6E3DF;color:var(--warn)}.pill.failed{background:#F6E3DF;color:var(--warn)}.pill.sending{background:#FFF1DC;color:var(--saffron-deep)}
+.empty{color:var(--mist);font-size:14px;padding:12px 0}
+.how{font-size:14px;color:var(--body)}
+.how li{margin:6px 0 6px 18px}
+.quick{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 4px}
+.quick button{font:600 12.5px var(--sans);padding:6px 12px;border:1px solid var(--line);background:#fff;border-radius:999px;cursor:pointer;color:var(--body)}
+.quick button:hover{border-color:var(--saffron);color:var(--ink)}
+</style>
+</head>
+<body>
+<div id="gate"><div class="card2"><span class="mark">Market <b>Access</b> Partners</span><h2>Appointments</h2><p>Crew only. Sign in with your Google account.</p><button id="signin-google">Continue with Google</button><div class="err" id="err"></div></div></div>
+
+<div id="app" hidden>
+<header><div class="wrap">
+  <span class="mark">Market <b>Access</b> Partners · Internal</span>
+  <nav class="tools"><a href="/dashboard.html">Home</a><span class="grp"><b>Investors</b><a href="/investors.html">Files</a><a href="/invest.html">Rules</a></span><span class="grp"><b>Producers</b><a href="/crm.html">CRM</a><a href="/distributors.html">Distributors</a></span><span class="grp"><b>Travel</b><a href="/tours.html">Tours</a><a href="/travel-builder.html">Builder</a></span><span class="grp"><b>Trade</b><a href="/landed-price.html">Calculator</a><a href="/containers.html">Containers</a><a href="/polo.html">Polo</a></span><a href="/finance.html">Finance</a><a href="/appointments.html" class="appt on">Appointments</a><a href="/proposal.html" class="prop">Build a proposal</a><a href="/manual.html" class="help">Manual</a></nav>
+  <span id="who"></span>
+</div></header>
+
+<div class="hero"><div class="wrap">
+  <div class="eyebrow" style="color:var(--ink)">Crew tool</div>
+  <h1>Appointments</h1>
+  <p class="sub">Fill in the guest and the time, press Send. The guest gets a proper calendar invitation with Accept and Decline buttons, and a copy lands in your own Google Calendar.</p>
+  <span class="from" id="fromline">Invitations go out from <b>…</b></span>
+</div></div>
+
+<main class="wrap">
+<div class="grid">
+<section class="form">
+  <form id="f" autocomplete="off">
+    <label for="title">What is it</label>
+    <input id="title" required placeholder="e.g. Introduction call · Sharma family · NZ investor residence">
+    <div class="quick" id="quick"></div>
+
+    <div class="row">
+      <div><label for="gname">Guest name</label><input id="gname" list="people" placeholder="Start typing a name from the CRM"><div class="hint">Names come from the CRM (producers, distributors, investor files, tour agents). Pick one and the email fills itself.</div></div>
+      <div><label for="gemail">Guest email</label><input id="gemail" type="email" required placeholder="name@company.com"></div>
+    </div>
+    <datalist id="people"></datalist>
+
+    <label for="extra">Anyone else (optional)</label>
+    <input id="extra" placeholder="More email addresses, separated by commas">
+
+    <div class="row3">
+      <div><label for="date">Date</label><input id="date" type="date" required></div>
+      <div><label for="time">Start</label><input id="time" type="time" required step="300" value="10:00"></div>
+      <div><label for="dur">Length</label><select id="dur"><option value="15">15 minutes</option><option value="30" selected>30 minutes</option><option value="45">45 minutes</option><option value="60">1 hour</option><option value="90">1.5 hours</option><option value="120">2 hours</option><option value="180">3 hours</option><option value="480">All day (8 hours)</option></select></div>
+    </div>
+    <label for="tz">Time zone the time is written in</label>
+    <select id="tz"><option value="Pacific/Auckland">New Zealand (Auckland)</option><option value="Asia/Kolkata">India (Delhi, Mumbai)</option><option value="Asia/Dubai">Dubai</option><option value="Asia/Singapore">Singapore</option><option value="Australia/Sydney">Sydney</option><option value="Europe/London">London</option></select>
+    <div class="hint" id="tzhint"></div>
+
+    <label for="loc">Where, or a meeting link</label>
+    <input id="loc" placeholder="Google Meet link, Zoom link, or an address">
+    <div class="quick"><button type="button" id="meetbtn">Make a Google Meet link</button><button type="button" data-loc="14 Francis Street, Grey Lynn, Auckland 1021">MAP office, Grey Lynn</button><button type="button" data-loc="Phone call">Phone call</button></div>
+
+    <label for="notes">Note to the guest (optional)</label>
+    <textarea id="notes" placeholder="What the meeting is for, what to bring, who will be there."></textarea>
+
+    <div class="actions">
+      <button class="btn big" type="submit" id="send">Send invitation</button>
+      <button class="btn ghost" type="button" id="clear">Clear</button>
+    </div>
+    <div id="msg"></div>
+  </form>
+</section>
+
+<aside>
+  <div class="panel" style="border-top:5px solid var(--saffron)">
+    <h2>Upcoming</h2>
+    <div class="toolbar"><select id="filter"><option value="mine">Mine</option><option value="all">Everyone's</option></select><label style="font-size:13px;color:var(--body)"><input type="checkbox" id="past" style="width:auto"> Show past and cancelled</label></div>
+    <div class="list" id="list"><div class="empty">Loading…</div></div>
+  </div>
+  <div class="panel ivory">
+    <h3>How it works</h3>
+    <ul class="how">
+      <li>The invitation is a real calendar invite (an .ics file) sent by email from your MAP address. Gmail, Outlook and Apple Mail all show it with Accept and Decline buttons.</li>
+      <li>You are copied on every invite, so it appears in your own Google Calendar as well. Accept it there and it is on your calendar.</li>
+      <li><b>Cancel</b> sends the guest a cancellation that removes it from their calendar. <b>Resend</b> sends the same invite again (useful if it went missing).</li>
+      <li>To change the time, cancel and send a new one.</li>
+      <li>Replies from the guest come back to your MAP address, so they land in your normal inbox.</li>
+    </ul>
+  </div>
+</aside>
+</div>
+</main>
+</div>
+
+<script>
+const SUPABASE_URL = "https://iwdibogfypdjgsinwube.supabase.co";
+const SUPABASE_ANON = "sb_publishable_BRmzLQw94Lt49xLFmDHJVQ_yoo68o4c";
+const OWNER = "paul.newton@agilestrategy.co.nz";
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+let me = null, ME_FROM = "";
+
+async function boot(){ const { data:{ session } } = await sb.auth.getSession(); if (session) show(session); }
+function show(session){
+  me = session.user; $("gate").hidden = true; $("app").hidden = false;
+  const email = (me.email || "").toLowerCase();
+  ME_FROM = email === OWNER ? "paul@myaccesspartners.com" : email;
+  const name = email === OWNER ? "Paul Newton" : (me.user_metadata?.full_name || me.user_metadata?.name || email.split("@")[0]);
+  $("fromline").innerHTML = "Invitations go out from <b>" + esc(name) + " &lt;" + esc(ME_FROM) + "&gt;</b>";
+  $("who").innerHTML = esc(email) + '<button id="out">Sign out</button>';
+  $("out").onclick = async () => { await sb.auth.signOut(); location.reload(); };
+  loadPeople(); loadList();
+}
+$("signin-google").onclick = async () => { const { error } = await sb.auth.signInWithOAuth({ provider: "google", options: { redirectTo: location.origin + location.pathname } }); if (error) $("err").textContent = "Google sign in failed: " + error.message; };
+sb.auth.onAuthStateChange((e, s) => { if (s && $("app").hidden) show(s); });
+
+// ---- people from the CRM (for the guest datalist)
+const PEOPLE = new Map();
+async function loadPeople(){
+  const add = (name, email, tag) => { if (!email || !/@/.test(email)) return; const k = email.toLowerCase(); if (!PEOPLE.has(k)) PEOPLE.set(k, { name: name || email, email: k, tag }); };
+  const [p, d, i, t] = await Promise.all([
+    sb.from("producers").select("name,key_person,email,tour_contact_email,category").limit(1000),
+    sb.from("distributors").select("name,contact_name,contact_email").limit(500),
+    sb.from("investor_leads").select("principal_name,email,referrer,referrer_email").limit(500),
+    sb.from("tour_bookings").select("agent,agent_contact,lead_name").limit(500),
+  ]);
+  (p.data || []).forEach((r) => { add((r.key_person ? r.key_person + " · " : "") + r.name, r.email, r.category); add(r.name + " (tours)", r.tour_contact_email, "tours"); });
+  (d.data || []).forEach((r) => add((r.contact_name ? r.contact_name + " · " : "") + r.name, r.contact_email, "distributor"));
+  (i.data || []).forEach((r) => { add(r.principal_name, r.email, "investor"); add(r.referrer, r.referrer_email, "referrer"); });
+  (t.data || []).forEach((r) => add(r.agent + (r.lead_name ? " · " + r.lead_name : ""), r.agent_contact, "tour agent"));
+  const dl = $("people"); dl.innerHTML = "";
+  [...PEOPLE.values()].sort((a, b) => a.name.localeCompare(b.name)).forEach((x) => { const o = document.createElement("option"); o.value = x.name; o.label = x.email; dl.appendChild(o); });
+}
+$("gname").addEventListener("input", () => { const v = $("gname").value.trim().toLowerCase(); for (const x of PEOPLE.values()) if (x.name.toLowerCase() === v) { $("gemail").value = x.email; break; } });
+$("gname").addEventListener("change", () => { const v = $("gname").value; const hit = [...PEOPLE.values()].find((x) => x.name === v); if (hit) { $("gemail").value = hit.email; const nm = hit.name.split(" · ")[0]; $("gname").value = nm; } });
+
+// ---- quick titles and locations
+const QUICK = ["Introduction call", "Investor residence · first conversation", "Producer meeting", "Distributor meeting", "Tour planning", "Polo supply call", "Follow up"];
+$("quick").innerHTML = QUICK.map((q) => `<button type="button" data-q="${esc(q)}">${esc(q)}</button>`).join("");
+$("quick").addEventListener("click", (e) => { const b = e.target.closest("button[data-q]"); if (b) { $("title").value = b.dataset.q + ($("gname").value ? " · " + $("gname").value.split(" · ")[0] : ""); $("title").focus(); } });
+document.querySelectorAll("button[data-loc]").forEach((b) => b.onclick = () => $("loc").value = b.dataset.loc);
+$("meetbtn").onclick = () => { window.open("https://meet.google.com/new", "_blank"); $("loc").placeholder = "Paste the Meet link here"; $("loc").focus(); };
+
+// ---- time handling: local wall time in a chosen zone → UTC ISO
+function zoneOffsetMin(date, tz){ const p = new Intl.DateTimeFormat("en-US", { timeZone: tz, hourCycle: "h23", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit" }).formatToParts(date); const g = (t) => Number(p.find((x) => x.type === t).value); const asUTC = Date.UTC(g("year"), g("month") - 1, g("day"), g("hour"), g("minute"), g("second")); return (asUTC - date.getTime()) / 60000; }
+function toUTC(dateStr, timeStr, tz){ const [y, m, d] = dateStr.split("-").map(Number); const [hh, mm] = timeStr.split(":").map(Number); let guess = new Date(Date.UTC(y, m - 1, d, hh, mm)); for (let i = 0; i < 2; i++) { const off = zoneOffsetMin(guess, tz); guess = new Date(Date.UTC(y, m - 1, d, hh, mm) - off * 60000); } return guess; }
+const NZ = "Pacific/Auckland";
+function fmt(iso, tz){ return new Date(iso).toLocaleString("en-NZ", { timeZone: tz || NZ, weekday: "short", day: "numeric", month: "short", hour: "numeric", minute: "2-digit", hour12: true }); }
+function tzHint(){ try { const s = toUTC($("date").value || new Date().toISOString().slice(0, 10), $("time").value || "10:00", $("tz").value); const nz = s.toLocaleString("en-NZ", { timeZone: NZ, hour: "numeric", minute: "2-digit", hour12: true, weekday: "short" }); const ind = s.toLocaleString("en-NZ", { timeZone: "Asia/Kolkata", hour: "numeric", minute: "2-digit", hour12: true, weekday: "short" }); $("tzhint").textContent = "That is " + nz + " in New Zealand and " + ind + " in India."; } catch { $("tzhint").textContent = ""; } }
+["date", "time", "tz"].forEach((id) => $(id).addEventListener("input", tzHint));
+(function init(){ const t = new Date(); t.setDate(t.getDate() + 1); $("date").value = t.toLocaleDateString("en-CA", { timeZone: NZ }); tzHint(); })();
+
+// ---- send / cancel / resend
+async function call(payload){
+  const { data:{ session } } = await sb.auth.getSession(); if (!session) throw new Error("Sign in again");
+  const r = await fetch(SUPABASE_URL + "/functions/v1/appointment-send", { method: "POST", headers: { "content-type": "application/json", "Authorization": "Bearer " + session.access_token, "apikey": SUPABASE_ANON }, body: JSON.stringify(payload) });
+  const j = await r.json().catch(() => ({})); if (!r.ok) throw new Error(j.error || ("Error " + r.status)); return j;
+}
+function say(t, ok){ $("msg").textContent = t; $("msg").className = ok ? "ok" : "bad"; }
+$("f").onsubmit = async (e) => {
+  e.preventDefault();
+  const tz = $("tz").value; const s = toUTC($("date").value, $("time").value, tz); const en = new Date(s.getTime() + Number($("dur").value) * 60000);
+  if (s < new Date()) { if (!confirm("That time is in the past. Send anyway?")) return; }
+  const btn = $("send"); btn.disabled = true; btn.textContent = "Sending…"; say("", true);
+  try {
+    const j = await call({ action: "send", title: $("title").value, guest_name: $("gname").value.split(" · ")[0], guest_email: $("gemail").value, extra_guests: $("extra").value, starts_at: s.toISOString(), ends_at: en.toISOString(), tz, location: $("loc").value, notes: $("notes").value });
+    say("Sent from " + j.from + ". The guest has the invitation and a copy is on its way to your calendar.", true);
+    ["title", "gname", "gemail", "extra", "loc", "notes"].forEach((id) => $(id).value = "");
+    loadList();
+  } catch (err) { say(err.message, false); }
+  btn.disabled = false; btn.textContent = "Send invitation";
+};
+$("clear").onclick = () => { $("f").reset(); (function(){ const t = new Date(); t.setDate(t.getDate() + 1); $("date").value = t.toLocaleDateString("en-CA", { timeZone: NZ }); })(); say("", true); };
+
+async function loadList(){
+  const past = $("past").checked, mine = $("filter").value === "mine";
+  let q = sb.from("appointments").select("*").order("starts_at", { ascending: true }).limit(200);
+  if (!past) q = q.gte("ends_at", new Date(Date.now() - 3600000).toISOString()).neq("status", "cancelled");
+  if (mine) q = q.eq("organiser_email", ME_FROM);
+  const { data, error } = await q;
+  const el = $("list");
+  if (error) { el.innerHTML = '<div class="empty">Could not load: ' + esc(error.message) + "</div>"; return; }
+  if (!data?.length) { el.innerHTML = '<div class="empty">Nothing booked yet. Send your first invitation on the left.</div>'; return; }
+  el.innerHTML = data.map((a) => {
+    const d = new Date(a.starts_at); const day = d.toLocaleDateString("en-NZ", { timeZone: a.tz || NZ, day: "numeric" }); const mon = d.toLocaleDateString("en-NZ", { timeZone: a.tz || NZ, month: "short" });
+    const own = a.organiser_email === ME_FROM;
+    const guests = [a.guest_name || a.guest_email, a.extra_guests].filter(Boolean).join(", ");
+    return `<div class="item ${a.status}"><div class="date"><div class="d">${esc(day)}</div><div class="m">${esc(mon)}</div></div>
+      <div><div class="t">${esc(a.title)}</div><div class="w">${esc(fmt(a.starts_at, a.tz))} to ${esc(new Date(a.ends_at).toLocaleTimeString("en-NZ", { timeZone: a.tz || NZ, hour: "numeric", minute: "2-digit", hour12: true }))}${a.tz && a.tz !== NZ ? " (" + esc(a.tz.split("/")[1].replace("_", " ")) + " time)" : ""}${a.location ? " · " + (/^https?:/.test(a.location) ? `<a href="${esc(a.location)}" target="_blank">link</a>` : esc(a.location)) : ""}</div>
+      <div class="g">${esc(guests)}${own ? "" : " · by " + esc(a.organiser_name)} <span class="pill ${esc(a.status)}">${esc(a.status)}</span></div></div>
+      <div class="ops">${own && a.status !== "cancelled" ? `<button class="btn sm ghost" data-act="resend" data-id="${a.id}">Resend</button><button class="btn sm ghost" data-act="cancel" data-id="${a.id}" style="color:var(--warn)">Cancel</button>` : ""}</div></div>`;
+  }).join("");
+}
+$("list").addEventListener("click", async (e) => {
+  const b = e.target.closest("button[data-act]"); if (!b) return;
+  const act = b.dataset.act, id = b.dataset.id;
+  if (act === "cancel" && !confirm("Cancel this appointment? The guest will get a cancellation and it comes off their calendar.")) return;
+  b.disabled = true; b.textContent = act === "cancel" ? "Cancelling…" : "Sending…";
+  try { await call({ action: act, id }); say(act === "cancel" ? "Cancelled. The guest has been told." : "Invitation sent again.", true); } catch (err) { say(err.message, false); }
+  loadList();
+});
+$("filter").onchange = loadList; $("past").onchange = loadList;
+boot();
+</script>
+</body>
+</html>
