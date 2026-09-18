@@ -155,7 +155,7 @@ nav.tools a.prop{background:var(--vine);color:#fff;padding:6px 16px;border-radiu
 
   <p style="margin:-6px 0 22px"><a class="pill" href="/proposal.html" style="text-decoration:none;background:var(--vine);color:#fff;padding:12px 22px;font-size:14px">Build a proposal for a client →</a> <span style="font-size:13px;color:var(--muted)">Custom deck and one pager with the client's name and CRM details, for any of the six portfolios.</span></p>
   <h2 class="sec">Category packs</h2>
-  <p class="secnote">Six portfolios, each with a six slide deck and an A4 one pager in the site fonts and colours (Fjalla One and Libre Franklin, ink, saffron, ivory). Press Preview to read it here; the PDFs look the same on every machine, the PowerPoint is there to edit. All in <a class="plain" href="https://drive.google.com/drive/folders/1ET8OJrD-UDo8TSOTkwpI9e0317GyYbX2" target="_blank" rel="noopener">Drive · Category packs Sep 2026</a>.</p>
+  <p class="secnote">Six portfolios, each with a six slide deck and an A4 one pager in the site fonts and colours (Fjalla One and Libre Franklin, ink, saffron, ivory). Press Preview to read it here (served from the site, so it always opens); the PDFs look the same on every machine, the PowerPoint is there to edit. All in <a class="plain" href="https://drive.google.com/drive/folders/1ET8OJrD-UDo8TSOTkwpI9e0317GyYbX2" target="_blank" rel="noopener">Drive · Category packs Sep 2026</a>.</p>
   <div class="docgrid" id="packs"></div>
 
   <h2 class="sec">Client collateral builder</h2>
@@ -292,16 +292,18 @@ const PACKS = [
    pptx:"1iNNdPyOIyQzfdwbJvffo44ZCtlBcg24s", deck:"1_jrvvo6G0bRprWkX3Nsu5m0KPCVGU2eh", op:"14TOE5R674Bw9fjwkc3NkYloBknfTrfLf"},
 ];
 const thumbUrl=id=>"https://drive.google.com/thumbnail?id="+id+"&sz=w600";
+const SITE_PDF={"1469DulzunuhVZtTcVrYMq2sfpvQs29tw":"MAP_Wine_Pitch_Deck","1VFOnHPYwL8ufNMiZQN7UbooWaY5DQqhr":"MAP_Wine_One_Pager","1q06_aWA3excubTJL2sPNJ9FH4nhmqtr9":"MAP_Manuka_Honey_Pitch_Deck","1C63jJXdXd3e749uufIeuNJFF-vtyOpVK":"MAP_Manuka_Honey_One_Pager","1Dzvg8uzgPZHo2PZODFL9cz1W1UDHi7mX":"MAP_Whisky_and_Bespoke_Spirits_Pitch_Deck","16HurTDjWUhE3Uagob9Bqwc0dRbxpCFaO":"MAP_Whisky_and_Bespoke_Spirits_One_Pager","1Qeuw4x5VPKmXxxMj417zZ8r1jjvrBUgd":"MAP_Travel_Provenance_Tours_Pitch_Deck","15uN72Ktx1p8UvMnvbRpd6oTlhqXALJC0":"MAP_Travel_Provenance_Tours_One_Pager","1Qe2XVV38xpP2AlbadnA-Qd4zPcmdmYDY":"MAP_Polo_Pitch_Deck","1hiTag-8MyASNI0IY8OlA3hs55j0ojs0o":"MAP_Polo_One_Pager","1_jrvvo6G0bRprWkX3Nsu5m0KPCVGU2eh":"MAP_Investor_Residence_Pitch_Deck","14TOE5R674Bw9fjwkc3NkYloBknfTrfLf":"MAP_Investor_Residence_One_Pager","1jp2g_6TjvC0W0B1oPyjou7IQjydJhsls":"MAP_Brand_Positioning"};
+const sitePdf=id=>SITE_PDF[id]?"/packs/"+SITE_PDF[id]+".pdf":null;
 const viewUrl=x=>x.url||("https://drive.google.com/file/d/"+x.id+"/view");
-const previewUrl=x=>x.url?x.url.replace(/\/edit.*$/,"/preview"):("https://drive.google.com/file/d/"+x.id+"/preview");
+const previewUrl=x=>(x.id&&sitePdf(x.id))?sitePdf(x.id)+"#toolbar=1&view=FitH":(x.url?x.url.replace(/\/edit.*$/,"/preview"):("https://drive.google.com/file/d/"+x.id+"/preview"));
 let pvUrl="";
-function pvLoad(){ const host=$("pv-host"); host.innerHTML=""; const f=document.createElement("iframe"); f.id="pv-frame"; f.allow="autoplay"; f.style.cssText="flex:1;border:0;width:100%"; $("pv-note").textContent="Loading…"; f.onload=()=>{ $("pv-note").textContent=""; }; f.src=pvUrl+(pvUrl.includes("?")?"&":"?")+"r="+Date.now(); host.appendChild(f); setTimeout(()=>{ if($("pv-note").textContent==="Loading…") $("pv-note").textContent="Slow to load? Press Reload or Open in Drive."; },7000); }
+function pvLoad(){ const host=$("pv-host"); host.innerHTML=""; const f=document.createElement("iframe"); f.id="pv-frame"; f.allow="autoplay"; f.style.cssText="flex:1;border:0;width:100%"; $("pv-note").textContent="Loading…"; f.onload=()=>{ $("pv-note").textContent=""; }; f.src=pvUrl.startsWith("/")?pvUrl:pvUrl+(pvUrl.includes("?")?"&":"?")+"r="+Date.now(); host.appendChild(f); setTimeout(()=>{ if($("pv-note").textContent==="Loading…") $("pv-note").textContent="Slow to load? Press Reload or Open in Drive."; },7000); }
 function openPreview(title,pu,vu){ $("pv-title").textContent=title; $("pv-open").href=vu; pvUrl=pu; $("pv").hidden=false; pvLoad(); }
 $("pv-reload").onclick=pvLoad;
 $("pv-close").onclick=()=>{ $("pv").hidden=true; $("pv-host").innerHTML=""; };
 $("pv").addEventListener("click",e=>{ if(e.target.id==="pv") $("pv-close").click(); });
 document.addEventListener("keydown",e=>{ if(e.key==="Escape"&&!$("pv").hidden) $("pv-close").click(); });
-const thumb=(id,alt)=>{ const im=document.createElement("img"); im.className="thumb"; im.loading="lazy"; im.alt=alt; im.src=thumbUrl(id)+"&t="+Math.floor(Date.now()/3600000); im.onerror=()=>{ const d=document.createElement("div"); d.className="thumb"; d.style.cssText="display:flex;align-items:center;justify-content:center;font:400 15px var(--serif);color:var(--saffron-deep);background:var(--ink)"; d.textContent=alt; im.replaceWith(d); }; return im; };
+const thumb=(id,alt)=>{ const im=document.createElement("img"); im.className="thumb"; im.loading="lazy"; im.alt=alt; im.src=sitePdf(id)?"/packs/thumbs/"+SITE_PDF[id]+".png":thumbUrl(id)+"&t="+Math.floor(Date.now()/3600000); im.onerror=()=>{ const d=document.createElement("div"); d.className="thumb"; d.style.cssText="display:flex;align-items:center;justify-content:center;font:400 15px var(--serif);color:var(--saffron-deep);background:var(--ink)"; d.textContent=alt; im.replaceWith(d); }; return im; };
 const mkBtn=(label,fn)=>{ const a=document.createElement("a"); a.textContent=label; a.href="#"; a.onclick=e=>{ e.preventDefault(); fn(); }; return a; };
 (function renderPacks(){
   const g = document.getElementById("packs");

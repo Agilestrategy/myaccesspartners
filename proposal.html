@@ -159,10 +159,11 @@ $("pick").onchange=()=>{ const r=(sources[cat]||[])[+$("pick").value]; cur=r||nu
 function client(){ const n=$("name").value.trim(); if(!n){ $("bMsg").className="msg err"; $("bMsg").textContent="Pick a client or type a name."; return null; } return { n, person:$("person").value.trim(), d:(cur&&cur.n===n)?cur.d:{} }; }
 
 /* standard pack */
-const previewUrl=id=>"https://drive.google.com/file/d/"+id+"/preview", viewUrl=id=>"https://drive.google.com/file/d/"+id+"/view", dl=id=>"https://drive.google.com/uc?export=download&id="+id, thumbUrl=id=>"https://drive.google.com/thumbnail?id="+id+"&sz=w600";
+const PDF_NAME={wine:["MAP_Wine_Pitch_Deck","MAP_Wine_One_Pager"],honey:["MAP_Manuka_Honey_Pitch_Deck","MAP_Manuka_Honey_One_Pager"],whisky:["MAP_Whisky_and_Bespoke_Spirits_Pitch_Deck","MAP_Whisky_and_Bespoke_Spirits_One_Pager"],travel:["MAP_Travel_Provenance_Tours_Pitch_Deck","MAP_Travel_Provenance_Tours_One_Pager"],polo:["MAP_Polo_Pitch_Deck","MAP_Polo_One_Pager"],investors:["MAP_Investor_Residence_Pitch_Deck","MAP_Investor_Residence_One_Pager"]};
+const viewUrl=id=>"https://drive.google.com/file/d/"+id+"/view", dl=id=>"https://drive.google.com/uc?export=download&id="+id;
 let pvUrl="";
-function pvLoad(){ const host=$("pv-host"); host.innerHTML=""; const f=document.createElement("iframe"); f.allow="autoplay"; f.style.cssText="flex:1;border:0;width:100%"; $("pv-note").textContent="Loading…"; f.onload=()=>{ $("pv-note").textContent=""; }; f.src=pvUrl+"?r="+Date.now(); host.appendChild(f); setTimeout(()=>{ if($("pv-note").textContent==="Loading…") $("pv-note").textContent="Slow to load? Press Reload or Open in Drive."; },7000); }
-function openPreview(title,id){ $("pv-title").textContent=title; $("pv-open").href=viewUrl(id); pvUrl=previewUrl(id); $("pv").hidden=false; pvLoad(); }
+function pvLoad(){ const host=$("pv-host"); host.innerHTML=""; const f=document.createElement("iframe"); f.style.cssText="flex:1;border:0;width:100%"; $("pv-note").textContent="Loading…"; f.onload=()=>{ $("pv-note").textContent=""; }; f.src=pvUrl; host.appendChild(f); setTimeout(()=>{ if($("pv-note").textContent==="Loading…") $("pv-note").textContent="Slow to load? Press Reload or Open in Drive."; },7000); }
+function openPreview(title,id,path){ $("pv-title").textContent=title; $("pv-open").href=viewUrl(id); pvUrl=path+"#toolbar=1&view=FitH"; $("pv").hidden=false; pvLoad(); }
 $("pv-reload").onclick=pvLoad;
 $("pv-close").onclick=()=>{ $("pv").hidden=true; $("pv-host").innerHTML=""; };
 $("pv").addEventListener("click",e=>{ if(e.target.id==="pv") $("pv-close").click(); });
@@ -170,9 +171,10 @@ document.addEventListener("keydown",e=>{ if(e.key==="Escape"&&!$("pv").hidden) $
 function paintPack(){
   const f=FILES[cat], P=PACKS[cat]; if(!f) return;
   $("hDeck").textContent=P.label+" · pitch deck"; $("hOne").textContent=P.label+" · one pager";
-  $("tDeck").src=thumbUrl(f.deck); $("tOne").src=thumbUrl(f.op);
-  $("tDeck").onclick=$("pDeck").onclick=()=>openPreview(P.label+" · deck",f.deck);
-  $("tOne").onclick=$("pOne").onclick=()=>openPreview(P.label+" · one pager",f.op);
+  const n=PDF_NAME[cat];
+  $("tDeck").src="/packs/thumbs/"+n[0]+".png"; $("tOne").src="/packs/thumbs/"+n[1]+".png";
+  $("tDeck").onclick=$("pDeck").onclick=()=>openPreview(P.label+" · deck",f.deck,"/packs/"+n[0]+".pdf");
+  $("tOne").onclick=$("pOne").onclick=()=>openPreview(P.label+" · one pager",f.op,"/packs/"+n[1]+".pdf");
   $("dDeckPdf").href=dl(f.deck); $("dDeckPptx").href=dl(f.pptx); $("dOne").href=dl(f.op);
 }
 
